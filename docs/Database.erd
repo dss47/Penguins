@@ -1,0 +1,1911 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dineug/erd-editor/main/json-schema/schema.json",
+  "version": "3.0.0",
+  "settings": {
+    "width": 4000,
+    "height": 4000,
+    "scrollTop": -1000.0001,
+    "scrollLeft": -1281.9922,
+    "zoomLevel": 1,
+    "show": 511,
+    "database": 1,
+    "databaseName": "",
+    "canvasType": "ERD",
+    "language": 1,
+    "tableNameCase": 4,
+    "columnNameCase": 2,
+    "bracketType": 1,
+    "relationshipDataTypeSync": true,
+    "relationshipOptimization": false,
+    "columnOrder": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64
+    ],
+    "maxWidthComment": -1,
+    "ignoreSaveSettings": 0
+  },
+  "doc": {
+    "tableIds": [
+      "RaOeMDlA4OQNlZwsIsc8L",
+      "TvmG6V7JOmpQm_mhxSV72",
+      "CuEK5QH5vgv473OsQSzbr",
+      "dj9dYG7V9Fuc6ziZnTxe8",
+      "x_U35lyWs8HntFA254l0q",
+      "0btqIexIMB3v843xciYOj",
+      "Xiri8j6dNEUunwM0BB3BM",
+      "0HYZaiCeCUxNyWsKeS-4F",
+      "W4NHvr8xCGAf_eT3OQsMK",
+      "HDSOzmo_3WMvblCXJ5zFG",
+      "ns4LThDMFA6ve-teN4tn6",
+      "Z1uMZmylt03Vu6DSy5aQw"
+    ],
+    "relationshipIds": [],
+    "indexIds": [],
+    "memoIds": []
+  },
+  "collections": {
+    "tableEntities": {
+      "RaOeMDlA4OQNlZwsIsc8L": {
+        "id": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "ai_tools",
+        "comment": "",
+        "columnIds": [
+          "lnCwqjqM1RMC1RR1yJ6RN",
+          "f9IDXHPslU2kE5tJikm34",
+          "DeESCeiUQ_a-gqnljYDs5",
+          "ljD-CEaEp23Gg3jTED5Gd",
+          "2l7tCImEGBRPALhRBGtIE",
+          "N1kiER9x6Z_GXmXDKQcQK",
+          "0h8ytsKJWayJ3BB26hY1V",
+          "B_nNXTnjZGV6MHcDrquj_",
+          "Sma0RArl8VvxinY4m5Wf6",
+          "jzF6iaP1ySrWeRYR0fnzA",
+          "5mM_OSsiqif3O2YuEDJJv"
+        ],
+        "seqColumnIds": [
+          "lnCwqjqM1RMC1RR1yJ6RN",
+          "9NLBXdSa-ud3649dz9Izf",
+          "uRuc9zrjMCsmzNYMEHr0t",
+          "f9IDXHPslU2kE5tJikm34",
+          "DeESCeiUQ_a-gqnljYDs5",
+          "ljD-CEaEp23Gg3jTED5Gd",
+          "2l7tCImEGBRPALhRBGtIE",
+          "N1kiER9x6Z_GXmXDKQcQK",
+          "0h8ytsKJWayJ3BB26hY1V",
+          "B_nNXTnjZGV6MHcDrquj_",
+          "Sma0RArl8VvxinY4m5Wf6",
+          "jzF6iaP1ySrWeRYR0fnzA",
+          "5mM_OSsiqif3O2YuEDJJv"
+        ],
+        "ui": {
+          "x": 206.329,
+          "y": 43.3649,
+          "zIndex": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779047182142,
+          "createAt": 1779045947168
+        }
+      },
+      "TvmG6V7JOmpQm_mhxSV72": {
+        "id": "TvmG6V7JOmpQm_mhxSV72",
+        "name": "users",
+        "comment": "",
+        "columnIds": [
+          "mTjSXRzaTt1XKyRn0egXY",
+          "eb-BQeyvXGHpDsRK-T63T",
+          "yqQRfbAQVvuUlDRJoYSXI",
+          "aZK_kYJIw2-kwZ0S_3_S6",
+          "xOjXpK2qujsQOn58Z696O",
+          "v3tVGhuInif6ORmJ1zOdK",
+          "GvgN_OkZ5kZ8g3naGedXa",
+          "a0wRC0xHgJjhTqW9v3OQf",
+          "Uw3AgnQZUgrbYWDYYbV1m"
+        ],
+        "seqColumnIds": [
+          "mTjSXRzaTt1XKyRn0egXY",
+          "eb-BQeyvXGHpDsRK-T63T",
+          "yqQRfbAQVvuUlDRJoYSXI",
+          "aZK_kYJIw2-kwZ0S_3_S6",
+          "xOjXpK2qujsQOn58Z696O",
+          "v3tVGhuInif6ORmJ1zOdK",
+          "GvgN_OkZ5kZ8g3naGedXa",
+          "a0wRC0xHgJjhTqW9v3OQf",
+          "Uw3AgnQZUgrbYWDYYbV1m"
+        ],
+        "ui": {
+          "x": 227.1737,
+          "y": 400.4936,
+          "zIndex": 114,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779047685165,
+          "createAt": 1779046812942
+        }
+      },
+      "CuEK5QH5vgv473OsQSzbr": {
+        "id": "CuEK5QH5vgv473OsQSzbr",
+        "name": "categories",
+        "comment": "",
+        "columnIds": [
+          "R1hwbbdadADXQWYYuW7DG",
+          "0upuOD1tfYLGzThhDgMd2",
+          "It5Vzq8sCGcE6FLuMpwpK",
+          "NLnRsYv6fFmrOc4HJUvJc",
+          "QbC7SVZXlUJF2moHKBBcn"
+        ],
+        "seqColumnIds": [
+          "R1hwbbdadADXQWYYuW7DG",
+          "0upuOD1tfYLGzThhDgMd2",
+          "It5Vzq8sCGcE6FLuMpwpK",
+          "NLnRsYv6fFmrOc4HJUvJc",
+          "QbC7SVZXlUJF2moHKBBcn",
+          "IrsMhNlIPZh1EkyTDyTXq"
+        ],
+        "ui": {
+          "x": 260.528,
+          "y": 714.2873,
+          "zIndex": 115,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779083069912,
+          "createAt": 1779082802237
+        }
+      },
+      "dj9dYG7V9Fuc6ziZnTxe8": {
+        "id": "dj9dYG7V9Fuc6ziZnTxe8",
+        "name": "providers",
+        "comment": "",
+        "columnIds": [
+          "ow2OGItr1PWXy0ZAkCYCN",
+          "3VeSvMGhOoZQKxSuZK8XE",
+          "6FQYhIPufJacvNsIsB8Md",
+          "M1oNDbKOzR86C1scanxos",
+          "hrAq9d_Slr6Kakv_eSplY",
+          "mOVdBBBxLNGQQbi5UlOLL",
+          "ueR_zkOy5GHi94JrkjW7v"
+        ],
+        "seqColumnIds": [
+          "ow2OGItr1PWXy0ZAkCYCN",
+          "3VeSvMGhOoZQKxSuZK8XE",
+          "6FQYhIPufJacvNsIsB8Md",
+          "M1oNDbKOzR86C1scanxos",
+          "hrAq9d_Slr6Kakv_eSplY",
+          "mOVdBBBxLNGQQbi5UlOLL",
+          "ueR_zkOy5GHi94JrkjW7v"
+        ],
+        "ui": {
+          "x": 251.292,
+          "y": 908.9009,
+          "zIndex": 179,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779083357952,
+          "createAt": 1779083101744
+        }
+      },
+      "x_U35lyWs8HntFA254l0q": {
+        "id": "x_U35lyWs8HntFA254l0q",
+        "name": "models",
+        "comment": "",
+        "columnIds": [
+          "D6S8b5eREb3MFHfZFnYud",
+          "k8j11ZtZmQYm4MsDEaxJ9",
+          "D4VSKoNZcw-d55LME423U",
+          "cY-s39JXBWpNYx7M8XQJ0",
+          "7P3k0Z8vZe176-C3Fw92U",
+          "jA05wTIwLzQsJOLw6W5IX",
+          "waJoX_85bEhGXBzzyt2yx"
+        ],
+        "seqColumnIds": [
+          "D6S8b5eREb3MFHfZFnYud",
+          "k8j11ZtZmQYm4MsDEaxJ9",
+          "D4VSKoNZcw-d55LME423U",
+          "cY-s39JXBWpNYx7M8XQJ0",
+          "7P3k0Z8vZe176-C3Fw92U",
+          "JECQVAaBMiiwPyODY_Fwg",
+          "jA05wTIwLzQsJOLw6W5IX",
+          "waJoX_85bEhGXBzzyt2yx"
+        ],
+        "ui": {
+          "x": 1817.6688,
+          "y": 138.3779,
+          "zIndex": 239,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779083799067,
+          "createAt": 1779083396081
+        }
+      },
+      "0btqIexIMB3v843xciYOj": {
+        "id": "0btqIexIMB3v843xciYOj",
+        "name": "features",
+        "comment": "",
+        "columnIds": [
+          "kRWGWdVeC_F7L5-xy4WdN",
+          "dMoUfQGu59DNEJ0K8iGH1",
+          "JERsJfSQeLBQ5sQHwC03f",
+          "o4svTPpkOk0Gt5hW5e7AZ",
+          "2wjRsrs4VO78DDp0OcBqg",
+          "qCYG5i6sQsCHlo6vnBQYf",
+          "Ra4ehkXIhZH3tAykXj4Dc"
+        ],
+        "seqColumnIds": [
+          "kRWGWdVeC_F7L5-xy4WdN",
+          "dMoUfQGu59DNEJ0K8iGH1",
+          "JERsJfSQeLBQ5sQHwC03f",
+          "o4svTPpkOk0Gt5hW5e7AZ",
+          "2wjRsrs4VO78DDp0OcBqg",
+          "qCYG5i6sQsCHlo6vnBQYf",
+          "Ra4ehkXIhZH3tAykXj4Dc"
+        ],
+        "ui": {
+          "x": 1915.6968,
+          "y": 484.8253,
+          "zIndex": 325,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779084225547,
+          "createAt": 1779083941277
+        }
+      },
+      "Xiri8j6dNEUunwM0BB3BM": {
+        "id": "Xiri8j6dNEUunwM0BB3BM",
+        "name": "favorite_items",
+        "comment": "",
+        "columnIds": [
+          "nvL3fyvwzhjQ0WoN7g8yY",
+          "2IRqpbAIW-fqhXVCGp4q3"
+        ],
+        "seqColumnIds": [
+          "nvL3fyvwzhjQ0WoN7g8yY",
+          "2IRqpbAIW-fqhXVCGp4q3"
+        ],
+        "ui": {
+          "x": 1921.9324,
+          "y": 720.1974,
+          "zIndex": 397,
+          "widthName": 79,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779084658980,
+          "createAt": 1779084320505
+        }
+      },
+      "0HYZaiCeCUxNyWsKeS-4F": {
+        "id": "0HYZaiCeCUxNyWsKeS-4F",
+        "name": "playlists",
+        "comment": "",
+        "columnIds": [
+          "9e5gze_aI6IVJ1LggpnVU",
+          "lxldb38bY3u-25yjO9cmV",
+          "tKg_63uDsRR_DA_UHQDdT",
+          "N5-VCZflob-BMLVV29-Lr",
+          "R8syhlhq6OLcmb9VbaM1o"
+        ],
+        "seqColumnIds": [
+          "9e5gze_aI6IVJ1LggpnVU",
+          "lxldb38bY3u-25yjO9cmV",
+          "tKg_63uDsRR_DA_UHQDdT",
+          "N5-VCZflob-BMLVV29-Lr",
+          "R8syhlhq6OLcmb9VbaM1o"
+        ],
+        "ui": {
+          "x": 1929.366,
+          "y": 845.8925,
+          "zIndex": 434,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779438605155,
+          "createAt": 1779084661458
+        }
+      },
+      "W4NHvr8xCGAf_eT3OQsMK": {
+        "id": "W4NHvr8xCGAf_eT3OQsMK",
+        "name": "playlist_items",
+        "comment": "",
+        "columnIds": [
+          "_ac40tejj4Am9rWp5J3sY",
+          "YIbF9d_8t5Xg9S12LXHef"
+        ],
+        "seqColumnIds": [
+          "_ac40tejj4Am9rWp5J3sY",
+          "YIbF9d_8t5Xg9S12LXHef"
+        ],
+        "ui": {
+          "x": 1951.33,
+          "y": 1041.9678,
+          "zIndex": 498,
+          "widthName": 75,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779439329708,
+          "createAt": 1779438700111
+        }
+      },
+      "c_lOHUOXkL3ilFBQ6ffkT": {
+        "id": "c_lOHUOXkL3ilFBQ6ffkT",
+        "name": "playlist_items",
+        "comment": "",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 1964.3614,
+          "y": 1214.7649,
+          "zIndex": 524,
+          "widthName": 75,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779439220489,
+          "createAt": 1779439215751
+        }
+      },
+      "HDSOzmo_3WMvblCXJ5zFG": {
+        "id": "HDSOzmo_3WMvblCXJ5zFG",
+        "name": "reviews",
+        "comment": "",
+        "columnIds": [
+          "ZbWFeXe6TRhMox6O3-wOF",
+          "4TEe9eXorYyrmL2uwX8Oh",
+          "iqr7yomn-1MfzOwxm0sz5",
+          "86nioQDi1y9XStHggmh2J",
+          "76svL7ufbU8EusxxccZMD",
+          "y6da1ParpidgytQPg7qDD"
+        ],
+        "seqColumnIds": [
+          "ZbWFeXe6TRhMox6O3-wOF",
+          "4TEe9eXorYyrmL2uwX8Oh",
+          "iqr7yomn-1MfzOwxm0sz5",
+          "86nioQDi1y9XStHggmh2J",
+          "76svL7ufbU8EusxxccZMD",
+          "y6da1ParpidgytQPg7qDD"
+        ],
+        "ui": {
+          "x": 1914.3614,
+          "y": 1201.7649,
+          "zIndex": 524,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779439691369,
+          "createAt": 1779439229533
+        }
+      },
+      "ns4LThDMFA6ve-teN4tn6": {
+        "id": "ns4LThDMFA6ve-teN4tn6",
+        "name": "search_histories",
+        "comment": "",
+        "columnIds": [
+          "lba91xe12GUucWEznOXhN",
+          "h3y8DsYv9J82-S7pAr7d7",
+          "A_7xpkyRxfjuElIZQ5EGS",
+          "uV4Y34T75RZdfbIhCwk1M"
+        ],
+        "seqColumnIds": [
+          "lba91xe12GUucWEznOXhN",
+          "h3y8DsYv9J82-S7pAr7d7",
+          "A_7xpkyRxfjuElIZQ5EGS",
+          "uV4Y34T75RZdfbIhCwk1M"
+        ],
+        "ui": {
+          "x": 1969.226,
+          "y": 1497.9649,
+          "zIndex": 612,
+          "widthName": 91,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779440298604,
+          "createAt": 1779439894075
+        }
+      },
+      "Z1uMZmylt03Vu6DSy5aQw": {
+        "id": "Z1uMZmylt03Vu6DSy5aQw",
+        "name": "tool_features",
+        "comment": "",
+        "columnIds": [
+          "qGOS3e6XJxs_iUl4kksFm",
+          "lQmVwGgKC1-5zpgYcsPMO"
+        ],
+        "seqColumnIds": [
+          "qGOS3e6XJxs_iUl4kksFm",
+          "lQmVwGgKC1-5zpgYcsPMO",
+          "wbD2lXnVn2yByG0VTxQ0t"
+        ],
+        "ui": {
+          "x": 2092.226,
+          "y": 1713.4178,
+          "zIndex": 653,
+          "widthName": 74,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1779440592023,
+          "createAt": 1779440531752
+        }
+      }
+    },
+    "tableColumnEntities": {
+      "lnCwqjqM1RMC1RR1yJ6RN": {
+        "id": "lnCwqjqM1RMC1RR1yJ6RN",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 15,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779046293233,
+          "createAt": 1779046079893
+        }
+      },
+      "9NLBXdSa-ud3649dz9Izf": {
+        "id": "9NLBXdSa-ud3649dz9Izf",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "category_id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 66,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779046311296,
+          "createAt": 1779046114116
+        }
+      },
+      "uRuc9zrjMCsmzNYMEHr0t": {
+        "id": "uRuc9zrjMCsmzNYMEHr0t",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "provider_id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 62,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779046333547,
+          "createAt": 1779046165999
+        }
+      },
+      "f9IDXHPslU2kE5tJikm34": {
+        "id": "f9IDXHPslU2kE5tJikm34",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "name",
+        "comment": "Stores the commercial name of the AI tool",
+        "dataType": "VARCHAR(255)",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 229,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779046853568,
+          "createAt": 1779046404782
+        }
+      },
+      "DeESCeiUQ_a-gqnljYDs5": {
+        "id": "DeESCeiUQ_a-gqnljYDs5",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "description",
+        "comment": "Stores the main explanation of what the AI tool does.",
+        "dataType": "TEXT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 64,
+          "widthComment": 285,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779046871917,
+          "createAt": 1779046439432
+        }
+      },
+      "ljD-CEaEp23Gg3jTED5Gd": {
+        "id": "ljD-CEaEp23Gg3jTED5Gd",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "logo_url",
+        "comment": "Stores the internet link pointing to the image file of the AI tool's logo",
+        "dataType": "VARCHAR(2083)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 368,
+          "widthDataType": 91,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779046884135,
+          "createAt": 1779046460278
+        }
+      },
+      "2l7tCImEGBRPALhRBGtIE": {
+        "id": "2l7tCImEGBRPALhRBGtIE",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "website_url",
+        "comment": "Stores the absolute link to the external website",
+        "dataType": "VARCHAR(2083)",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 254,
+          "widthDataType": 91,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779046915380,
+          "createAt": 1779046502473
+        }
+      },
+      "N1kiER9x6Z_GXmXDKQcQK": {
+        "id": "N1kiER9x6Z_GXmXDKQcQK",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "global_rating",
+        "comment": "Stores the average rating score out of 5 stars",
+        "dataType": "DECIMAL(3,2)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 73,
+          "widthComment": 244,
+          "widthDataType": 76,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779046931075,
+          "createAt": 1779046633206
+        }
+      },
+      "0h8ytsKJWayJ3BB26hY1V": {
+        "id": "0h8ytsKJWayJ3BB26hY1V",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "release_date",
+        "comment": "Tracks exactly when this AI tool was launched",
+        "dataType": "DATE",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 72,
+          "widthComment": 246,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779046946645,
+          "createAt": 1779046649943
+        }
+      },
+      "B_nNXTnjZGV6MHcDrquj_": {
+        "id": "B_nNXTnjZGV6MHcDrquj_",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "status",
+        "comment": "",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 78,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779046678293,
+          "createAt": 1779046667423
+        }
+      },
+      "Sma0RArl8VvxinY4m5Wf6": {
+        "id": "Sma0RArl8VvxinY4m5Wf6",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "validated_by",
+        "comment": "Tracks who approved this row",
+        "dataType": "VARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 70,
+          "widthComment": 162,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779047003858,
+          "createAt": 1779046685140
+        }
+      },
+      "jzF6iaP1ySrWeRYR0fnzA": {
+        "id": "jzF6iaP1ySrWeRYR0fnzA",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "created_at",
+        "comment": "System clock stamp tracking the exact second this tool row was originally inserted into the database",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 542,
+          "widthDataType": 66,
+          "widthDefault": 123
+        },
+        "meta": {
+          "updateAt": 1779047029387,
+          "createAt": 1779046700342
+        }
+      },
+      "5mM_OSsiqif3O2YuEDJJv": {
+        "id": "5mM_OSsiqif3O2YuEDJJv",
+        "tableId": "RaOeMDlA4OQNlZwsIsc8L",
+        "name": "updated_at",
+        "comment": "Automatically updates its own timestamp value whenever an Admin modifies or changes any data inside this specific tool row.",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 679,
+          "widthDataType": 66,
+          "widthDefault": 313
+        },
+        "meta": {
+          "updateAt": 1779047046193,
+          "createAt": 1779046733444
+        }
+      },
+      "mTjSXRzaTt1XKyRn0egXY": {
+        "id": "mTjSXRzaTt1XKyRn0egXY",
+        "tableId": "TvmG6V7JOmpQm_mhxSV72",
+        "name": "id",
+        "comment": "A unique identifier number for every registered person",
+        "dataType": "INT",
+        "default": "",
+        "options": 15,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 297,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779047263886,
+          "createAt": 1779047233037
+        }
+      },
+      "eb-BQeyvXGHpDsRK-T63T": {
+        "id": "eb-BQeyvXGHpDsRK-T63T",
+        "tableId": "TvmG6V7JOmpQm_mhxSV72",
+        "name": "email",
+        "comment": "Stores the user's login email address.",
+        "dataType": "VARCHAR(255)",
+        "default": "",
+        "options": 12,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 200,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779047322092,
+          "createAt": 1779047274506
+        }
+      },
+      "yqQRfbAQVvuUlDRJoYSXI": {
+        "id": "yqQRfbAQVvuUlDRJoYSXI",
+        "tableId": "TvmG6V7JOmpQm_mhxSV72",
+        "name": "password_hash",
+        "comment": "Stores the securely encrypted password string",
+        "dataType": "VARCHAR(255)",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 86,
+          "widthComment": 253,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779047333958,
+          "createAt": 1779047307388
+        }
+      },
+      "aZK_kYJIw2-kwZ0S_3_S6": {
+        "id": "aZK_kYJIw2-kwZ0S_3_S6",
+        "tableId": "TvmG6V7JOmpQm_mhxSV72",
+        "name": "name",
+        "comment": "Stores the full name or display name of the user",
+        "dataType": "VARCHAR(100)",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 258,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779047419784,
+          "createAt": 1779047350764
+        }
+      },
+      "xOjXpK2qujsQOn58Z696O": {
+        "id": "xOjXpK2qujsQOn58Z696O",
+        "tableId": "TvmG6V7JOmpQm_mhxSV72",
+        "name": "profile_url",
+        "comment": "Stores an optional link to the user's profile picture or avatar image",
+        "dataType": "VARCHAR(2083)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 355,
+          "widthDataType": 91,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779047449249,
+          "createAt": 1779047428839
+        }
+      },
+      "v3tVGhuInif6ORmJ1zOdK": {
+        "id": "v3tVGhuInif6ORmJ1zOdK",
+        "tableId": "TvmG6V7JOmpQm_mhxSV72",
+        "name": "role",
+        "comment": "It separates permissions",
+        "dataType": "ENUM('admin','user','manager')",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 133,
+          "widthDataType": 166,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779047604130,
+          "createAt": 1779047459287
+        }
+      },
+      "GvgN_OkZ5kZ8g3naGedXa": {
+        "id": "GvgN_OkZ5kZ8g3naGedXa",
+        "tableId": "TvmG6V7JOmpQm_mhxSV72",
+        "name": "status",
+        "comment": "Tracks the account state",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 134,
+          "widthDataType": 78,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779047589044,
+          "createAt": 1779047523886
+        }
+      },
+      "a0wRC0xHgJjhTqW9v3OQf": {
+        "id": "a0wRC0xHgJjhTqW9v3OQf",
+        "tableId": "TvmG6V7JOmpQm_mhxSV72",
+        "name": "created_at",
+        "comment": "System clock stamp recording the exact second this user created their account.",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 432,
+          "widthDataType": 66,
+          "widthDefault": 123
+        },
+        "meta": {
+          "updateAt": 1779047677023,
+          "createAt": 1779047640489
+        }
+      },
+      "Uw3AgnQZUgrbYWDYYbV1m": {
+        "id": "Uw3AgnQZUgrbYWDYYbV1m",
+        "tableId": "TvmG6V7JOmpQm_mhxSV72",
+        "name": "updated_at",
+        "comment": "Automatically updates whenever a user changes their password, updates their profile photo, or changes their display name",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 663,
+          "widthDataType": 66,
+          "widthDefault": 313
+        },
+        "meta": {
+          "updateAt": 1779047729159,
+          "createAt": 1779047685164
+        }
+      },
+      "R1hwbbdadADXQWYYuW7DG": {
+        "id": "R1hwbbdadADXQWYYuW7DG",
+        "tableId": "CuEK5QH5vgv473OsQSzbr",
+        "name": "id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 15,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779082843674,
+          "createAt": 1779082827561
+        }
+      },
+      "0upuOD1tfYLGzThhDgMd2": {
+        "id": "0upuOD1tfYLGzThhDgMd2",
+        "tableId": "CuEK5QH5vgv473OsQSzbr",
+        "name": "name",
+        "comment": "he explicit commercial title of the classification (e.g., \"Text Generation\", \"Image Generation\", \"Video Editing\").",
+        "dataType": "VARCHAR(100)",
+        "default": "",
+        "options": 4,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 582,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779082889028,
+          "createAt": 1779082857396
+        }
+      },
+      "It5Vzq8sCGcE6FLuMpwpK": {
+        "id": "It5Vzq8sCGcE6FLuMpwpK",
+        "tableId": "CuEK5QH5vgv473OsQSzbr",
+        "name": "description",
+        "comment": "A detailed paragraph defining what kind of tasks fit here",
+        "dataType": "TEXT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 64,
+          "widthComment": 304,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779082968433,
+          "createAt": 1779082928966
+        }
+      },
+      "NLnRsYv6fFmrOc4HJUvJc": {
+        "id": "NLnRsYv6fFmrOc4HJUvJc",
+        "tableId": "CuEK5QH5vgv473OsQSzbr",
+        "name": "created_at",
+        "comment": "System timestamp marking exactly when your team added this category",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 392,
+          "widthDataType": 66,
+          "widthDefault": 123
+        },
+        "meta": {
+          "updateAt": 1779083046258,
+          "createAt": 1779082973385
+        }
+      },
+      "QbC7SVZXlUJF2moHKBBcn": {
+        "id": "QbC7SVZXlUJF2moHKBBcn",
+        "tableId": "CuEK5QH5vgv473OsQSzbr",
+        "name": "updated_at",
+        "comment": "Automatically adjusts itself if you update a category",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 281,
+          "widthDataType": 66,
+          "widthDefault": 313
+        },
+        "meta": {
+          "updateAt": 1779083058682,
+          "createAt": 1779082973942
+        }
+      },
+      "IrsMhNlIPZh1EkyTDyTXq": {
+        "id": "IrsMhNlIPZh1EkyTDyTXq",
+        "tableId": "CuEK5QH5vgv473OsQSzbr",
+        "name": "",
+        "comment": "",
+        "dataType": "",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779082974564,
+          "createAt": 1779082974564
+        }
+      },
+      "ow2OGItr1PWXy0ZAkCYCN": {
+        "id": "ow2OGItr1PWXy0ZAkCYCN",
+        "tableId": "dj9dYG7V9Fuc6ziZnTxe8",
+        "name": "id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 5,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779083155559,
+          "createAt": 1779083119266
+        }
+      },
+      "3VeSvMGhOoZQKxSuZK8XE": {
+        "id": "3VeSvMGhOoZQKxSuZK8XE",
+        "tableId": "dj9dYG7V9Fuc6ziZnTxe8",
+        "name": "name",
+        "comment": "The official name of the company or developer consortium.",
+        "dataType": "VARCHAR(150)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 321,
+          "widthDataType": 82,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779083153591,
+          "createAt": 1779083119846
+        }
+      },
+      "6FQYhIPufJacvNsIsB8Md": {
+        "id": "6FQYhIPufJacvNsIsB8Md",
+        "tableId": "dj9dYG7V9Fuc6ziZnTxe8",
+        "name": "website_url",
+        "comment": "The official corporate website URL of the provider",
+        "dataType": "VARCHAR(2083)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 270,
+          "widthDataType": 91,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779083177722,
+          "createAt": 1779083120273
+        }
+      },
+      "M1oNDbKOzR86C1scanxos": {
+        "id": "M1oNDbKOzR86C1scanxos",
+        "tableId": "dj9dYG7V9Fuc6ziZnTxe8",
+        "name": "description",
+        "comment": "A brief background paragraph explaining who this organization is",
+        "dataType": "TEXT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 64,
+          "widthComment": 352,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779083202509,
+          "createAt": 1779083120818
+        }
+      },
+      "hrAq9d_Slr6Kakv_eSplY": {
+        "id": "hrAq9d_Slr6Kakv_eSplY",
+        "tableId": "dj9dYG7V9Fuc6ziZnTxe8",
+        "name": "status",
+        "comment": "Tracks the validation status of the provider",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 230,
+          "widthDataType": 78,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779083243102,
+          "createAt": 1779083214569
+        }
+      },
+      "mOVdBBBxLNGQQbi5UlOLL": {
+        "id": "mOVdBBBxLNGQQbi5UlOLL",
+        "tableId": "dj9dYG7V9Fuc6ziZnTxe8",
+        "name": "created_at",
+        "comment": "CURRENT_TIMESTAMP\tInternal system clock recording exactly when this company profile was saved to your directories",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 642,
+          "widthDataType": 66,
+          "widthDefault": 123
+        },
+        "meta": {
+          "updateAt": 1779083287161,
+          "createAt": 1779083252098
+        }
+      },
+      "ueR_zkOy5GHi94JrkjW7v": {
+        "id": "ueR_zkOy5GHi94JrkjW7v",
+        "tableId": "dj9dYG7V9Fuc6ziZnTxe8",
+        "name": "updated_at",
+        "comment": "Automatically updates if you change the company name or modify its URL link from your admin panel.",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 548,
+          "widthDataType": 66,
+          "widthDefault": 313
+        },
+        "meta": {
+          "updateAt": 1779083346816,
+          "createAt": 1779083296813
+        }
+      },
+      "D6S8b5eREb3MFHfZFnYud": {
+        "id": "D6S8b5eREb3MFHfZFnYud",
+        "tableId": "x_U35lyWs8HntFA254l0q",
+        "name": "id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 15,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779083467865,
+          "createAt": 1779083436423
+        }
+      },
+      "k8j11ZtZmQYm4MsDEaxJ9": {
+        "id": "k8j11ZtZmQYm4MsDEaxJ9",
+        "tableId": "x_U35lyWs8HntFA254l0q",
+        "name": "name",
+        "comment": "The exact technical version name of the model",
+        "dataType": "VARCHAR(150)",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 253,
+          "widthDataType": 82,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779083499792,
+          "createAt": 1779083469824
+        }
+      },
+      "D4VSKoNZcw-d55LME423U": {
+        "id": "D4VSKoNZcw-d55LME423U",
+        "tableId": "x_U35lyWs8HntFA254l0q",
+        "name": "description",
+        "comment": "A technical summary detailing what this specific engine model specializes in",
+        "dataType": "TEXT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 64,
+          "widthComment": 411,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779083524826,
+          "createAt": 1779083502727
+        }
+      },
+      "cY-s39JXBWpNYx7M8XQJ0": {
+        "id": "cY-s39JXBWpNYx7M8XQJ0",
+        "tableId": "x_U35lyWs8HntFA254l0q",
+        "name": "status",
+        "comment": "Tracks the lifecycle state of the model",
+        "dataType": "ENUM('active', 'deprecated', 'beta')",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 206,
+          "widthDataType": 188,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779083601916,
+          "createAt": 1779083529022
+        }
+      },
+      "7P3k0Z8vZe176-C3Fw92U": {
+        "id": "7P3k0Z8vZe176-C3Fw92U",
+        "tableId": "x_U35lyWs8HntFA254l0q",
+        "name": "tags",
+        "comment": "Comma-separated quick search keywords or modalities natively handled by the model",
+        "dataType": "VARCHAR(255)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 466,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779083635768,
+          "createAt": 1779083606045
+        }
+      },
+      "JECQVAaBMiiwPyODY_Fwg": {
+        "id": "JECQVAaBMiiwPyODY_Fwg",
+        "tableId": "x_U35lyWs8HntFA254l0q",
+        "name": "created_by",
+        "comment": "",
+        "dataType": "VARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 63,
+          "widthComment": 60,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779083692679,
+          "createAt": 1779083638555
+        }
+      },
+      "jA05wTIwLzQsJOLw6W5IX": {
+        "id": "jA05wTIwLzQsJOLw6W5IX",
+        "tableId": "x_U35lyWs8HntFA254l0q",
+        "name": "created_at",
+        "comment": "Internal system stamp recording exactly when this model entry was populated in the database",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 508,
+          "widthDataType": 66,
+          "widthDefault": 123
+        },
+        "meta": {
+          "updateAt": 1779083791792,
+          "createAt": 1779083743830
+        }
+      },
+      "waJoX_85bEhGXBzzyt2yx": {
+        "id": "waJoX_85bEhGXBzzyt2yx",
+        "tableId": "x_U35lyWs8HntFA254l0q",
+        "name": "updated_at",
+        "comment": "Automatically updates if your admin panel modifies the model's description or updates its operational status flag",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 608,
+          "widthDataType": 66,
+          "widthDefault": 313
+        },
+        "meta": {
+          "updateAt": 1779083850018,
+          "createAt": 1779083799067
+        }
+      },
+      "kRWGWdVeC_F7L5-xy4WdN": {
+        "id": "kRWGWdVeC_F7L5-xy4WdN",
+        "tableId": "0btqIexIMB3v843xciYOj",
+        "name": "id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 15,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779083980284,
+          "createAt": 1779083958045
+        }
+      },
+      "dMoUfQGu59DNEJ0K8iGH1": {
+        "id": "dMoUfQGu59DNEJ0K8iGH1",
+        "tableId": "0btqIexIMB3v843xciYOj",
+        "name": "name",
+        "comment": "The display label for the feature",
+        "dataType": "VARCHAR(100)",
+        "default": "",
+        "options": 4,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 171,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779084037520,
+          "createAt": 1779083982449
+        }
+      },
+      "JERsJfSQeLBQ5sQHwC03f": {
+        "id": "JERsJfSQeLBQ5sQHwC03f",
+        "tableId": "0btqIexIMB3v843xciYOj",
+        "name": "description",
+        "comment": "A brief explanation defining what this feature means so admins and users understand its context",
+        "dataType": "TEXT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 64,
+          "widthComment": 520,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779084068289,
+          "createAt": 1779084047929
+        }
+      },
+      "o4svTPpkOk0Gt5hW5e7AZ": {
+        "id": "o4svTPpkOk0Gt5hW5e7AZ",
+        "tableId": "0btqIexIMB3v843xciYOj",
+        "name": "type",
+        "comment": "Groups features into structural brackets like 'Pricing', 'Technical', 'Language', or 'Platform'",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 476,
+          "widthDataType": 78,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779084125144,
+          "createAt": 1779084078417
+        }
+      },
+      "2wjRsrs4VO78DDp0OcBqg": {
+        "id": "2wjRsrs4VO78DDp0OcBqg",
+        "tableId": "0btqIexIMB3v843xciYOj",
+        "name": "status",
+        "comment": "",
+        "dataType": "ENUM('active' , 'disabled')",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 138,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779084172624,
+          "createAt": 1779084130338
+        }
+      },
+      "qCYG5i6sQsCHlo6vnBQYf": {
+        "id": "qCYG5i6sQsCHlo6vnBQYf",
+        "tableId": "0btqIexIMB3v843xciYOj",
+        "name": "created_at",
+        "comment": "The system clock record tracking when this specific feature checkbox was introduced to your platform",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 554,
+          "widthDataType": 66,
+          "widthDefault": 123
+        },
+        "meta": {
+          "updateAt": 1779084221623,
+          "createAt": 1779084190286
+        }
+      },
+      "Ra4ehkXIhZH3tAykXj4Dc": {
+        "id": "Ra4ehkXIhZH3tAykXj4Dc",
+        "tableId": "0btqIexIMB3v843xciYOj",
+        "name": "updated_at",
+        "comment": "Automatically updates if an admin renames the feature or updates its type categorization",
+        "dataType": "TIMESTAMP DEFAULT",
+        "default": "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 482,
+          "widthDataType": 116,
+          "widthDefault": 313
+        },
+        "meta": {
+          "updateAt": 1779084301001,
+          "createAt": 1779084225547
+        }
+      },
+      "nvL3fyvwzhjQ0WoN7g8yY": {
+        "id": "nvL3fyvwzhjQ0WoN7g8yY",
+        "tableId": "Xiri8j6dNEUunwM0BB3BM",
+        "name": "id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 11,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779084545572,
+          "createAt": 1779084517274
+        }
+      },
+      "2IRqpbAIW-fqhXVCGp4q3": {
+        "id": "2IRqpbAIW-fqhXVCGp4q3",
+        "tableId": "Xiri8j6dNEUunwM0BB3BM",
+        "name": "created_at",
+        "comment": "Tracks exactly when the user added this tool to their favorites list",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 350,
+          "widthDataType": 66,
+          "widthDefault": 123
+        },
+        "meta": {
+          "updateAt": 1779084650147,
+          "createAt": 1779084547974
+        }
+      },
+      "9e5gze_aI6IVJ1LggpnVU": {
+        "id": "9e5gze_aI6IVJ1LggpnVU",
+        "tableId": "0HYZaiCeCUxNyWsKeS-4F",
+        "name": "id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 15,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779438483365,
+          "createAt": 1779438466151
+        }
+      },
+      "lxldb38bY3u-25yjO9cmV": {
+        "id": "lxldb38bY3u-25yjO9cmV",
+        "tableId": "0HYZaiCeCUxNyWsKeS-4F",
+        "name": "name",
+        "comment": "The custom name the user typed for their collection",
+        "dataType": "VARCHAR(150)",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 282,
+          "widthDataType": 82,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779438652333,
+          "createAt": 1779438485662
+        }
+      },
+      "tKg_63uDsRR_DA_UHQDdT": {
+        "id": "tKg_63uDsRR_DA_UHQDdT",
+        "tableId": "0HYZaiCeCUxNyWsKeS-4F",
+        "name": "description",
+        "comment": "An optional explanation the user can write about what these tools are for",
+        "dataType": "TEXT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 64,
+          "widthComment": 394,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779438668417,
+          "createAt": 1779438547599
+        }
+      },
+      "N5-VCZflob-BMLVV29-Lr": {
+        "id": "N5-VCZflob-BMLVV29-Lr",
+        "tableId": "0HYZaiCeCUxNyWsKeS-4F",
+        "name": "created_at",
+        "comment": "System record tracking when this specific folder was created.",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 334,
+          "widthDataType": 66,
+          "widthDefault": 123
+        },
+        "meta": {
+          "updateAt": 1779438679298,
+          "createAt": 1779438565348
+        }
+      },
+      "R8syhlhq6OLcmb9VbaM1o": {
+        "id": "R8syhlhq6OLcmb9VbaM1o",
+        "tableId": "0HYZaiCeCUxNyWsKeS-4F",
+        "name": "updated_at",
+        "comment": "Automatically updates if the user renames the playlist or changes its description",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 433,
+          "widthDataType": 66,
+          "widthDefault": 313
+        },
+        "meta": {
+          "updateAt": 1779438694295,
+          "createAt": 1779438605155
+        }
+      },
+      "_ac40tejj4Am9rWp5J3sY": {
+        "id": "_ac40tejj4Am9rWp5J3sY",
+        "tableId": "W4NHvr8xCGAf_eT3OQsMK",
+        "name": "created_at",
+        "comment": "",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 60,
+          "widthDataType": 66,
+          "widthDefault": 123
+        },
+        "meta": {
+          "updateAt": 1779439192371,
+          "createAt": 1779439160947
+        }
+      },
+      "YIbF9d_8t5Xg9S12LXHef": {
+        "id": "YIbF9d_8t5Xg9S12LXHef",
+        "tableId": "W4NHvr8xCGAf_eT3OQsMK",
+        "name": "id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 15,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779439351012,
+          "createAt": 1779439329708
+        }
+      },
+      "ZbWFeXe6TRhMox6O3-wOF": {
+        "id": "ZbWFeXe6TRhMox6O3-wOF",
+        "tableId": "HDSOzmo_3WMvblCXJ5zFG",
+        "name": "id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 15,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779439370216,
+          "createAt": 1779439356600
+        }
+      },
+      "4TEe9eXorYyrmL2uwX8Oh": {
+        "id": "4TEe9eXorYyrmL2uwX8Oh",
+        "tableId": "HDSOzmo_3WMvblCXJ5zFG",
+        "name": "comment",
+        "comment": "Stores the textual feedback or review written by the user.",
+        "dataType": "TEXT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 309,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779439777775,
+          "createAt": 1779439371567
+        }
+      },
+      "iqr7yomn-1MfzOwxm0sz5": {
+        "id": "iqr7yomn-1MfzOwxm0sz5",
+        "tableId": "HDSOzmo_3WMvblCXJ5zFG",
+        "name": "rating",
+        "comment": "Stores the numeric score given by the user",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 232,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779439790971,
+          "createAt": 1779439418114
+        }
+      },
+      "86nioQDi1y9XStHggmh2J": {
+        "id": "86nioQDi1y9XStHggmh2J",
+        "tableId": "HDSOzmo_3WMvblCXJ5zFG",
+        "name": "status",
+        "comment": "allow your admin team to filter out spam or offensive language before it goes live",
+        "dataType": "ENUM('approved', 'pending','flagged')",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 437,
+          "widthDataType": 202,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779439806055,
+          "createAt": 1779439453441
+        }
+      },
+      "76svL7ufbU8EusxxccZMD": {
+        "id": "76svL7ufbU8EusxxccZMD",
+        "tableId": "HDSOzmo_3WMvblCXJ5zFG",
+        "name": "created_at",
+        "comment": "The system clock stamp recording the exact second the review was posted",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 407,
+          "widthDataType": 66,
+          "widthDefault": 123
+        },
+        "meta": {
+          "updateAt": 1779439821258,
+          "createAt": 1779439627329
+        }
+      },
+      "y6da1ParpidgytQPg7qDD": {
+        "id": "y6da1ParpidgytQPg7qDD",
+        "tableId": "HDSOzmo_3WMvblCXJ5zFG",
+        "name": "updated_at",
+        "comment": "Automatically updates if a user decides to edit their rating or comment later on.",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 430,
+          "widthDataType": 66,
+          "widthDefault": 313
+        },
+        "meta": {
+          "updateAt": 1779439829418,
+          "createAt": 1779439691369
+        }
+      },
+      "lba91xe12GUucWEznOXhN": {
+        "id": "lba91xe12GUucWEznOXhN",
+        "tableId": "ns4LThDMFA6ve-teN4tn6",
+        "name": "id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 15,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779440183978,
+          "createAt": 1779439902806
+        }
+      },
+      "h3y8DsYv9J82-S7pAr7d7": {
+        "id": "h3y8DsYv9J82-S7pAr7d7",
+        "tableId": "ns4LThDMFA6ve-teN4tn6",
+        "name": "prompt_text",
+        "comment": "Stores the exact conversational string or question the user typed",
+        "dataType": "TEXT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 70,
+          "widthComment": 351,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779440219953,
+          "createAt": 1779440198581
+        }
+      },
+      "A_7xpkyRxfjuElIZQ5EGS": {
+        "id": "A_7xpkyRxfjuElIZQ5EGS",
+        "tableId": "ns4LThDMFA6ve-teN4tn6",
+        "name": "matched_category_id",
+        "comment": "Stores the specific category ID that your External AI Agent selected as the ideal match for this prompt",
+        "dataType": "INT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 121,
+          "widthComment": 549,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779440288196,
+          "createAt": 1779440237978
+        }
+      },
+      "uV4Y34T75RZdfbIhCwk1M": {
+        "id": "uV4Y34T75RZdfbIhCwk1M",
+        "tableId": "ns4LThDMFA6ve-teN4tn6",
+        "name": "created_at",
+        "comment": "The exact day, hour, and second the search query was submitted",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 349,
+          "widthDataType": 66,
+          "widthDefault": 123
+        },
+        "meta": {
+          "updateAt": 1779440585444,
+          "createAt": 1779440298604
+        }
+      },
+      "qGOS3e6XJxs_iUl4kksFm": {
+        "id": "qGOS3e6XJxs_iUl4kksFm",
+        "tableId": "Z1uMZmylt03Vu6DSy5aQw",
+        "name": "id",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 15,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779440552644,
+          "createAt": 1779440538018
+        }
+      },
+      "lQmVwGgKC1-5zpgYcsPMO": {
+        "id": "lQmVwGgKC1-5zpgYcsPMO",
+        "tableId": "Z1uMZmylt03Vu6DSy5aQw",
+        "name": "created_at",
+        "comment": "",
+        "dataType": "TIMESTAMP",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 60,
+          "widthDataType": 66,
+          "widthDefault": 123
+        },
+        "meta": {
+          "updateAt": 1779440589441,
+          "createAt": 1779440555109
+        }
+      },
+      "wbD2lXnVn2yByG0VTxQ0t": {
+        "id": "wbD2lXnVn2yByG0VTxQ0t",
+        "tableId": "Z1uMZmylt03Vu6DSy5aQw",
+        "name": "",
+        "comment": "",
+        "dataType": "",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1779440555487,
+          "createAt": 1779440555487
+        }
+      }
+    },
+    "relationshipEntities": {},
+    "indexEntities": {},
+    "indexColumnEntities": {},
+    "memoEntities": {}
+  }
+}

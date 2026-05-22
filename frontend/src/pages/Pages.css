@@ -1,0 +1,16 @@
+:root{
+  --accent:#7dd3fc;
+  --muted:#9ca3af;
+  --bg:#071025;
+  --text:#e6eef8;
+}
+
+.page-container{
+  max-width:980px;
+  margin:40px auto;
+  padding:0 18px;
+  color:var(--text);
+}
+.page-container h1{ font-size:32px; margin-bottom:8px }
+.lead{ color:var(--muted); font-size:18px }
+.page-container a{ color:var(--accent) }

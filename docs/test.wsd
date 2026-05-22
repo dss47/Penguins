@@ -1,0 +1,33 @@
+@startuml Penguins_Database
+Alice->Bob : Hello
+Alice->Bob : Hello
+Alice->Bob : Hello
+yahya->anwar : hi
+Bob->yahya : hello
+return ok
+users
+
+categories
+
+providers
+
+ai_tools
+
+models ------
+
+features (Changed from caracteristiques)
+
+playlists
+
+playlist_items
+
+reviews
+
+search_histories (Changed from historique)
+
+tool_models
+
+tool_features (Changed from tool_caracteristiques)
+
+model_features (Changed from model_caracteristiques)
+@enduml
