@@ -1,0 +1,114 @@
+@startuml Penguins_Database
+left to right direction
+
+
+skinparam nodesep 50
+skinparam ranksep 60
+
+
+actor "Guest" as guest
+actor "User" as user 
+actor "Manager" as manager
+actor "Administrator" as admin 
+actor "AI Engine" as ai <<System>>
+
+
+manager --|> user
+admin --|> manager
+
+rectangle "Penguin"{
+    
+    rectangle "Authentification" {
+        usecase "s'inscrire" as sign_up
+        usecase "se connecter" as log_in
+        usecase "deconnexion" as log_out
+    }
+
+    rectangle "Exploration" {
+        usecase "parcourir la page d'accueil" as voir_page_accueil
+        usecase "rechercher par mots-cles" as keywords_recherche
+        usecase "rechercher par suggestion IA" as prompt_recherche
+        usecase "filtrer par categorie ou fournisseur" as filter_outils
+        usecase "afficher les details d'un outil" as voir_details_outil
+    }
+
+    rectangle "Espace Personnel" {
+        usecase "ajouter l'outils aux favoris" as favoris
+        usecase "gerer les rayons de costumes" as gere_costumes
+        usecase "Afficher l'historique de recherche" as historique
+        usecase "Rediger un avis et une note " as avis_note
+        usecase "suggerer a nouvel outil d'IA" as suggerer_AI
+    }
+
+    rectangle "Administration & Configuration" {
+        usecase "acceder au tableau de bord" as dashboard
+        usecase "Gestion des suggestions de utilisateurs" as gestion_suggestions
+        usecase "Approve outil" as approve
+        usecase "reject outil" as reject
+        usecase "gerer les categories and featues" as CF_gerer
+        usecase "examiner le contenu signale" as examiner_contenu
+
+        usecase "bannir ou suspendre l'utilisateur" as suspend
+        usecase "Gerer les roles (Promouvoir Manager)" as gerer_roles
+        usecase "Configurer les parametres du systeme" as config_systeme
+        usecase "Consulter les statistiques globales" as stats_globales
+    }
+
+    rectangle "Background IA" {
+        usecase "extraire les categories" as ai_extraire
+        usecase "valider les donnees de l'outil " as ai_validation
+        usecase "Contenu modere" as ai_modere
+    }
+}
+
+
+
+
+
+guest --> sign_up
+
+guest --> keywords_recherche
+guest --> prompt_recherche
+guest --> voir_details_outil
+guest --> voir_page_accueil
+guest --> filter_outils
+
+
+user --> log_out
+user --> log_in
+user --> keywords_recherche
+user --> prompt_recherche
+user --> voir_details_outil
+user --> voir_page_accueil
+user --> filter_outils
+user --> favoris
+user --> gere_costumes
+user --> historique
+user --> avis_note
+user --> suggerer_AI
+
+
+manager --> dashboard
+manager --> gestion_suggestions
+manager --> CF_gerer
+manager --> examiner_contenu
+
+admin --> suspend
+admin --> gerer_roles
+admin --> config_systeme
+admin --> stats_globales
+
+
+ai_extraire <-- ai
+ai_validation <-- ai
+ai_modere <-- ai
+
+
+prompt_recherche .> ai_extraire : <<include>>
+suggerer_AI .> ai_validation : <<include>>
+avis_note .> ai_modere : <<include>>
+
+approve .> gestion_suggestions : <<extend>>
+reject .> gestion_suggestions : <<extend>>
+
+@enduml
