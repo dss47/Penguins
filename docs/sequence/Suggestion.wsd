@@ -1,0 +1,224 @@
+@startuml advanced_ai_wizard_with_creatable
+skinparam maxMessageSize 200
+
+actor "User" as user
+participant "React UI\n(4-Step Wizard)" as react
+participant "ToolController" as controller
+participant "ToolService" as service
+participant "Suggestion (Model)" as model
+participant "AI Engine" as ai
+participant "Response.php" as res
+database "MySQL" as db
+actor "Manager" as manager
+
+
+== 0. Initial Check (The Spam Lock) ==
+
+
+user -> react : Navigates to "Proposer un outil" page
+activate react
+  react -> controller : GET /api/suggestions/current
+  activate controller
+    controller -> service : checkPendingSuggestion(user_id)
+    activate service
+      service -> model : findPendingByUser(user_id)
+      model -> db : SELECT * FROM suggestions WHERE user_id=? AND status LIKE 'pending%'
+      db --> model : Returns row (if exists)
+      model --> service : Result
+    deactivate service
+    controller -> res : formatSuccess(Result)
+    res --> controller : JSON String
+    
+    alt A pending suggestion exists
+        controller --> react : JSON: {has_pending: true}
+        react --> user : Locks UI on Step 3 ("En attente"). Cannot submit new.
+    else No pending suggestion
+        controller --> react : JSON: {has_pending: false}
+        react --> user : Shows empty Step 1 Form
+    end
+  deactivate controller
+deactivate react
+
+
+== 1. Submission & Duplicate URL Check ==
+
+
+user -> react : Submits Form
+note right of user: UI sends mixed arrays from CreatableSelect:\n{provider_id: null, proposed_provider: "New Co"}\n{features: [3, 7, "Voice Clone"]}
+activate react
+  react -> controller : POST /api/suggestions
+  activate controller
+    controller -> service : processSuggestion(url, data)
+    activate service
+    
+      service -> model : checkUrlExists(url)
+      model -> db : SELECT id FROM ai_tools WHERE url = ?
+      db --> model : Result
+      
+      alt URL Existe Déjà
+          service -> model : save(status='rejected', reason='URL exists')
+          model -> db : INSERT INTO suggestions...
+          service --> controller : Returns "Duplicate Error"
+          
+          controller -> res : formatError("This tool is already in our catalog", 409)
+          res --> controller : JSON String
+          controller --> react : HTTP 409 Conflict
+          
+          react -> react : UI jumps to Step 4 (Failed)
+          react --> user : Shows "Déjà existant" reason
+      else URL est Nouvelle
+          
+
+
+          service -> ai : POST /analyze (Verify this tool)
+          activate ai
+          
+          alt L'IA Rejette
+              ai --> service : {valid: false, reason: "Fake tool"}
+              service -> model : save(status='rejected', reason='AI Blocked')
+              model -> db : INSERT INTO suggestions...
+              service --> controller : Returns AI Error
+              
+              controller -> res : formatError("AI Validation Failed", 422)
+              res --> controller : JSON String
+              controller --> react : HTTP 422 Unprocessable\nJSON
+              react -> react : UI jumps to Step 4
+              
+          else L'IA Accepte
+              ai --> service : {valid: true, corrected_data}
+              deactivate ai
+              
+              note right of service: Mixed arrays are saved safely as JSON strings\nin the suggestions holding table.
+              service -> model : save(status='pending_manager', corrected_data)
+              model -> db : INSERT INTO suggestions (..., features_json)
+              service --> controller : Returns Success
+              
+              controller -> res : formatCreated(corrected_data)
+              res --> controller : JSON String
+              controller --> react : HTTP 201 Created
+              react -> react : UI moves to Step 3
+              react --> user : Shows "Waiting for Admin Approval"
+          end
+      end
+    deactivate service
+  deactivate controller
+deactivate react
+
+
+== 3. Manager Dashboard (Load & Sort) ==
+
+
+manager -> react : Opens Admin Dashboard
+activate react
+  react -> controller : GET /api/manager/suggestions
+  activate controller
+    controller -> service : getAllSuggestionsSorted()
+    activate service
+      service -> model : fetchAll()
+      activate model
+        model -> db : SELECT * FROM suggestions\nORDER BY FIELD(status, 'pending_manager', 'active', 'rejected')
+        activate db
+          db --> model : Sorted Results
+        deactivate db
+        model --> service : Array of objects
+      deactivate model
+      service --> controller : Returns Array
+    deactivate service
+    
+    controller -> res : formatSuccess(Array)
+    activate res
+      res --> controller : JSON String
+    deactivate res
+    controller --> react : HTTP 200 OK
+  deactivate controller
+  
+  react --> manager : Displays list (Pending at the very top!)
+deactivate react
+
+
+== 4. Manager Action (Approve & Resolve Creatables) ==
+
+manager -> react : Reviews a pending suggestion
+activate react
+
+  alt Manager Rejette la suggestion
+      manager -> react : Clicks "Reject" + types reason
+      react -> controller : POST /api/manager/suggestions/12/reject\n{reason}
+      activate controller
+        controller -> service : rejectSuggestion(id, reason)
+        activate service
+          service -> model : updateStatus(id, 'rejected_manager', reason)
+          activate model
+            model -> db : UPDATE suggestions SET status='rejected_manager', reason=?
+            activate db
+              db --> model : Success
+            deactivate db
+            model --> service : Success
+          deactivate model
+          service --> controller : Returns Success
+        deactivate service
+        controller -> res : formatSuccess({status: "rejected"})
+        activate res
+          res --> controller : JSON String
+        deactivate res
+        controller --> react : HTTP 200 OK
+      deactivate controller
+      
+      react -> react : UI removes item from "Pending" list
+      
+  else Manager Accepte la suggestion
+      manager -> react : Clicks "Approve"
+      react -> controller : POST /api/manager/suggestions/12/approve
+      activate controller
+        controller -> service : approveSuggestion(id)
+        activate service
+          
+          ' Step A: Mark as active in suggestions
+          service -> model : updateStatus(id, 'active')
+          activate model
+            model -> db : UPDATE suggestions SET status='active'
+            db --> model : Success
+          deactivate model
+          
+
+          service -> model : resolveAndMoveToCatalog(id)
+          activate model
+            
+            note right of model: Backend loops through the JSON mixed arrays.\nIf it finds a String, it creates a new database row.
+            alt Contient de nouveaux textes (Providers/Features)
+                model -> db : INSERT INTO features/providers (name) VALUES ("Voice Clone")
+                activate db
+                  db --> model : Returns new ID(s)
+                deactivate db
+            end
+            
+            model -> db : INSERT INTO ai_tools (name, provider_id...)\nVALUES (resolved_ids)
+            activate db
+              db --> model : Returns new Tool ID
+            deactivate db
+            
+            note right of model: Connect everything in the Pivot Table
+            model -> db : INSERT INTO tool_features (tool_id, feature_id)\nVALUES (tool_id, 3), (tool_id, new_id)
+            activate db
+              db --> model : Success
+            deactivate db
+            
+            model --> service : Success
+          deactivate model
+          
+          service --> controller : Returns Success
+        deactivate service
+        
+        controller -> res : formatSuccess({status: "active"})
+        activate res
+          res --> controller : JSON String
+        deactivate res
+        controller --> react : HTTP 200 OK
+      deactivate controller
+      
+      react -> react : UI moves item to "Active" list
+  end
+  
+deactivate react
+
+@enduml

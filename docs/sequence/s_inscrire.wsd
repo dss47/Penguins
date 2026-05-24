@@ -1,0 +1,68 @@
+@startuml s_inscrire
+skinparam maxMessageSize 150
+
+actor "Guest" as guest
+participant "register form" as sign_up
+participant "AuthController" as auth_controller
+participant "AuthService" as auth_service
+participant "User (Model)" as model
+participant "Response.php (Util)" as res
+database "MySQL (users)" as db
+
+guest -> sign_up : Types infos, clicks "S'inscrire"
+activate sign_up
+sign_up -> auth_controller : POST /api/register\n{name, email, password}
+activate auth_controller
+auth_controller -> auth_service : registerUser(name, email, password)
+activate auth_service
+
+auth_service -> model : checkEmailExists(email)
+activate model
+model -> db : SELECT id FROM users WHERE email = ?
+activate db
+db --> model : Returns result
+deactivate db
+model --> auth_service : Returns boolean
+deactivate model
+
+alt Email n'existe pas (Succès)
+    
+    auth_service -> model : new User(name, email, hashed_pw, 'user')
+    activate model
+    model -> db : INSERT INTO users (name, email, password_hash, role)\nVALUES (?, ?, ?, 'user')
+    activate db
+    db --> model : Returns new user_id
+    deactivate db
+    model --> auth_service : Returns User object
+    deactivate model
+    
+    auth_service -> auth_service : Generates JWT Token
+    auth_service --> auth_controller : Returns Token & User object
+    
+    auth_controller -> res : formatCreated({token, user})
+    activate res
+    res --> auth_controller : JSON String
+    deactivate res
+    
+    auth_controller --> sign_up : HTTP 201 Created\nJSON
+    sign_up -> sign_up : Saves Token
+    sign_up --> guest : Redirects to Espace Personnel
+    
+else Email existe déjà (Échec)
+    
+    auth_service --> auth_controller : Returns Error
+    
+    auth_controller -> res : formatError("Email already in use", 409)
+    activate res
+    res --> auth_controller : JSON String
+    deactivate res
+    
+    auth_controller --> sign_up : HTTP 409 Conflict\nJSON
+    sign_up --> guest : Displays "Cet email est déjà utilisé" message
+    
+end
+
+deactivate auth_service
+deactivate auth_controller
+deactivate sign_up
+@enduml

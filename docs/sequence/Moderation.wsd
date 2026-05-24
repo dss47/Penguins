@@ -1,0 +1,114 @@
+@startuml review_moderation_pipeline
+skinparam maxMessageSize 200
+
+' --- PARTICIPANTS ---
+actor "Regular User" as user
+actor "Admin" as admin
+participant "React UI" as react
+participant "Auth & Role\nMiddleware" as auth
+participant "ReviewController" as controller
+participant "ReviewService" as service
+participant "AI Moderatio" as ai
+participant "Models\n(Review & User)" as model
+participant "Response.php" as res
+database "MySQL" as db
+
+
+== Phase 1: Review Submission & AI Filter ==
+
+user -> react : Submits Rating (5) & Comment
+activate react
+  
+  react -> auth : POST /api/reviews\n{tool_id, rating, comment}
+  activate auth
+    auth -> controller : Forward Request (Inject user_id)
+    activate controller
+      
+      controller -> service : submitReview(user_id, data)
+      activate service
+        
+        service -> ai : POST /v1/moderations\n{input: comment}
+        activate ai
+          ai --> service : Returns JSON {flagged: true, categories: ["profanity"]}
+        deactivate ai
+        
+        alt Commentaire est Toxique/Spam (Flagged)
+            
+            service -> model : saveReview(data, status='flagged')
+            activate model
+              model -> db : INSERT INTO reviews (..., status='flagged')
+              db --> model : Returns new_review_id
+            deactivate model
+            
+            service --> controller : Returns "Held for moderation"
+            
+            controller -> res : formatCreated({message: "En attente de modération"})
+            activate res
+              res --> controller : JSON String
+            deactivate res
+            
+            controller --> react : HTTP 201 Created (Pending Warning)
+            react --> user : Shows "Votre avis est en cours de vérification"
+            
+        else Commentaire est Propre (Approved)
+            
+            note right of service: If the AI returned {flagged: false},\nthe Model inserts it as status='approved'\nand it immediately appears on the site.
+            
+        end
+        
+      deactivate service
+    deactivate controller
+  deactivate auth
+deactivate react
+
+
+== Phase 2: Admin Moderation & User Ban ==
+
+admin -> react : Reviews "Flagged" tab in Dashboard
+activate react
+  
+  admin -> react : Clicks "Ban User & Delete" on a toxic review
+  react -> auth : POST /api/admin/users/12/ban\n{review_id: 88}
+  activate auth
+    
+    alt User Role != 'admin'
+        auth --> react : HTTP 403 Forbidden
+    else User Role == 'admin'
+        
+        auth -> controller : Forward Request
+        activate controller
+          
+          controller -> service : banUserAndCleanUp(user_id, review_id)
+          activate service
+            
+            service -> model : suspendUser(user_id)
+            activate model
+              model -> db : UPDATE users SET status = 'suspended' WHERE id = ?
+              db --> model : Success
+            deactivate model
+            
+            service -> model : deleteReview(review_id)
+            activate model
+              model -> db : DELETE FROM reviews WHERE id = ?
+              db --> model : Success
+            deactivate model
+            
+            service --> controller : Returns Success
+          deactivate service
+          
+          controller -> res : formatSuccess({action: "user_suspended"})
+          activate res
+            res --> controller : JSON String
+          deactivate res
+          
+          controller --> react : HTTP 200 OK
+        deactivate controller
+        
+    end ' End of RBAC Check
+  deactivate auth
+  
+  react -> react : Removes review from the list
+  react --> admin : Shows "Utilisateur banni avec succès"
+deactivate react
+
+@enduml

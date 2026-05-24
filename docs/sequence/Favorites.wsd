@@ -1,0 +1,70 @@
+@startuml favorites
+skinparam maxMessageSize 150
+
+actor "User" as user
+participant "UI_favorite" as react
+participant "AuthMiddleware" as auth 
+participant "FavoriteController" as controller 
+participant "FavoriteService" as service 
+participant "FavoriteItem (Model)" as model
+participant "Response.php (Util)" as res
+
+database "MySQL (favorite_items)" as db
+
+user -> react : Clicks "Heart/Favorite" icon on a Tool
+activate react
+  react -> auth : POST /api/favorites\n{tool_id} (Sends JWT Token)
+  activate auth
+  
+    alt Token Invalide ou Absent
+        auth --> react : HTTP 401 Unauthorized
+        react --> user : Redirects to Login Page
+    else Token Valide (Logged In)
+        
+        auth -> controller : Forward Request\n(Injects user_id)
+        activate controller
+        deactivate auth
+        
+        controller -> service : toggleFavorite(user_id, tool_id)
+        activate service
+          service -> model : toggleItem(user_id, tool_id)
+          activate model
+            
+            model -> db : SELECT id FROM favorite_items\nWHERE user_id = ? AND tool_id = ?
+            activate db
+              db --> model : Returns Result
+            deactivate db
+            
+            alt Outil est déjà dans les favoris
+                model -> db : DELETE FROM favorite_items
+                activate db
+                  db --> model : Deleted
+                deactivate db
+                model --> service : Returns action: "removed"
+                
+            else Outil n'est pas dans les favoris
+                model -> db : INSERT INTO favorite_items
+                activate db
+                  db --> model : Inserted
+                deactivate db
+                model --> service : Returns action: "added"
+            end
+            
+          deactivate model
+          
+          service --> controller : Returns action ("added/removed")
+        deactivate service
+        controller -> res : formatSuccess({action})
+        activate res
+          res --> controller : Standardized JSON String
+        deactivate res
+        
+        controller --> react : HTTP 200 OK\nJSON: {success: true, data: {action: "added/removed"}}
+        deactivate controller
+    end
+  
+  react -> react : Updates UI State\n(Heart turns red or empty)
+  react --> user : Sees visual confirmation
+deactivate react
+
+@enduml

@@ -1,0 +1,145 @@
+@startuml quick_manage_modal
+skinparam maxMessageSize 150
+
+
+actor "User" as user
+participant "React UI (Modal)" as react
+participant "AuthMiddleware" as auth
+participant "ShelfController" as controller
+participant "ShelfService" as service
+
+
+participant "Models (Shelf/Item)" as model
+participant "Response.php (Util)" as res
+
+database "Shelves" as shelves
+database "shelf_items" as shelf_items
+
+
+== 1. Fetch Existing Shelves ==
+
+user -> react : Clicks "Add to Shelf" on an AI Tool Card
+activate react
+  react -> auth : GET /api/shelves?tool_id=12
+  activate auth
+    auth -> controller : Forward Request (Inject user_id)
+    activate controller
+      
+      controller -> service : getUserShelvesWithStatus(user_id, tool_id)
+      activate service
+      
+
+        service -> model : fetchUserShelves(user_id)
+        activate model
+          model -> shelves : SELECT * FROM Shelves WHERE user_id = ?
+          shelves --> model : raw data
+          
+          model -> shelf_items : Check which shelves contain tool_id=12
+          shelf_items --> model : raw toggle status
+          
+          model --> service : Returns hydrated array of Shelf objects
+        deactivate model
+        
+        service --> controller : Returns array of objects
+      deactivate service
+      
+
+      controller -> res : formatSuccess(array of shelves)
+      activate res
+        res --> controller : Standardized JSON String
+      deactivate res
+      
+      controller --> react : HTTP 200 OK\nJSON: [{id: 1, name: "Video", in_shelf: true}]
+    deactivate controller
+  deactivate auth
+  
+  react --> user : Opens Modal & Displays Shelves List
+deactivate react
+
+
+== 2. Create Empty Shelf (Optional) ==
+
+user -> react : Types "Audio Editing", clicks "Create Shelf"
+activate react
+  
+  react -> auth : POST /api/shelves\n{name: "Audio Editing"}
+  activate auth
+    auth -> controller : Forward Request
+    activate controller
+      
+      controller -> service : createEmptyShelf(name, user_id)
+      activate service
+      
+
+        service -> model : new Shelf(name, user_id)
+        activate model
+          model -> shelves : INSERT INTO Shelves (name, user_id)
+          activate shelves
+            shelves --> model : Returns new shelf_id
+          deactivate shelves
+          model --> service : Returns complete Shelf Object
+        deactivate model
+        
+        service --> controller : Returns Shelf Object
+      deactivate service
+      
+
+      controller -> res : formatCreated(Shelf Object)
+      activate res
+        res --> controller : Standardized JSON String
+      deactivate res
+      
+      controller --> react : HTTP 201 Created\nJSON: {success: true, data: {shelf_id, name}}
+    deactivate controller
+  deactivate auth
+  
+  react -> react : Prepends new shelf to the top of the list
+  react --> user : Shows new shelf with an empty "+" button
+deactivate react
+
+
+== 3. Toggle Tool in Shelf (Add/Remove) ==
+
+user -> react : Clicks "+" (or "Remove") on a specific shelf
+activate react
+  
+  react -> auth : POST /api/shelves/toggle\n{shelf_id, tool_id}
+  activate auth
+    auth -> controller : Forward Request
+    activate controller
+      
+      controller -> service : toggleShelfItem(shelf_id, tool_id)
+      activate service
+        
+
+        service -> model : toggleItem(shelf_id, tool_id)
+        activate model
+          model -> shelf_items : SELECT id FROM shelf_items WHERE...
+          
+          alt Item existe (Remove it)
+              model -> shelf_items : DELETE FROM shelf_items
+              model --> service : Returns action: "removed"
+          else Item n'existe pas (Add it)
+              model -> shelf_items : INSERT INTO shelf_items
+              model --> service : Returns action: "added"
+          end
+        deactivate model
+        
+        service --> controller : Returns action ("added" or "removed")
+      deactivate service
+      
+
+      controller -> res : formatSuccess({action})
+      activate res
+        res --> controller : Standardized JSON String
+      deactivate res
+      
+      controller --> react : HTTP 200 OK\nJSON: {success: true, data: {action: "added/removed"}}
+    deactivate controller
+  deactivate auth
+  
+  react -> react : Updates Button UI (e.g., changes + to a checkmark)
+  react --> user : Visual Confirmation
+deactivate react
+
+@enduml

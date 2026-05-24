@@ -1,0 +1,120 @@
+@startuml ai_semantic_search
+skinparam maxMessageSize 200
+
+
+actor "User" as user
+participant "React UI\n(Search & Sidebar)" as react
+participant "SearchController" as controller
+participant "SearchService" as service
+participant "AI Engine\n(OpenAI/Claude)" as ai
+participant "Models\n(History, Tool)" as model
+participant "Response.php" as res
+database "MySQL" as db
+
+
+== Phase 1: The AI Prompt Search ==
+
+user -> react : Types "I need to make a podcast", hits Enter
+activate react
+  
+  react -> controller : POST /api/search/ai\n{prompt: "I need to make a podcast"}
+  activate controller
+    controller -> service : processAiSearch(prompt, user_id)
+    activate service
+      
+
+      service -> ai : POST /analyze\nPrompt: "Give a short title and category names"
+      activate ai
+        ai --> service : JSON: {\n  title: "Podcast Creation",\n  categories: ["Audio Editing", "Text-to-Speech"]\n}
+      deactivate ai
+      
+
+      service -> model : findCategoryIds(["Audio Editing", "Text-to-Speech"])
+      activate model
+        model -> db : SELECT id FROM categories WHERE name IN (...)
+        activate db
+          db --> model : Returns IDs: [3, 9]
+        deactivate db
+        model --> service : Returns IDs: [3, 9]
+      deactivate model
+      
+
+      service -> model : logSearch(prompt, title, user_id, category_ids)
+      activate model
+        model -> db : INSERT INTO search_histories (prompt, title, user_id)
+        activate db
+          db --> model : Returns new_search_id (e.g., 55)
+        deactivate db
+        
+        model -> db : INSERT INTO search_history_categories (search_id, category_id)\nVALUES (55, 3), (55, 9)
+        activate db
+          db --> model : Success
+        deactivate db
+        model --> service : Returns History Object
+      deactivate model
+      
+
+      service -> model : getToolsByCategories([3, 9])
+      activate model
+        model -> db : SELECT * FROM ai_tools WHERE category_id IN (3, 9) AND status='active'
+        activate db
+          db --> model : Array of matching tools
+        deactivate db
+        
+
+        model --> service : Tools Array
+      deactivate model
+      
+      service --> controller : Returns {history_item, tools}
+    deactivate service
+    
+    controller -> res : formatSuccess(data)
+    activate res
+      res --> controller : JSON String
+    deactivate res
+    
+    controller --> react : HTTP 200 OK
+  deactivate controller
+  
+  react -> react : Prepends "Podcast Creation" to Sidebar History
+  react --> user : Displays the Audio Editing tools!
+deactivate react
+
+
+== Phase 2: Reloading from Sidebar History ==
+
+user -> react : Clicks "+" (Clears UI)
+user -> react : Clicks "Podcast Creation" from Sidebar History
+activate react
+  
+  react -> controller : GET /api/search/history/55/results
+  activate controller
+    controller -> service : fetchHistoryResults(search_id=55)
+    activate service
+      
+      service -> model : fetchToolsByHistoryId(55)
+      activate model
+        
+        model -> db : SELECT t.* FROM ai_tools t\nJOIN search_history_categories shc ON t.category_id = shc.category_id\nWHERE shc.search_id = 55 AND t.status = 'active'
+        activate db
+          db --> model : Array of matching tools
+        deactivate db
+        
+        model --> service : Tools Array
+      deactivate model
+      
+      service --> controller : Returns Tools Array
+    deactivate service
+    
+    controller -> res : formatSuccess(Tools Array)
+    activate res
+      res --> controller : JSON String
+    deactivate res
+    
+    controller --> react : HTTP 200 OK
+  deactivate controller
+  
+  react --> user : Displays the exact same tools again instantly!
+deactivate react
+
+@enduml

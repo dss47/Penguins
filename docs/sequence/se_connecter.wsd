@@ -1,0 +1,61 @@
+@startuml se_connecter
+skinparam maxMessageSize 150
+
+actor "User" as user
+participant "Login Form" as log_in
+participant "AuthController" as auth_controller
+participant "AuthService" as auth_service
+participant "User (Model)" as model
+participant "Response.php (Util)" as res
+database "MySQL (users)" as db
+
+user -> log_in: Types email & mot de passe, clicks "Login"
+activate log_in
+
+  log_in -> auth_controller : POST /api/login\n{email, password}
+  activate auth_controller
+  
+    auth_controller -> auth_service : verifyCredentials(email, password)
+    activate auth_service
+      auth_service -> model : findByEmail(email)
+      activate model
+        model -> db : SELECT * FROM users\nWHERE email = ?
+        activate db 
+          db --> model : Returns row (password_hash, role)
+        deactivate db
+        model --> auth_service : Returns User object (or null)
+      deactivate model
+      
+      note right of auth_service : Verifies password_hash
+      
+      alt Mot de passe est correct
+          
+          auth_service -> auth_service : Generates JWT token
+          auth_service --> auth_controller : Returns Token & User Role
+          auth_controller -> res : formatSuccess({token, role})
+          activate res
+            res --> auth_controller : JSON String
+          deactivate res
+          
+          auth_controller --> log_in : HTTP 200 OK\nJSON String
+          log_in -> log_in : Saves token in localStorage
+          log_in --> user : Redirects to Dashboard based on Role
+          
+      else Mot de passe est incorrect
+          
+          auth_service --> auth_controller : Returns false / Exception
+          auth_controller -> res : formatError("Invalid credentials", 401)
+          activate res
+            res --> auth_controller : JSON String
+          deactivate res
+          
+          auth_controller --> log_in : HTTP 401 Unauthorized\nJSON String
+          log_in --> user : Displays "Mot de passe incorrect" error message
+          
+      end
+      
+    deactivate auth_service
+  deactivate auth_controller
+deactivate log_in
+
+@enduml
