@@ -1,0 +1,244 @@
+.TopAI{
+    position: relative;
+    z-index: 1;
+    padding: 7rem 1.5rem 5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.TopAI::before{
+    content: "";
+    position: absolute;
+    inset: -80px 0 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.header{
+    position: relative;
+    z-index: 2;
+    max-width: 640px;
+    margin: 0 auto 2.5rem;
+}
+
+.hero{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .72rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--nv);
+    margin-bottom: .875rem;
+    font-weight: 500;
+}
+
+.heroLine{
+    width: 26px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(168,85,247,0), var(--nv));
+    box-shadow: 0 0 12px rgba(168,85,247,.35);
+}
+
+.intro{
+    font-family: 'Syne',sans-serif;
+    font-weight: 700;
+    font-size: clamp(2rem,3.2vw,3rem);
+    line-height: 1.15;
+    letter-spacing: -.01em;
+    margin-bottom: .875rem;
+}
+
+.desc{
+    color: var(--ts);
+    font-size: 1rem;
+    max-width: 520px;
+    font-weight: 300;
+    line-height: 1.75;
+    margin: 0 auto;
+}
+
+.stage{
+    position: relative;
+    width: min(920px, 100%);
+    height: 420px;
+    margin: 2.5rem auto 2rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.stageBackdrop{
+    position: absolute;
+    inset: 10px 0 90px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.ringLarge,
+.ringMid,
+.ringSmall{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid rgba(168,85,247,.18);
+    border-bottom: none;
+    border-radius: 999px 999px 0 0;
+}
+
+.ringLarge{
+    width: 660px;
+    height: 240px;
+    opacity: .35;
+}
+
+.ringMid{
+    width: 520px;
+    height: 200px;
+    opacity: .5;
+    border-color: rgba(168,85,247,.26);
+}
+
+.ringSmall{
+    width: 400px;
+    height: 160px;
+    opacity: .65;
+    border-color: rgba(168,85,247,.35);
+}
+
+.stageDot{
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    box-shadow: 0 0 14px rgba(245,158,11,.65);
+    z-index: 1;
+}
+
+.top3AI{
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2rem;
+    padding-bottom: 34px;
+}
+
+.stageBase{
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    width: min(760px, 92%);
+    height: 120px;
+    border-radius: 120px 120px 0 0;
+    background: linear-gradient(180deg, rgba(22,13,56,.9), rgba(9,5,24,0));
+    border: 1px solid rgba(168,85,247,.22);
+    border-bottom: none;
+    box-shadow: 0 -20px 50px rgba(0,0,0,.45), inset 0 18px 28px rgba(0,0,0,.35);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.rankSection{
+    position: relative;
+    z-index: 2;
+    margin-top: .5rem;
+}
+
+.top8AIRank{
+    font-size: .78rem;
+    color: var(--tm);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: .75rem;
+}
+
+.top8AI{
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 1rem;
+    margin-top: 1.25rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.fromgrid{
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity .7s ease, transform .7s ease;
+    will-change: opacity, transform;
+}
+
+.togrid{
+    opacity: 1;
+    transform: none;
+}
+
+@media (max-width: 980px){
+    .stage{
+        height: 380px;
+    }
+
+    .ringLarge{
+        width: 560px;
+    }
+
+    .ringMid{
+        width: 440px;
+    }
+
+    .ringSmall{
+        width: 340px;
+    }
+
+    .top3AI{
+        gap: 1.25rem;
+    }
+
+    .top8AI{
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px){
+    .TopAI{
+        padding: 6rem 1.25rem 4rem;
+    }
+
+    .stage{
+        height: 360px;
+    }
+
+    .top3AI{
+        flex-direction: column;
+        align-items: center;
+        gap: .75rem;
+        padding-bottom: 0;
+    }
+
+    .stageBase{
+        height: 100px;
+    }
+
+    .top8AI{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px){
+    .stage{
+        height: 320px;
+    }
+
+    .top8AI{
+        grid-template-columns: 1fr;
+    }
+}

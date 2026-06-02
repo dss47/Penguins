@@ -1,0 +1,206 @@
+.toolContainer {
+    display: contents; 
+}
+
+.card {
+    width: 100%; /* Take full width of the grid column */
+    background: var(--bg-card);
+    border: 1px solid var(--bd);
+    border-radius: 24px;
+    padding: 2rem; /* Increased padding for breathing room */
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Increased gap */
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    cursor: default;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    background: var(--bg-card-h);
+    border-color: var(--bm);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--bd);
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1.5rem;
+}
+
+.iconWrapper {
+    background: var(--bg-surface);
+    border: 1px solid var(--bd);
+    padding: 1rem;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.card:hover .iconWrapper {
+    transform: scale(1.08) rotate(5deg);
+    border-color: var(--bm);
+}
+
+.toolIconImage {
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.headerInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1.2rem;
+    font-family: sans-serif;
+    color: var(--ts);
+    font-weight: 700;
+}
+
+.toolName {
+    font-size: 1.6rem;
+    color: var(--tp);
+    margin: 0;
+    font-family: sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    max-width: 180px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.provider {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--tm);
+    font-family: sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ratingMax {
+    font-size: 0.9rem;
+    opacity: 0.5;
+    margin-left: 2px;
+}
+
+.featureList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem 0.6rem;
+}
+
+.featureItem {
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: sans-serif;
+    color: var(--nc); /* Cyan text for features */
+    background: rgba(6, 182, 212, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    transition: all 0.2s ease;
+}
+
+.card:hover .featureItem {
+    color: #fff;
+    background: var(--nc);
+    border-color: var(--nc);
+}
+
+.cardFooter {
+    margin-top: auto;
+    display: flex;
+    gap: 0.8rem;
+    justify-content: flex-end; /* Push to right, or could use flex-between */
+    align-items: center;
+}
+
+.actionBtn {
+    flex: 2; /* Make it take up more space to be prominent */
+    padding: 1.1rem;
+    border-radius: 16px;
+    border: none;
+    background: var(--nv); /* Purple primary action */
+    color: white;
+    font-weight: 800;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    box-shadow: 0 4px 15px rgba(168,85,247,0.3);
+}
+
+.card:hover .actionBtn {
+    background: var(--ag);
+    box-shadow: 0 6px 20px rgba(168,85,247,0.5);
+    transform: translateY(-2px);
+}
+
+.actionBtn svg {
+    transition: transform 0.3s ease;
+}
+
+.actionBtn:hover svg {
+    transform: translateX(6px);
+}
+
+.secondaryBtn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.1rem 0;
+    border-radius: 16px;
+    border: 1px solid var(--bd);
+    background: var(--bg-surface);
+    color: var(--tm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.favorite:hover {
+    background: var(--np); /* Pink */
+    border-color: var(--np);
+    color: white;
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+    transform: translateY(-4px);
+}
+
+.shelf:hover {
+    background: var(--nb); /* Blue */
+    border-color: var(--nb);
+    color: white;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    transform: translateY(-4px);
+}
+
+.actionBtn:active, .secondaryBtn:active {
+    transform: translateY(0);
+}

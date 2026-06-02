@@ -1,0 +1,234 @@
+/* --- Base Navbar --- */
+.navbar {
+    width: 100%;
+    background:rgba(4,1,14,.65); backdrop-filter:blur(24px); /* Deep dark background */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    font-family: sans-serif;
+    position: relative;
+    overflow: hidden;
+    z-index: 50;
+}
+
+.Link{
+      all: unset;
+}
+
+.navContainer {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0 2rem;
+    height: 80px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    box-sizing: border-box;
+}
+
+/* --- Logo Section --- */
+.logoSection {
+    flex-shrink: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.logoSection, .authSection {
+    flex-shrink: 0; /* Prevents the logo and buttons from getting squished */
+}
+
+.logoSection {
+    justify-self: start;
+}
+
+.logoIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(to bottom right, #6366f1, #9333ea);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.logoText {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* --- Sliding Track Mechanism --- */
+.sliderWrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sliderWrapper {
+    min-width: 0;
+}
+
+@media (min-width: 768px) {
+    .sliderWrapper {
+        display: block;
+    }
+}
+
+.sliderTrack {
+    display: flex;
+    width: 200%; /* Holds both menus side-by-side */
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slideLanding {
+    transform: translateX(0);
+}
+
+.slideMain {
+    transform: translateX(-50%);
+}
+
+.menuHalf {
+    width: 50%; /* Each menu takes exactly half of the 200% width */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    position: relative;
+}
+
+/* --- Navigation Links --- */
+.navLinks, .navLinksApp {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navLinks li:hover {
+    color: #3b82f6; /* Example: changes text to blue on hover */
+    cursor: pointer;
+}
+
+.navLinks a, .navLinksApp a {
+    font-size: 14px;
+    font-weight: 500;
+    color: #9ca3af;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.navLinks a:hover {
+    color: #ffffff;
+}
+
+.navLinksApp a:hover {
+    color: #818cf8; /* Indigo hover for app side */
+}
+
+/* --- Sliding Buttons --- */
+.slideBtnRight, .slideBtnLeft {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.3rem 0.55rem;
+    border-radius: 0.45rem;
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: #9ca3af;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.slideBtnRight {
+    margin-left: 0.5rem; /* sits to the right of the left links */
+}
+
+.slideBtnLeft {
+    margin-right: 0.5rem; /* sits to the left of the right links */
+}
+
+.slideBtnRight:hover, .slideBtnLeft:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.iconMargin {
+    margin: 0 4px;
+}
+
+/* --- Auth Section --- */
+.authSection {
+    flex-shrink: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.authSection {
+    justify-self: end;
+}
+
+.textLink {
+    font-size: 13px;
+    font-weight: 500;
+    color: #d1d5db;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.textLink:hover {
+    color: #ffffff;
+}
+
+.outlineBtn {
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.outlineBtn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.primaryBtn {
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem;
+    background: linear-gradient(to right, #2563eb, #4f46e5); /* Blue to Indigo */
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 0 15px rgba(79, 70, 229, 0.3); /* Subtle neon glow */
+    transition: opacity 0.3s ease;
+}
+
+.primaryBtn:hover {
+    opacity: 0.9;
+}

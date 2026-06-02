@@ -1,0 +1,350 @@
+:root {
+  --bg-void: #04010e;
+  --bg-deep: #0a0520;
+  --bg-surface: #110830;
+  --bg-card: #160d38;
+  --bg-card-h: #1e1250;
+  --nv: #a855f7;
+  --nb: #3b82f6;
+  --np: #ec4899;
+  --nc: #06b6d4;
+  --ng: #22c55e;
+  --ag: #7c3aed;
+  --tp: #f0eaff;
+  --ts: #9d8abf;
+  --tm: #5a4d72;
+  --bd: rgba(168,85,247,0.12);
+  --bm: rgba(168,85,247,0.25);
+  --bg2: rgba(168,85,247,0.5);
+}
+
+/* Container & Background styling */
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    color: #ffffff;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    padding: 4rem 1rem 2rem;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* "AI-Powered Discovery Platform" Pill */
+.hero {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 16px;
+    border: 1px solid var(--bm);
+    border-radius: 100px;
+    background: rgba(168, 85, 247, .08);
+    font-size: .75rem;
+    color: var(--nv);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 1.75rem;
+    animation: fadeUp .8s ease both;
+}
+.bdot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--nv);
+    box-shadow: 0 0 8px var(--nv);
+    animation: pulse 2s infinite;
+}
+
+/* Main Typography */
+.title {
+    font-family: 'Syne',sans-serif;
+    font-weight: 800;
+    font-size: 3vw;
+    line-height: 1.07;
+    letter-spacing: -.025em;
+    margin-bottom: 1.25rem;
+    animation: fadeUp .9s ease .1s both;
+}
+
+.heroTitle1{
+    color: var(--tp);
+}
+.heroTitle2{
+    display: block;
+    background: linear-gradient(90deg,var(--nv),var(--nb),var(--nc));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 28px rgba(168,85,247,.45));
+}
+
+/* Gradient text on the second line */
+
+/* Subtitle / Paragraph */
+.introduction {
+    font-size: 1.1rem;
+    color: var(--ts);
+    max-width: 540px;
+    font-weight: 300;
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+    animation: fadeUp .9s ease .2s both;
+}
+
+/* Search Area Container */
+.searchField {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 5rem;
+}
+
+/* Input + Button Wrapper */
+.submitionField {
+position: relative;
+    width: 100%;
+    max-width: 650px;
+    animation: fadeUp .9s ease .3s both;
+    margin-bottom: 1.25rem;
+}
+
+/* Text Input */
+.input {
+    width: 100%;
+    padding: .95rem 1.5rem .95rem 3.4rem;
+    border-radius: 14px;
+    border: 1px solid var(--bm);
+    background: rgba(17, 8, 48, .85);
+    backdrop-filter: blur(12px);
+    color: var(--tp);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
+    outline: none;
+    transition: all .3s;
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+}
+
+.input::placeholder {
+    color: #4b5563;
+}
+
+/* Search Button */
+.searchBtn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: .5rem 1.25rem;
+    border-radius: 9px;
+    border: none;
+    background: linear-gradient(135deg, var(--ag), var(--nb));
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .85rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(124, 58, 237, .4);
+    transition: all .2s;
+}
+
+.icon{
+    position: absolute;
+    left: 1.1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--tm);
+    pointer-events: none;
+    z-index: 9999;
+}
+.icon::after{
+    content: "";
+    border-right:1px solid rgba(240,234,255 ,0.3);
+    padding-left:9px;
+}
+.searchBtn:hover {
+    opacity: 0.9;
+}
+
+/* Tags / Hints Container */
+.hints {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    animation: fadeUp .9s ease .4s both;
+}
+
+/* Individual Hint Pill */
+.hint {
+    padding: 4px 14px;
+    border: 1px solid var(--bd);
+    border-radius: 100px;
+    background: rgba(168,85,247,.05);
+    font-size: .78rem;
+    color: var(--tm);
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.hint:hover { 
+    border-color:var(--bm);
+    color:var(--ts);
+}
+
+.statNum{
+    font-family: 'Syne',sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg,var(--nv),var(--nc));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.statValue{
+    font-size: .78rem;
+    color: var(--tm);
+    letter-spacing: .04em;
+    margin-top: 2px;
+    text-align: center;
+}
+/* Stats Section (Handling the nested classes) */
+
+/* The outer container wrapper */
+.heroStats {
+    display: flex;
+    gap: 3rem;
+    margin-top: 0rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--bd);
+    animation: fadeUp .9s ease .5s both;
+}
+
+
+/* The inner individual stat columns */
+.infos {
+    display: block;
+    unicode-bidi: isolate;
+}
+
+/* The big gradient numbers */
+.catalogueNum,
+.categoriesNum,
+.communauteNum,
+.disponibiliteNum {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(to right, #a855f7, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Ensuring spans inside numbers inherit the gradient correctly */
+.catalogueNum span,
+.categoriesNum span,
+.communauteNum span,
+.disponibiliteNum span {
+    background: linear-gradient(to right, #a855f7, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+/* The subtext under the numbers */
+.catalogue,
+.categories,
+.communaute,
+.disponibilite {
+    color: #6b7280;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Animation classes */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+}
+
+.fromgrid {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .7s ease, transform .7s ease;
+}
+
+.toGrid {
+    opacity: 1;
+    transform: none;
+}
+
+.infos {
+    transition-delay: 0s;
+}
+
+.infos:nth-child(2) {
+    transition-delay: .15s;
+}
+
+.infos:nth-child(3) {
+    transition-delay: .3s;
+}
+
+.infos:nth-child(4) {
+    transition-delay: .45s;
+}
+
+.hint {
+    padding: 4px 14px;
+    border: 1px solid var(--bd);
+    border-radius: 100px;
+    background: rgba(168,85,247,.05);
+    font-size: .78rem;
+    color: var(--tm);
+    cursor: pointer;
+    transition: all .2s;
+    transition-delay: 0s;
+}
+
+.hint:nth-child(2) {
+    transition-delay: .1s;
+}
+
+.hint:nth-child(3) {
+    transition-delay: .2s;
+}
+
+.hint:nth-child(4) {
+    transition-delay: .3s;
+}
+
+.hint:nth-child(5) {
+    transition-delay: .4s;
+}
+
+.hint:nth-child(6) {
+    transition-delay: .5s;
+}

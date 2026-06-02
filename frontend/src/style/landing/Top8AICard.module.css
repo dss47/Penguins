@@ -1,0 +1,64 @@
+.Top8AI{
+    padding: .85rem 1rem;
+    border-radius: 14px;
+    border: 1px solid rgba(168,85,247,.2);
+    background: linear-gradient(145deg, rgba(22,13,56,.9), rgba(10,6,28,.95));
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: .75rem;
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+    cursor: pointer;
+    box-shadow: 0 12px 30px rgba(0,0,0,.35);
+}
+
+.Top8AI:hover{
+    transform: translateY(-3px);
+    border-color: rgba(168,85,247,.45);
+    box-shadow: 0 16px 36px rgba(0,0,0,.4);
+}
+
+.rank{
+    font-family: 'Syne',sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: rgba(168,85,247,.55);
+    min-width: 24px;
+}
+
+.icon{
+    font-size: 1.3rem;
+}
+
+.second{
+    display: flex;
+    flex-direction: column;
+}
+
+.name{
+    font-size: .8rem;
+    font-weight: 500;
+    color: var(--tp);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rate{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .72rem;
+    color: var(--nv);
+}
+
+.rate::before{
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+    background: #fbbf24;
+    transform: rotate(45deg);
+    box-shadow: 0 0 6px rgba(251,191,36,.6);
+    display: inline-block;
+}

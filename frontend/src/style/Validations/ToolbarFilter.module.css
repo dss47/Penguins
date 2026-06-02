@@ -1,0 +1,89 @@
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.toolbarFilterBar {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+.toolbarSearch {
+  background: transparent;
+  border: 0.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 7px 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  outline: none;
+  min-width: 390px;
+  transition: border-color 0.2s;
+}
+
+.toolbarSearch:focus {
+  border-color: rgba(167, 139, 250, 0.5);
+}
+
+.toolbarSearch::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.toolbarBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+
+.toolbarBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.toolbarBtnActive {
+  background: rgba(167, 139, 250, 0.15);
+  border-color: rgba(167, 139, 250, 0.4);
+  color: #a78bfa;
+}
+
+.toolbarSort {
+  width: 100%;
+}
+
+.toolbarSelect {
+  width: 100%;
+  background: #161628;
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 8px 32px 8px 12px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: border-color 0.2s;
+}
+
+.toolbarSelect:focus {
+  border-color: rgba(167, 139, 250, 0.4);
+}

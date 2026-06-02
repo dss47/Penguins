@@ -1,0 +1,134 @@
+.Top3card{
+    border-radius: 18px;
+    padding: 1.6rem 1.3rem;
+    text-align: center;
+    border: 1px solid rgba(168,85,247,.2);
+    background: linear-gradient(160deg, rgba(30,18,80,.92), rgba(12,7,32,.95));
+    position: relative;
+    overflow: hidden;
+    transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+    width: 200px;
+    box-shadow: 0 16px 40px rgba(0,0,0,.45);
+}
+
+.Top3card::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(140px 90px at 50% 0%, rgba(168,85,247,.18), transparent 70%);
+    opacity: .8;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.Top3card > *{
+    position: relative;
+    z-index: 1;
+}
+.rank1Card{
+    order: 2;
+    width: 230px;
+    margin-bottom: 80px;
+    background: linear-gradient(160deg,rgba(124,58,237,.35),rgba(59,130,246,.22));
+    border-color: rgba(168,85,247,.45);
+    box-shadow: 0 0 70px rgba(124,58,237,.25), 0 24px 60px rgba(0,0,0,.55);
+}
+.rank2Card{
+    order: 1;
+    margin-bottom: 40px;
+}
+.rank3Card{
+    order: 3;
+    margin-bottom: 20px;
+}
+
+
+.rank{
+    position: absolute;
+    top: -.85rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne',sans-serif;
+    font-size: .75rem;
+    font-weight: 700;
+}
+.rank1{
+    background: linear-gradient(135deg,#f59e0b,#fbbf24);
+    color: #000;
+    box-shadow: 0 0 16px rgba(251,191,36,.5);
+}
+.rank2{
+    background: linear-gradient(135deg,#94a3b8,#cbd5e1);
+    color: #000;
+}
+.rank3{
+    background: linear-gradient(135deg,#c2793a,#d97706);
+    color: #000;
+}
+
+.icon{
+    width: 52px;
+    height: 52px;
+    margin: .85rem auto .55rem;
+    border-radius: 14px;
+    background: rgba(168,85,247,.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.9rem;
+}
+
+.rank1Card .icon{
+    width: 60px;
+    height: 60px;
+    font-size: 2.1rem;
+    background: rgba(168,85,247,.2);
+}
+
+.name{
+    font-family: 'Syne',sans-serif;
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--tp);
+    margin-bottom: .25rem;
+}
+.category{
+    font-size: .72rem;
+    color: var(--tm);
+    margin-bottom: .75rem;
+}
+.stars{
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    font-size: .8rem;
+    color: #f59e0b;
+    margin-bottom: .625rem;
+}
+.rate{
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 12px;
+    border-radius: 100px;
+    font-size: .72rem;
+    font-weight: 600;
+    background: rgba(168,85,247,.12);
+    border: 1px solid rgba(168,85,247,.25);
+    color: var(--nv);
+}
+
+@media (max-width: 720px){
+    .rank1Card,
+    .rank2Card,
+    .rank3Card{
+        order: initial;
+        margin-bottom: 0;
+    }
+}

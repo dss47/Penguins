@@ -1,0 +1,170 @@
+.formSection {
+    display: flex;
+    width: 1130px;
+    height: 700px;
+    border-radius: 30px;
+    background: #0f1629f1;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    color: white;
+}
+
+.formContainer {
+    flex: 1.2;
+    padding: 4rem;
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.formContainer h2 {
+    font-size: 2.2rem;
+    font-family: sans-serif;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.formContainer >p {
+    font-size: 1.2rem;
+    margin: 0;
+    padding-bottom: 3rem;
+    font-family: sans-serif;
+    color: grey;
+}
+
+.actualForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1.7rem;
+}
+
+.actualForm p{
+    font-size: 1.2rem;
+    margin-top: -1.8rem;
+    padding-bottom: 3rem;
+    font-family: sans-serif;
+    color: grey;
+}
+
+.inputGroup {
+    position: relative;
+    width: 100%;
+}
+
+.input,.passwordInput {
+    width: 100%;
+    height: 3.8rem;
+    background: #151c35;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 0 1.5rem;
+    margin: 0;
+    color: white;
+    font-size: 1.1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    outline: none;
+    box-sizing: border-box;
+    transition: 0.3s ease;
+}
+
+.passwordInput{
+    padding-right: 3.5rem;
+}
+
+.input::placeholder,.passwordInput::placeholder{
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.input:focus,.passwordInput:focus {
+    background: #1a2240;
+    border-color: #6356df;
+}
+
+.passwordToggle {
+    position: absolute;
+    right: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s;
+}
+
+.passwordToggle:hover {
+    color: white;
+}
+
+.submitBtn {
+    width: 100%;
+    height: 3.8rem;
+    background-color: #6356df;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    box-shadow: 0 10px 20px rgba(99, 86, 223, 0.2);
+    transition: 0.3s ease;
+}
+
+.submitBtn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(99, 86, 223, 0.4);
+}
+
+.formSide {
+    flex: 1.2;
+    background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    position: relative;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.waveContent {
+    z-index: 2;
+    text-align: center;
+}
+
+.waveContent h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.waveContent p {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.5;
+}
+
+.rowGroup {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+.input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(1);
+    opacity: 0.6;
+    transition: opacity 0.3s;
+    transform: scale(1.2);
+}
+
+.input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}

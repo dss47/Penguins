@@ -1,0 +1,164 @@
+.tableContainer {
+  width: 100%;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+.tableOutils {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-family: sans-serif;
+}
+
+.tableOutils thead tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tableOutils th {
+  padding: 12px 16px;
+  text-align: left;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tableOutils tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.15s;
+}
+
+.tableOutils tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.tableOutils td {
+  padding: 14px 16px;
+  color: #fff;
+  vertical-align: middle;
+}
+
+.tdMuted {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* Outil logo + nom */
+.outilInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.outilLogo {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.outilNom {
+  font-weight: 600;
+  font-size: 13px;
+  color: #fff;
+}
+
+.outilUrl {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 2px;
+}
+
+/* Badges statut */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badgeAttente {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badgeAccepte {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badgeRejete {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badgeModif {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnVoir {
+  background: rgba(255, 255, 255, 0.06);
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btnAccepter {
+  background: rgba(255, 255, 255, 0.06);
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.btnRejeter {
+  background: transparent;
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btnAccepter:hover { background: rgba(255, 255, 255, 0.1); }
+.btnRejeter:hover  { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.btnVoir:hover     { background: rgba(255, 255, 255, 0.1); }
+
+.actionPublie {
+  color: #10b981;
+  font-size: 13px;
+}
+
+.actionRejete {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 13px;
+}

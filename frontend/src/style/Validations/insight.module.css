@@ -1,0 +1,70 @@
+.boxTitre {
+  display: flex;
+  gap: 2px;
+  box-sizing: border-box;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  margin-left: 25px;
+  justify-content: left;
+}
+
+.ia {
+  color: #8b5cf6;
+}
+
+.insightContainer {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #0b0d19;
+  padding: 10px 24px;
+  margin-left: 0;
+}
+
+.insightCard {
+  flex: 1;
+  background-color: #141726;
+  border: 1px solid #1f233b;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+.insightNumber {
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-family: sans-serif;
+}
+
+.insightLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #727b98;
+  font-size: 0.85rem;
+  font-family: sans-serif;
+}
+
+.insightIcon {
+  font-size: 0.9rem;
+}
+
+.cardTotal .insightNumber {
+  color: #8b5cf6;
+}
+
+.cardPending .insightNumber {
+  color: #f59e0b;
+}
+
+.cardAccepted .insightNumber {
+  color: #10b981;
+}
+
+.cardRejected .insightNumber {
+  color: #ef4444;
+}

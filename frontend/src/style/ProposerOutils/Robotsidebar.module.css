@@ -1,0 +1,153 @@
+/* ── SIDEBAR ROBOT ── */
+.robot-sidebar {
+  width: 200px;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 2rem;
+  position: sticky;
+  top: 2rem;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+/* ── BULLE MESSAGE ── */
+.robot-bubble {
+  background: #1a2140;
+  border: 1px solid rgba(124, 107, 255, 0.4);
+  border-radius: 16px 16px 16px 4px;
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  color: #e8eaf0;
+  line-height: 1.5;
+  text-align: left;
+  max-width: 170px;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 20px rgba(124, 107, 255, 0.15);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.bubble-in  { opacity: 1; transform: translateY(0)   scale(1);    }
+.bubble-out { opacity: 0; transform: translateY(-6px) scale(0.97); }
+
+/* ── ROBOT FLOTTANT ── */
+.robot-float-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.robot-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px);   }
+  50%       { transform: translateY(-14px); }
+}
+
+.robot-svg {
+  width: 160px;
+  height: auto;
+  filter: drop-shadow(0 8px 28px rgba(124, 107, 255, 0.45));
+}
+
+/* ── OMBRE SOL ── */
+.robot-shadow {
+  width: 90px;
+  height: 14px;
+  background: radial-gradient(ellipse, rgba(124,107,255,0.35) 0%, transparent 70%);
+  margin: 0 auto;
+  animation: shadow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes shadow-pulse {
+  0%, 100% { transform: scaleX(1);    opacity: 0.6;  }
+  50%       { transform: scaleX(0.65); opacity: 0.25; }
+}
+
+/* ── ANTENNE ── */
+.antenna-pulse {
+  animation: antenna 1.5s ease-in-out infinite;
+}
+@keyframes antenna {
+  0%, 100% { opacity: 1;   r: 6; }
+  50%       { opacity: 0.3; r: 8; }
+}
+
+/* ── YEUX ── */
+.eye-blink {
+  animation: blink 4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes blink {
+  0%, 88%, 100% { transform: scaleY(1);   }
+  94%            { transform: scaleY(0.1); }
+}
+
+/* ── LUMIÈRES ── */
+.light-blink      { animation: light 2s   ease-in-out infinite; }
+.light-blink-slow { animation: light 3.2s ease-in-out infinite 0.8s; }
+@keyframes light {
+  0%, 100% { opacity: 1;   }
+  50%       { opacity: 0.2; }
+}
+
+/* ── BARRE PROGRESSION ── */
+.bar-animate { animation: bar 3s ease-in-out infinite; }
+@keyframes bar {
+  0%   { width: 10px; }
+  50%  { width: 45px; }
+  100% { width: 10px; }
+}
+
+/* ── BRAS ── */
+.arm-left  { animation: arm-l 3s ease-in-out infinite; }
+.arm-right { animation: arm-r 3s ease-in-out infinite 0.3s; }
+
+@keyframes arm-l {
+  0%, 100% { transform: rotate(0deg);   }
+  25%       { transform: rotate(-15deg); }
+  75%       { transform: rotate(8deg);  }
+}
+@keyframes arm-r {
+  0%, 100% { transform: rotate(0deg);   }
+  25%       { transform: rotate(12deg);  }
+  75%       { transform: rotate(-10deg); }
+}
+
+/* ── PARTICULES ── */
+.particles {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #7c6bff;
+  opacity: 0;
+}
+.particle-1 { left: 20%;  top: 60%; animation: pfloat 4s ease-in-out infinite 0s; }
+.particle-2 { left: 75%;  top: 50%; animation: pfloat 4s ease-in-out infinite 0.7s;  background: #22c55e; }
+.particle-3 { left: 40%;  top: 75%; animation: pfloat 4s ease-in-out infinite 1.2s; }
+.particle-4 { left: 85%;  top: 70%; animation: pfloat 4s ease-in-out infinite 1.8s;  background: #f59e0b; }
+.particle-5 { left: 10%;  top: 80%; animation: pfloat 4s ease-in-out infinite 2.3s; }
+.particle-6 { left: 60%;  top: 85%; animation: pfloat 4s ease-in-out infinite 2.9s;  background: #a855f7; }
+
+@keyframes pfloat {
+  0%   { opacity: 0;   transform: translateY(0)     scale(1);   }
+  20%  { opacity: 0.8; }
+  100% { opacity: 0;   transform: translateY(-70px)  scale(0.3); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .robot-sidebar { display: none; }
+}
