@@ -1,3 +1,4 @@
+import { useState } from "react";
 import style from "../../style/Validations/table.module.css"
 import { faEye } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,8 +17,29 @@ function Main(){
     { id: 5, nom: 'ChatFlow Pro', url: 'chatflow.io', categorie: 'Chatbots & NLP', soumis: 'Omar L.', date: '5 mai 2025', statut: 'accepte', couleur: '#1a7a4a' },
     { id: 6, nom: 'AutoBot X', url: 'autobotx.net', categorie: 'Automatisation', soumis: 'Ines T.', date: '3 mai 2025', statut: 'rejete', couleur: '#a81a1a' },
     { id: 7, nom: 'VoiceClone AI', url: 'voiceclone.ai', categorie: 'Audio & Voix', soumis: 'Mehdi R.', date: "Aujourd'hui", statut: 'attente', couleur: '#1a5fa8' },
-  ]
+    { id: 8, nom: 'SmartSEO', url: 'smartseo.com', categorie: 'Marketing', soumis: 'Ali C.', date: '1 mai 2025', statut: 'attente', couleur: '#1a5fa8' },
+    { id: 9, nom: 'CodeWizard', url: 'codewizard.app', categorie: 'Développement', soumis: 'Hassan N.', date: '30 avr 2025', statut: 'accepte', couleur: '#6c3fd4' },
+    { id: 10, nom: 'Visionary', url: 'visionary.ai', categorie: 'Image & Design', soumis: 'Salma G.', date: '28 avr 2025', statut: 'rejete', couleur: '#a85e1a' },
+    { id: 11, nom: 'DataCrunch', url: 'datacrunch.io', categorie: 'Analyse de données', soumis: 'Tarik O.', date: '25 avr 2025', statut: 'attente', couleur: '#1a7a4a' },
+    { id: 12, nom: 'WriteGenius', url: 'writgenius.com', categorie: 'Génération contenu', soumis: 'Fatima Z.', date: '22 avr 2025', statut: 'accepte', couleur: '#6c3fd4' },
+    { id: 13, nom: 'SoundScape', url: 'soundscape.net', categorie: 'Audio & Voix', soumis: 'Mounir M.', date: '20 avr 2025', statut: 'attente', couleur: '#1a5fa8' },
+    { id: 14, nom: 'LogicBot', url: 'logicbot.ai', categorie: 'Chatbots & NLP', soumis: 'Lina E.', date: '18 avr 2025', statut: 'modifications', couleur: '#1a7a4a' },
+    { id: 15, nom: 'WorkflowMax', url: 'workflowmax.io', categorie: 'Automatisation', soumis: 'Samir B.', date: '15 avr 2025', statut: 'accepte', couleur: '#a81a1a' },
+    { id: 16, nom: 'EcoBot', url: 'ecobot.green', categorie: 'Environnement', soumis: 'Yassir B.', date: '12 avr 2025', statut: 'attente', couleur: '#1a7a4a' },
+    { id: 17, nom: 'FinancePro', url: 'financepro.com', categorie: 'Finance', soumis: 'Nadia K.', date: '10 avr 2025', statut: 'accepte', couleur: '#a85e1a' },
+    { id: 18, nom: 'HealthAI', url: 'healthai.org', categorie: 'Santé', soumis: 'Omar L.', date: '8 avr 2025', statut: 'rejete', couleur: '#a81a1a' },
+    { id: 19, nom: 'EduLearn', url: 'edulearn.edu', categorie: 'Education', soumis: 'Ines T.', date: '5 avr 2025', statut: 'attente', couleur: '#1a5fa8' }
+  ];
   
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
+  const totalPages = Math.ceil(outils.length / itemsPerPage);
+  
+  const currentData = outils.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const getStatutBadge = (statut) => {
     switch (statut) {
       case 'attente':      
@@ -57,7 +79,7 @@ function Main(){
             </tr>
           </thead>
           <tbody>
-            {outils.map(outil => (
+            {currentData.map(outil => (
               <tr key={outil.id}>
                 <td>
                   <div className={style.outilInfo}>
@@ -84,6 +106,28 @@ function Main(){
             ))}
           </tbody>
         </table>
+        
+        {totalPages > 1 && (
+          <div className={style.paginationContainer}>
+            <button 
+              className={style.pageBtn} 
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              Précédent
+            </button>
+            <span className={style.pageInfo}>
+              Page {currentPage} sur {totalPages}
+            </span>
+            <button 
+              className={style.pageBtn} 
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              Suivant
+            </button>
+          </div>
+        )}
       </div>
     </>
   );
