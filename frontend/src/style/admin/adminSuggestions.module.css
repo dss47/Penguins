@@ -88,7 +88,7 @@
 
 .card:hover {
   border-color: var(--bg-hover);
-  background-color: var(--bg-hover);
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
 .cardHeader {
@@ -116,9 +116,9 @@
   flex-shrink: 0;
 }
 
-.badgePending  { background-color: var(--warning-bg); color: var(--warning-text); }
-.badgeApproved { background-color: var(--success-bg); color: var(--success-text); }
-.badgeRejected { background-color: var(--danger-bg); color: var(--danger-text); }
+.badgePending  { background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.badgeApproved { background-color: rgba(34, 197, 94, 0.1);  border: 1px solid rgba(34, 197, 94, 0.2);  color: #22c55e; }
+.badgeRejected { background-color: rgba(239, 68, 68, 0.1);  border: 1px solid rgba(239, 68, 68, 0.2);  color: #ef4444; }
 
 .cardDesc {
   font-size: 13px;

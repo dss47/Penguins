@@ -123,7 +123,7 @@
 }
 
 .table tbody tr:hover {
-  background-color: var(--bg-hover);
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
 .table td {
@@ -175,12 +175,11 @@
   text-transform: capitalize;
 }
 
-.badgeAdmin   { background-color: var(--nv-soft); color: var(--nv); }
-.badgeManager { background-color: var(--warning-bg); color: var(--warning-text); }
-.badgeUser    { background-color: var(--bg-surface); color: var(--tm); }
-
-.badgeActive  { background-color: var(--success-bg); color: var(--success-text); }
-.badgeBanned  { background-color: var(--danger-bg); color: var(--danger-text); }
+.badgeAdmin   { background-color: rgba(129, 140, 248, 0.1); border: 1px solid rgba(129, 140, 248, 0.2); color: #818cf8; }
+.badgeManager { background-color: rgba(245, 158, 11, 0.1);  border: 1px solid rgba(245, 158, 11, 0.2);  color: #f59e0b; }
+.badgeUser    { background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); color: #94A3B8; }
+.badgeActive  { background-color: rgba(34, 197, 94, 0.1);    border: 1px solid rgba(34, 197, 94, 0.2);    color: #22c55e; }
+.badgeBanned  { background-color: rgba(239, 68, 68, 0.1);    border: 1px solid rgba(239, 68, 68, 0.2);    color: #ef4444; }
 
 /* ── Actions ──────────────────────────────────────────────── */
 .actions {

@@ -119,8 +119,10 @@
 
 /* ── État actif ──────────────────────────────────────────── */
 .navBtnActive {
-  background-color: var(--bg-hover);
-  color: var(--nv);
+  background-color: var(--nv-soft);
+  color: var(--text-primary);
+  border-left: 3px solid var(--nv);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
 .navBtnActive svg {

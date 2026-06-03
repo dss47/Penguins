@@ -455,36 +455,75 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* ── Light Mode Overrides ───────────────────────────────────── */
 @media (prefers-color-scheme: light) {
+  .form-label {
+    color: #0F172A !important;
+    font-weight: 500 !important;
+  }
+  .form-hint {
+    color: #64748B !important;
+  }
   .form-input,
   .form-textarea {
-    border-color: #CBD5E1;
-    color: #0F172A;
+    color: #0F172A !important;
+    border: 1px solid #CBD5E1 !important;
+    background-color: #FFFFFF !important;
   }
   .form-input::placeholder,
   .form-textarea::placeholder {
-    color: #94A3B8;
+    color: #A1A1AA;
   }
   .upload-zone {
     background-color: #F8FAFC;
     border-color: #CBD5E1;
   }
+  .upload-text {
+    color: #0F172A !important;
+  }
+  .upload-text strong {
+    color: #0F172A !important;
+  }
+  .upload-hint {
+    color: #64748B !important;
+  }
 }
 
+:root[data-theme="light"] .form-label,
+.light .form-label {
+  color: #0F172A !important;
+  font-weight: 500 !important;
+}
+:root[data-theme="light"] .form-hint,
+.light .form-hint {
+  color: #64748B !important;
+}
 :root[data-theme="light"] .form-input,
 .light .form-input,
 :root[data-theme="light"] .form-textarea,
 .light .form-textarea {
-  border-color: #CBD5E1;
-  color: #0F172A;
+  color: #0F172A !important;
+  border: 1px solid #CBD5E1 !important;
+  background-color: #FFFFFF !important;
 }
 :root[data-theme="light"] .form-input::placeholder,
 .light .form-input::placeholder,
 :root[data-theme="light"] .form-textarea::placeholder,
 .light .form-textarea::placeholder {
-  color: #94A3B8;
+  color: #A1A1AA;
 }
 :root[data-theme="light"] .upload-zone,
 .light .upload-zone {
   background-color: #F8FAFC;
   border-color: #CBD5E1;
+}
+:root[data-theme="light"] .upload-text,
+.light .upload-text {
+  color: #0F172A !important;
+}
+:root[data-theme="light"] .upload-text strong,
+.light .upload-text strong {
+  color: #0F172A !important;
+}
+:root[data-theme="light"] .upload-hint,
+.light .upload-hint {
+  color: #64748B !important;
 }

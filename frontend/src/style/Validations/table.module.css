@@ -12,13 +12,13 @@
 }
 
 .tableOutils thead tr {
-  border-bottom: 1px solid rgba(15, 23, 42, 0.08) /* var(--tp-rgb) fallback */;
+  border-bottom: 1px solid var(--border);
 }
 
 .tableOutils th {
   padding: 12px 16px;
   text-align: left;
-  color: rgba(15, 23, 42, 0.4) /* var(--tp-rgb) fallback */;
+  color: var(--text-muted);
   font-weight: 500;
   font-size: 12px;
   text-transform: uppercase;
@@ -26,22 +26,22 @@
 }
 
 .tableOutils tbody tr {
-  border-bottom: 1px solid rgba(15, 23, 42, 0.05) /* var(--tp-rgb) fallback */;
+  border-bottom: 1px solid var(--border);
   transition: background 0.15s;
 }
 
 .tableOutils tbody tr:hover {
-  background: rgba(15, 23, 42, 0.03) /* var(--tp-rgb) fallback */;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .tableOutils td {
   padding: 14px 16px;
-  color: var(--tp);
+  color: var(--text-primary);
   vertical-align: middle;
 }
 
 .tdMuted {
-  color: rgba(15, 23, 42, 0.55) /* var(--tp-rgb) fallback */ !important;
+  color: var(--text-muted) !important;
 }
 
 /* Outil logo + nom */
@@ -60,19 +60,19 @@
   justify-content: center;
   font-weight: 700;
   font-size: 16px;
-  color: var(--tp);
+  color: var(--text-primary);
   flex-shrink: 0;
 }
 
 .outilNom {
   font-weight: 600;
   font-size: 13px;
-  color: var(--tp);
+  color: var(--text-primary);
 }
 
 .outilUrl {
   font-size: 11px;
-  color: rgba(15, 23, 42, 0.35) /* var(--tp-rgb) fallback */;
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
@@ -119,21 +119,21 @@
 }
 
 .btnVoir {
-  background: rgba(15, 23, 42, 0.06) /* var(--tp-rgb) fallback */;
-  border: 0.5px solid rgba(15, 23, 42, 0.12) /* var(--tp-rgb) fallback */;
+  background: rgba(255, 255, 255, 0.06);
+  border: 0.5px solid var(--border);
   border-radius: 8px;
   padding: 6px 10px;
-  color: var(--tp);
+  color: var(--text-primary);
   cursor: pointer;
   font-size: 13px;
 }
 
 .btnAccepter {
-  background: rgba(15, 23, 42, 0.06) /* var(--tp-rgb) fallback */;
-  border: 0.5px solid rgba(15, 23, 42, 0.12) /* var(--tp-rgb) fallback */;
+  background: rgba(255, 255, 255, 0.06);
+  border: 0.5px solid var(--border);
   border-radius: 8px;
   padding: 6px 12px;
-  color: var(--tp);
+  color: var(--text-primary);
   cursor: pointer;
   font-size: 13px;
   white-space: nowrap;
@@ -141,17 +141,17 @@
 
 .btnRejeter {
   background: transparent;
-  border: 0.5px solid rgba(15, 23, 42, 0.12) /* var(--tp-rgb) fallback */;
+  border: 0.5px solid var(--border);
   border-radius: 8px;
   padding: 6px 10px;
-  color: rgba(15, 23, 42, 0.5) /* var(--tp-rgb) fallback */;
+  color: var(--text-primary);
   cursor: pointer;
   font-size: 13px;
 }
 
-.btnAccepter:hover { background: rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */; }
+.btnAccepter:hover { background: rgba(255, 255, 255, 0.1); }
 .btnRejeter:hover  { background: rgba(239, 68, 68, 0.1); color: var(--np); }
-.btnVoir:hover     { background: rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */; }
+.btnVoir:hover     { background: rgba(255, 255, 255, 0.1); }
 
 .actionPublie {
   color: var(--ng);
@@ -164,15 +164,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  border-top: 1px solid rgba(15, 23, 42, 0.08) /* var(--tp-rgb) fallback */;
+  border-top: 1px solid var(--border);
 }
 
 .pageBtn {
-  background: rgba(15, 23, 42, 0.04) /* var(--tp-rgb) fallback */;
-  border: 1px solid rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px 16px;
-  color: var(--tp);
+  color: var(--text-primary);
   cursor: pointer;
   font-size: 13px;
   transition: all 0.2s ease;
@@ -180,8 +180,8 @@
 }
 
 .pageBtn:hover:not(:disabled) {
-  background: rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */;
-  border-color: rgba(15, 23, 42, 0.2) /* var(--tp-rgb) fallback */;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .pageBtn:disabled {
@@ -190,7 +190,7 @@
 }
 
 .pageInfo {
-  color: rgba(15, 23, 42, 0.5) /* var(--tp-rgb) fallback */;
+  color: var(--text-muted);
   font-size: 13px;
   font-weight: 500;
 }

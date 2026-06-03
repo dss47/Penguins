@@ -359,13 +359,24 @@
   .dropdownMenu {
     box-shadow: var(--shadow-lg);
   }
+  .categoryBtn {
+    color: #475569;
+  }
+  .categoryBtn:hover {
+    color: #0F172A;
+  }
+  .activeCategoryBtn {
+    color: #0F172A !important;
+    background: #F1F5F9 !important;
+    border-left: 3px solid var(--nv) !important;
+  }
   .categoryCount {
     background: #F1F5F9;
     color: #64748B;
   }
   .activeCategoryBtn .categoryCount {
-    background: var(--nv);
-    color: #FFFFFF;
+    background: var(--nv) !important;
+    color: #FFFFFF !important;
   }
 }
 
@@ -378,6 +389,20 @@
 .light .dropdownMenu {
     box-shadow: var(--shadow-lg);
 }
+:root[data-theme="light"] .categoryBtn,
+.light .categoryBtn {
+    color: #475569;
+}
+:root[data-theme="light"] .categoryBtn:hover,
+.light .categoryBtn:hover {
+    color: #0F172A;
+}
+:root[data-theme="light"] .activeCategoryBtn,
+.light .activeCategoryBtn {
+    color: #0F172A !important;
+    background: #F1F5F9 !important;
+    border-left: 3px solid var(--nv) !important;
+}
 :root[data-theme="light"] .categoryCount,
 .light .categoryCount {
     background: #F1F5F9;
@@ -385,6 +410,21 @@
 }
 :root[data-theme="light"] .activeCategoryBtn .categoryCount,
 .light .activeCategoryBtn .categoryCount {
-    background: var(--nv);
-    color: #FFFFFF;
+    background: var(--nv) !important;
+    color: #FFFFFF !important;
+}
+
+/* ── Aggressive Dark Mode Overrides ──────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  .activeCategoryBtn {
+    background: rgba(79, 70, 229, 0.15) !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+    border-left: 3px solid var(--nv) !important;
+    color: #FFFFFF !important;
+  }
+  .activeCategoryBtn .categoryCount {
+    background: rgba(0, 0, 0, 0.25) !important;
+    color: #FFFFFF !important;
+  }
 }

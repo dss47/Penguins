@@ -119,22 +119,21 @@
     margin: 0;
 }
 
-.navLinks li:hover {
-    color: var(--nb); /* Example: changes text to blue on hover */
-    cursor: pointer;
-}
-
-.navLinks a, .navLinksApp a {
+/* Target the <li> in the first menu AND the <a> in the second menu identically */
+.navLinks li, 
+.navLinksApp a {
     font-size: 0.95rem;
     font-weight: 500;
     color: var(--ts);
     text-decoration: none;
     transition: color 0.2s ease;
+    cursor: pointer;
 }
 
-.navLinks a:hover,
+/* Uniform hover and active states for both menus */
+.navLinks li:hover,
 .navLinksApp a:hover {
-    color: var(--tp);
+    color: #FFFFFF;
 }
 
 /* --- Sliding Buttons --- */
@@ -237,7 +236,7 @@
     backdrop-filter: none;
     border-bottom: 1px solid var(--bd);
   }
-  .navLinks a:hover {
+  .navLinks li:hover {
     color: var(--nv);
   }
   .navLinksApp a:hover {
@@ -262,8 +261,8 @@
     backdrop-filter: none;
     border-bottom: 1px solid var(--bd);
 }
-:root[data-theme="light"] .navLinks a:hover,
-.light .navLinks a:hover {
+:root[data-theme="light"] .navLinks li:hover,
+.light .navLinks li:hover {
     color: var(--nv);
 }
 :root[data-theme="light"] .navLinksApp a:hover,
