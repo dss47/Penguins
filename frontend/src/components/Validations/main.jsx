@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import style from "../../style/Validations/table.module.css"
 import { faEye } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,7 +8,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 
-function Main(){
+function Main({ searchQuery = "", filterStatus = "tous", sortOption = "Plus récent" }){
   const outils = [
     { id: 1, nom: 'ScriptAI Pro', url: 'scriptai.pro', categorie: 'Génération contenu', soumis: 'Karim A.', date: '12 mai 2025', statut: 'attente', couleur: '#6c3fd4' },
     { id: 2, nom: 'DevAssist AI', url: 'devassist.io', categorie: 'Développement', soumis: 'Sara M.', date: '10 mai 2025', statut: 'attente', couleur: '#1a7a4a' },
@@ -31,11 +31,37 @@ function Main(){
     { id: 19, nom: 'EduLearn', url: 'edulearn.edu', categorie: 'Education', soumis: 'Ines T.', date: '5 avr 2025', statut: 'attente', couleur: '#1a5fa8' }
   ];
   
+  let filteredOutils = outils.filter(outil => {
+    if (filterStatus !== "tous" && outil.statut !== filterStatus) {
+      return false;
+    }
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      if (!outil.nom.toLowerCase().includes(q) && 
+          !outil.soumis.toLowerCase().includes(q) &&
+          !outil.categorie.toLowerCase().includes(q)) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  if (sortOption === "A → Z") {
+    filteredOutils.sort((a, b) => a.nom.localeCompare(b.nom));
+  } else if (sortOption === "Plus ancien") {
+    filteredOutils.reverse();
+  }
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
-  const totalPages = Math.ceil(outils.length / itemsPerPage);
   
-  const currentData = outils.slice(
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filterStatus, sortOption]);
+
+  const totalPages = Math.ceil(filteredOutils.length / itemsPerPage);
+  
+  const currentData = filteredOutils.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
