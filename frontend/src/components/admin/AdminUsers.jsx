@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "../../style/admin/adminUsers.module.css";
 import BanConfirmForm from "../forms/BanConfirmForm";
 import PromoteConfirmForm from "../forms/PromoteConfirmForm";
@@ -11,6 +11,17 @@ const MOCK_USERS = [
   { id: 4, name: "Lucas Petit",    email: "lucas@example.com",  role: "user",    status: "active",  joined: "5 avr. 2025" },
   { id: 5, name: "Emma Leroy",     email: "emma@example.com",   role: "admin",   status: "active",  joined: "1 jan. 2025" },
   { id: 6, name: "Thomas Moreau",  email: "thomas@example.com", role: "user",    status: "active",  joined: "18 mai 2025" },
+  { id: 7, name: "Youssef Alaoui", email: "youssef@example.com", role: "user",    status: "active",  joined: "22 juin 2025" },
+  { id: 8, name: "Fatima Zahra",   email: "fatima@example.com",  role: "user",    status: "active",  joined: "14 juil. 2025" },
+  { id: 9, name: "Nicolas Roux",   email: "nicolas@example.com", role: "manager", status: "active",  joined: "9 août 2025" },
+  { id: 10, name: "Amine Benali",  email: "amine@example.com",   role: "user",    status: "banned",  joined: "2 sept. 2025" },
+  { id: 11, name: "Chloé Simon",   email: "chloe@example.com",   role: "user",    status: "active",  joined: "19 oct. 2025" },
+  { id: 12, name: "Julien Laurent",email: "julien@example.com",  role: "admin",   status: "active",  joined: "5 nov. 2025" },
+  { id: 13, name: "Sara Michel",   email: "sara@example.com",    role: "user",    status: "active",  joined: "11 déc. 2025" },
+  { id: 14, name: "Karim Haddad",  email: "karim@example.com",   role: "user",    status: "banned",  joined: "8 jan. 2026" },
+  { id: 15, name: "Léa Garcia",    email: "lea@example.com",     role: "manager", status: "active",  joined: "24 fév. 2026" },
+  { id: 16, name: "Paul Blanc",    email: "paul@example.com",    role: "user",    status: "active",  joined: "1 mars 2026" },
+  { id: 17, name: "Julie Tremblay",email: "julie@example.com",   role: "user",    status: "active",  joined: "10 mars 2026" }
 ];
 
 const ROLE_LABELS = { admin: "Admin", manager: "Manager", user: "Utilisateur" };
@@ -39,6 +50,19 @@ export default function AdminUsers() {
     const matchRole   = roleFilter === "all" || u.role === roleFilter;
     return matchSearch && matchRole;
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, roleFilter]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginatedData = filtered.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleBan = (userId) => {
     setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, status: "banned" } : u));
@@ -98,7 +122,7 @@ export default function AdminUsers() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((user) => (
+              {paginatedData.map((user) => (
                 <>
                   <tr key={user.id}>
                     {/* Utilisateur */}
@@ -183,6 +207,28 @@ export default function AdminUsers() {
               ))}
             </tbody>
           </table>
+        )}
+
+        {totalPages > 1 && filtered.length > 0 && (
+          <div className={styles.paginationContainer}>
+            <button 
+              className={styles.pageBtn} 
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              Précédent
+            </button>
+            <span className={styles.pageInfo}>
+              Page {currentPage} sur {totalPages}
+            </span>
+            <button 
+              className={styles.pageBtn} 
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              Suivant
+            </button>
+          </div>
         )}
       </div>
     </div>

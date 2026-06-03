@@ -161,34 +161,36 @@
 /* Pagination */
 .paginationContainer {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  margin-top: 24px;
-  padding-bottom: 24px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .pageBtn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  padding: 6px 14px;
+  padding: 8px 16px;
   color: #fff;
   cursor: pointer;
   font-size: 13px;
-  transition: background 0.15s;
+  transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .pageBtn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .pageBtn:disabled {
-  opacity: 0.4;
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
 .pageInfo {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
   font-size: 13px;
+  font-weight: 500;
 }
