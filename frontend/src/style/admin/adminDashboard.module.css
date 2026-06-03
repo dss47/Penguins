@@ -85,7 +85,7 @@
   height: 17px;
 }
 
-.statIconAccent  { background-color: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent-light); }
+.statIconAccent  { background-color: var(--nv-soft); color: var(--nv); }
 .statIconSuccess { background-color: color-mix(in srgb, var(--success) 15%, transparent); color: var(--success); }
 .statIconDanger  { background-color: color-mix(in srgb, var(--danger) 15%, transparent); color: var(--danger); }
 .statIconWarning { background-color: color-mix(in srgb, var(--warning) 15%, transparent); color: var(--warning); }
@@ -141,7 +141,7 @@
 .cardTitle svg {
   width: 15px;
   height: 15px;
-  color: var(--accent-light);
+  color: var(--nv);
 }
 
 /* ── Activité récente ─────────────────────────────────────── */
@@ -165,7 +165,7 @@
   flex-shrink: 0;
 }
 
-.dotAccent  { background-color: var(--accent-light); }
+.dotAccent  { background-color: var(--nv); }
 .dotSuccess { background-color: var(--success); }
 .dotDanger  { background-color: var(--danger); }
 .dotWarning { background-color: var(--warning); }

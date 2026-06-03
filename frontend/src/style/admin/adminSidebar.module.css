@@ -54,7 +54,7 @@
 .logoSub {
   font-size: 10px;
   font-weight: 500;
-  color: var(--accent-light);
+  color: var(--nv);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   display: block;
@@ -120,11 +120,11 @@
 /* ── État actif ──────────────────────────────────────────── */
 .navBtnActive {
   background-color: var(--bg-hover);
-  color: var(--accent-light);
+  color: var(--nv);
 }
 
 .navBtnActive svg {
-  color: var(--accent-light);
+  color: var(--nv);
 }
 
 /* ── Badge ───────────────────────────────────────────────── */
@@ -141,11 +141,13 @@
 }
 
 .badgeDanger {
-  background-color: var(--danger);
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
 }
 
 .badgeWarning {
-  background-color: var(--warning);
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
 }
 
 /* ── Pied de sidebar ─────────────────────────────────────── */

@@ -175,12 +175,12 @@
   text-transform: capitalize;
 }
 
-.badgeAdmin   { background-color: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--accent-light); }
-.badgeManager { background-color: color-mix(in srgb, var(--warning) 20%, transparent); color: var(--warning); }
-.badgeUser    { background-color: color-mix(in srgb, var(--text-muted) 20%, transparent); color: var(--text-muted); }
+.badgeAdmin   { background-color: var(--nv-soft); color: var(--nv); }
+.badgeManager { background-color: var(--warning-bg); color: var(--warning-text); }
+.badgeUser    { background-color: var(--bg-surface); color: var(--tm); }
 
-.badgeActive  { background-color: color-mix(in srgb, var(--success) 20%, transparent); color: var(--success); }
-.badgeBanned  { background-color: color-mix(in srgb, var(--danger) 20%, transparent); color: var(--danger); }
+.badgeActive  { background-color: var(--success-bg); color: var(--success-text); }
+.badgeBanned  { background-color: var(--danger-bg); color: var(--danger-text); }
 
 /* ── Actions ──────────────────────────────────────────────── */
 .actions {

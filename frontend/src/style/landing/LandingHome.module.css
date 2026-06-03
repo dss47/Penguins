@@ -21,7 +21,7 @@
     padding: 5px 16px;
     border: 1px solid var(--bm);
     border-radius: 100px;
-    background: rgba(168, 85, 247, .08);
+    background: var(--nv-soft, rgba(168, 85, 247, .08));
     font-size: .75rem;
     color: var(--nv);
     letter-spacing: .08em;
@@ -54,11 +54,7 @@
 }
 .heroTitle2{
     display: block;
-    background: linear-gradient(90deg,var(--nv),var(--nb),var(--nc));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 0 28px rgba(168,85,247,.45));
+    color: var(--nv);
 }
 
 /* Gradient text on the second line */
@@ -99,7 +95,7 @@ position: relative;
     padding: .95rem 1.5rem .95rem 3.4rem;
     border-radius: 14px;
     border: 1px solid var(--bm);
-    background: rgba(17, 8, 48, .85);
+    background: var(--bg-card);
     backdrop-filter: blur(12px);
     color: var(--tp);
     font-family: 'DM Sans', sans-serif;
@@ -164,7 +160,7 @@ position: relative;
     padding: 4px 14px;
     border: 1px solid var(--bd);
     border-radius: 100px;
-    background: rgba(168,85,247,.05);
+    background: var(--nv-soft, rgba(168,85,247,.05));
     font-size: .78rem;
     color: var(--tm);
     cursor: pointer;
@@ -219,7 +215,7 @@ position: relative;
     font-size: 2.5rem;
     font-weight: 700;
     margin: 0;
-    background: linear-gradient(to right, var(--nv), #06b6d4);
+    background: linear-gradient(to right, var(--nv), var(--nv));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -231,7 +227,7 @@ position: relative;
 .categoriesNum span,
 .communauteNum span,
 .disponibiliteNum span {
-    background: linear-gradient(to right, var(--nv), #06b6d4);
+    background: linear-gradient(to right, var(--nv), var(--nv));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -250,6 +246,18 @@ position: relative;
 }
 
 /* Animation classes */
+/* ── Light mode overrides ─────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .input {
+    background: var(--bg-card);
+    backdrop-filter: none;
+    box-shadow: var(--shadow-sm);
+  }
+  .searchBtn {
+    box-shadow: var(--shadow-sm);
+  }
+}
+
 @keyframes fadeUp {
     from {
         opacity: 0;
@@ -303,7 +311,7 @@ position: relative;
     padding: 4px 14px;
     border: 1px solid var(--bd);
     border-radius: 100px;
-    background: rgba(168,85,247,.05);
+    background: var(--nv-soft, rgba(168,85,247,.05));
     font-size: .78rem;
     color: var(--tm);
     cursor: pointer;

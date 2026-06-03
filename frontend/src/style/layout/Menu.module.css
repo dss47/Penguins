@@ -113,7 +113,7 @@
 .navLinks, .navLinksApp {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 2rem;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -125,19 +125,16 @@
 }
 
 .navLinks a, .navLinksApp a {
-    font-size: 14px;
+    font-size: 0.95rem;
     font-weight: 500;
     color: var(--ts);
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.2s ease;
 }
 
-.navLinks a:hover {
-    color: var(--tp);
-}
-
+.navLinks a:hover,
 .navLinksApp a:hover {
-    color: var(--nv); /* Indigo hover for app side */
+    color: var(--tp);
 }
 
 /* --- Sliding Buttons --- */
@@ -231,4 +228,59 @@
 
 .primaryBtn:hover {
     opacity: 0.9;
+}
+
+/* ── Light Mode Overrides ───────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .navbar {
+    background: var(--bg-card);
+    backdrop-filter: none;
+    border-bottom: 1px solid var(--bd);
+  }
+  .navLinks a:hover {
+    color: var(--nv);
+  }
+  .navLinksApp a:hover {
+    color: var(--nv);
+  }
+  .textLink:hover {
+    color: var(--nv);
+  }
+  .primaryBtn {
+    transition: all 0.2s ease;
+  }
+  .primaryBtn:hover {
+    background: #4338CA;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    opacity: 1;
+  }
+}
+
+:root[data-theme="light"] .navbar,
+.light .navbar {
+    background: var(--bg-card);
+    backdrop-filter: none;
+    border-bottom: 1px solid var(--bd);
+}
+:root[data-theme="light"] .navLinks a:hover,
+.light .navLinks a:hover {
+    color: var(--nv);
+}
+:root[data-theme="light"] .navLinksApp a:hover,
+.light .navLinksApp a:hover {
+    color: var(--nv);
+}
+:root[data-theme="light"] .textLink:hover,
+.light .textLink:hover {
+    color: var(--nv);
+}
+:root[data-theme="light"] .primaryBtn,
+.light .primaryBtn {
+    transition: all 0.2s ease;
+}
+:root[data-theme="light"] .primaryBtn:hover,
+.light .primaryBtn:hover {
+    background: #4338CA;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    opacity: 1;
 }

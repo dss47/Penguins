@@ -14,14 +14,14 @@
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     cursor: default;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow-sm);
 }
 
 .card:hover {
     transform: translateY(-8px);
     background: var(--bg-card-h);
     border-color: var(--bm);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--bd);
+    box-shadow: var(--shadow-lg);
 }
 
 .cardHeader {
@@ -39,11 +39,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
 }
 
 .card:hover .iconWrapper {
-    transform: scale(1.08) rotate(5deg);
+    transform: scale(1.05);
     border-color: var(--bm);
 }
 
@@ -117,18 +117,18 @@
     font-size: 0.85rem;
     font-weight: 600;
     font-family: sans-serif;
-    color: var(--nc); /* Cyan text for features */
-    background: rgba(6, 182, 212, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(79, 70, 229, 0.1);
     padding: 0.5rem 1rem;
     border-radius: 8px;
-    border: 1px solid rgba(6, 182, 212, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     transition: all 0.2s ease;
 }
 
 .card:hover .featureItem {
-    color: var(--tp);
-    background: var(--nc);
-    border-color: var(--nc);
+    background: rgba(79, 70, 229, 0.18);
+    color: rgba(255, 255, 255, 0.95);
+    border-color: rgba(79, 70, 229, 0.3);
 }
 
 .cardFooter {
@@ -154,12 +154,12 @@
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
-    box-shadow: 0 4px 15px rgba(168,85,247,0.3);
+    box-shadow: none;
 }
 
 .card:hover .actionBtn {
-    background: var(--ag);
-    box-shadow: 0 6px 20px rgba(168,85,247,0.5);
+    background: #4338CA;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     transform: translateY(-2px);
 }
 
@@ -203,4 +203,49 @@
 
 .actionBtn:active, .secondaryBtn:active {
     transform: translateY(0);
+}
+
+/* ── Light Mode Overrides ───────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .actionBtn {
+    background: var(--nv);
+    box-shadow: var(--shadow-sm);
+  }
+  .card:hover .actionBtn {
+    background: var(--nv-hover, var(--nv));
+    box-shadow: var(--shadow-md);
+  }
+  .featureItem {
+    background: var(--nv-soft);
+    color: var(--tp);
+    border-color: transparent;
+  }
+  .card:hover .featureItem {
+    background: var(--nv-soft);
+    color: var(--tp);
+    border-color: transparent;
+  }
+}
+
+:root[data-theme="light"] .actionBtn,
+.light .actionBtn {
+    background: var(--nv);
+    box-shadow: var(--shadow-sm);
+}
+:root[data-theme="light"] .card:hover .actionBtn,
+.light .card:hover .actionBtn {
+    background: var(--nv-hover, var(--nv));
+    box-shadow: var(--shadow-md);
+}
+:root[data-theme="light"] .featureItem,
+.light .featureItem {
+    background: var(--nv-soft);
+    color: var(--tp);
+    border-color: transparent;
+}
+:root[data-theme="light"] .card:hover .featureItem,
+.light .card:hover .featureItem {
+    background: var(--nv-soft);
+    color: var(--tp);
+    border-color: transparent;
 }

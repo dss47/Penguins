@@ -8,6 +8,7 @@
     background: var(--bg-card);
     position: relative;
     overflow: hidden;
+    transition: all 0.3s ease;
 }
 .topSection{
     display: flex;
@@ -85,4 +86,45 @@
 .toComment{
     opacity: 1;
     transform: none;
+}
+
+/* ── Hover (dark mode) ────────────────────────────────────── */
+.CommentBox:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.35);
+}
+
+/* ── Light Mode Overrides ───────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .logo {
+    background: var(--nv-soft);
+    border-color: rgba(79, 70, 229, 0.25);
+  }
+  .iaName {
+    background: var(--nv-soft);
+    color: var(--tp);
+  }
+  .CommentBox:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-color: var(--nv-soft);
+  }
+}
+
+:root[data-theme="light"] .logo,
+.light .logo {
+    background: var(--nv-soft);
+    border-color: rgba(79, 70, 229, 0.25);
+}
+:root[data-theme="light"] .iaName,
+.light .iaName {
+    background: var(--nv-soft);
+    color: var(--tp);
+}
+:root[data-theme="light"] .CommentBox:hover,
+.light .CommentBox:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-color: var(--nv-soft);
 }

@@ -9,13 +9,13 @@
     gap: .75rem;
     transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
     cursor: pointer;
-    box-shadow: 0 12px 30px rgba(0,0,0,.35);
+    box-shadow: var(--shadow-md);
 }
 
 .Top8AI:hover{
     transform: translateY(-3px);
     border-color: rgba(168,85,247,.45);
-    box-shadow: 0 16px 36px rgba(0,0,0,.4);
+    box-shadow: var(--shadow-md);
 }
 
 .rank{
@@ -61,4 +61,38 @@
     transform: rotate(45deg);
     box-shadow: 0 0 6px rgba(251,191,36,.6);
     display: inline-block;
+}
+
+/* ── Light mode overrides ─────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .Top8AI {
+    background: #FFFFFF;
+    border-color: #E4E4E7;
+    box-shadow: var(--shadow-sm);
+  }
+  .Top8AI:hover {
+    border-color: var(--nv-soft);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+  }
+  .rank {
+    color: var(--tm);
+  }
+}
+
+:root[data-theme="light"] .Top8AI,
+.light .Top8AI {
+  background: #FFFFFF;
+  border-color: #E4E4E7;
+  box-shadow: var(--shadow-sm);
+}
+:root[data-theme="light"] .Top8AI:hover,
+.light .Top8AI:hover {
+  border-color: var(--nv-soft);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+:root[data-theme="light"] .rank,
+.light .rank {
+  color: var(--tm);
 }

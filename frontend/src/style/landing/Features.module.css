@@ -144,3 +144,38 @@
     color: var(--ng);
     background: rgba(34, 197, 94, .06);
 }
+
+/* ── Light Mode Overrides ───────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .grid1, .grid2, .grid3, .grid4, .grid5 {
+    background: var(--bg-card);
+    border-color: var(--bd);
+    box-shadow: var(--shadow-sm);
+  }
+  .gridsbox:hover {
+    background-color: var(--bg-card-h);
+    border-color: var(--nv);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+:root[data-theme="light"] .grid1,
+:root[data-theme="light"] .grid2,
+:root[data-theme="light"] .grid3,
+:root[data-theme="light"] .grid4,
+:root[data-theme="light"] .grid5,
+.light .grid1,
+.light .grid2,
+.light .grid3,
+.light .grid4,
+.light .grid5 {
+    background: var(--bg-card);
+    border-color: var(--bd);
+    box-shadow: var(--shadow-sm);
+}
+:root[data-theme="light"] .gridsbox:hover,
+.light .gridsbox:hover {
+    background-color: var(--bg-card-h);
+    border-color: var(--nv);
+    box-shadow: var(--shadow-md);
+}

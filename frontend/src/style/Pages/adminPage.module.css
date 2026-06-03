@@ -1,17 +1,16 @@
 
 
 :root {
-  --bg-base:      var(--bg-void);   /* gray-950 */
-  --bg-card:      var(--bg-card);   /* gray-900 */
-  --bg-hover:     var(--bg-card-h);   /* gray-800 */
+  --bg-base:      var(--bg-void);
+  --bg-hover:     var(--bg-card-h);
   --border:       var(--bd);
   --text-primary: var(--tp);
-  --text-muted:   var(--tm);   /* gray-500 */
-  --accent:       var(--nv);   /* indigo-500 */
-  --accent-light: var(--nv);   /* indigo-400 */
-  --success:      var(--ng);   /* emerald-500 */
-  --danger:       var(--np);   /* red-500 */
-  --warning:      var(--np);   /* amber-500 */
+  --text-muted:   var(--tm);
+  --accent:       var(--nv);
+  --accent-light: var(--nv);
+  --success:      var(--ng);
+  --danger:       var(--np);
+  --warning:      var(--np);
 
   /* Spacing */
   --sidebar-width: 240px;

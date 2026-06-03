@@ -75,8 +75,8 @@
 
 /* ── INPUT ── */
 .form-input {
-  background: var(--bg-card-h); /* Lightened from #141b35 */
-  border: 1px solid rgba(15, 23, 42, 0.15) /* var(--tp-rgb) fallback */; /* Increased contrast */
+  background: var(--bg-card-h);
+  border: 1px solid var(--bd);
   border-radius: 12px;
   color: var(--tp);
   font-size: 0.88rem;
@@ -103,8 +103,8 @@
 
 /* ── TEXTAREA ── */
 .form-textarea {
-  background: var(--bg-card-h); /* Lightened from #141b35 */
-  border: 1px solid rgba(15, 23, 42, 0.15) /* var(--tp-rgb) fallback */; /* Increased contrast */
+  background: var(--bg-card-h);
+  border: 1px solid var(--bd);
   border-radius: 12px;
   color: var(--tp);
   font-size: 0.88rem;
@@ -130,9 +130,9 @@
 
 /* ── UPLOAD ZONE ── */
 .upload-zone {
-  border: 2px dashed rgba(124, 107, 255, 0.45); /* Increased contrast */
+  border: 2px dashed var(--bd);
   border-radius: 12px;
-  background: var(--bg-card-h); /* Lightened from #141b35 */
+  background: var(--bg-card-h);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -257,6 +257,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   text-align: center;
   padding: 2rem 0 1rem;
   width: 100%;
+  max-width: 950px;
+  margin: 0 auto;
 }
 
 .ia {
@@ -449,4 +451,40 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: var(--nv) !important;
   color: white !important;
   border-radius: 0 6px 6px 0 !important;
+}
+
+/* ── Light Mode Overrides ───────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .form-input,
+  .form-textarea {
+    border-color: #CBD5E1;
+    color: #0F172A;
+  }
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+    color: #94A3B8;
+  }
+  .upload-zone {
+    background-color: #F8FAFC;
+    border-color: #CBD5E1;
+  }
+}
+
+:root[data-theme="light"] .form-input,
+.light .form-input,
+:root[data-theme="light"] .form-textarea,
+.light .form-textarea {
+  border-color: #CBD5E1;
+  color: #0F172A;
+}
+:root[data-theme="light"] .form-input::placeholder,
+.light .form-input::placeholder,
+:root[data-theme="light"] .form-textarea::placeholder,
+.light .form-textarea::placeholder {
+  color: #94A3B8;
+}
+:root[data-theme="light"] .upload-zone,
+.light .upload-zone {
+  background-color: #F8FAFC;
+  border-color: #CBD5E1;
 }

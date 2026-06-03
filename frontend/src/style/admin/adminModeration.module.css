@@ -138,9 +138,10 @@
   height: 10px;
 }
 
-.badgeDanger  { background-color: color-mix(in srgb, var(--danger) 20%, transparent); color: var(--danger); }
-.badgeWarning { background-color: color-mix(in srgb, var(--warning) 20%, transparent); color: var(--warning); }
-.badgeAI      { background-color: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--accent-light); }
+.badgeSuccess { background-color: var(--success-bg); color: var(--success-text); }
+.badgeDanger  { background-color: var(--danger-bg); color: var(--danger-text); }
+.badgeWarning { background-color: var(--warning-bg); color: var(--warning-text); }
+.badgeAI      { background-color: var(--nv-soft); color: var(--nv); }
 
 /* ── Contenu commentaire ──────────────────────────────────── */
 .commentBody {

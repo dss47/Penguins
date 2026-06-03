@@ -67,6 +67,7 @@
     font-size: .82rem;
     color: var(--tm);
     white-space: nowrap;
+    transition: all 0.25s ease;
 }
 
 .aiPill span:first-child{
@@ -100,4 +101,44 @@
   100% {
     transform: translateX(-50%);
   }
+}
+
+/* ── Light Mode Overrides ───────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .aiPill {
+    background: var(--nv-soft);
+    color: var(--tp);
+  }
+  .aiPill:hover {
+    background: var(--nv-hover);
+    border-color: var(--nv);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+  .marqueeContainer::before {
+    background: linear-gradient(90deg, var(--bg-void), transparent);
+  }
+  .marqueeContainer::after {
+    background: linear-gradient(270deg, var(--bg-void), transparent);
+  }
+}
+
+:root[data-theme="light"] .aiPill,
+.light .aiPill {
+    background: var(--nv-soft);
+    color: var(--tp);
+}
+:root[data-theme="light"] .aiPill:hover,
+.light .aiPill:hover {
+    background: var(--nv-hover);
+    border-color: var(--nv);
+    box-shadow: var(--shadow-sm);
+}
+:root[data-theme="light"] .marqueeContainer::before,
+.light .marqueeContainer::before {
+    background: linear-gradient(90deg, var(--bg-void), transparent);
+}
+:root[data-theme="light"] .marqueeContainer::after,
+.light .marqueeContainer::after {
+    background: linear-gradient(270deg, var(--bg-void), transparent);
 }

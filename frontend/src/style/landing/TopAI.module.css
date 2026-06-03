@@ -141,7 +141,7 @@
     background: linear-gradient(180deg, rgba(22,13,56,.9), rgba(9,5,24,0));
     border: 1px solid rgba(168,85,247,.22);
     border-bottom: none;
-    box-shadow: 0 -20px 50px rgba(0,0,0,.45), inset 0 18px 28px rgba(0,0,0,.35);
+    box-shadow: var(--shadow-md);
     pointer-events: none;
     z-index: 1;
 }
@@ -241,4 +241,50 @@
     .top8AI{
         grid-template-columns: 1fr;
     }
+}
+
+/* ── Light Mode Overrides ───────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .TopAI {
+    padding: 7rem 1.5rem 5rem;
+  }
+  .ringLarge,
+  .ringMid,
+  .ringSmall {
+    border-color: rgba(79, 70, 229, 0.1);
+  }
+  .stageBase {
+    background: linear-gradient(180deg, var(--nv-soft), transparent);
+    border-color: rgba(79, 70, 229, 0.1);
+  }
+  .heroLine {
+    background: linear-gradient(90deg, transparent, var(--nv));
+    box-shadow: none;
+  }
+  .stageDot {
+    box-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+  }
+}
+
+:root[data-theme="light"] .ringLarge,
+:root[data-theme="light"] .ringMid,
+:root[data-theme="light"] .ringSmall,
+.light .ringLarge,
+.light .ringMid,
+.light .ringSmall {
+    border-color: rgba(79, 70, 229, 0.1);
+}
+:root[data-theme="light"] .stageBase,
+.light .stageBase {
+    background: linear-gradient(180deg, var(--nv-soft), transparent);
+    border-color: rgba(79, 70, 229, 0.1);
+}
+:root[data-theme="light"] .heroLine,
+.light .heroLine {
+    background: linear-gradient(90deg, transparent, var(--nv));
+    box-shadow: none;
+}
+:root[data-theme="light"] .stageDot,
+.light .stageDot {
+    box-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
 }

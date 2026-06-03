@@ -6,9 +6,15 @@
     background: linear-gradient(160deg, rgba(30,18,80,.92), rgba(12,7,32,.95));
     position: relative;
     overflow: hidden;
-    transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+    transition: all 0.3s ease;
     width: 200px;
-    box-shadow: 0 16px 40px rgba(0,0,0,.45);
+    box-shadow: var(--shadow-md);
+}
+
+.Top3card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.2);
+  border-color: rgba(168, 85, 247, 0.5);
 }
 
 .Top3card::after{
@@ -122,6 +128,78 @@
     background: rgba(168,85,247,.12);
     border: 1px solid rgba(168,85,247,.25);
     color: var(--nv);
+}
+
+/* ── Light mode overrides ─────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .Top3card {
+    background: var(--bg-card);
+    border-color: var(--bd);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  }
+  .Top3card::after {
+    display: none;
+  }
+  .rank1Card {
+    background: linear-gradient(180deg, #FFFFFF, #EEF2FF);
+    border-color: var(--bm);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  }
+  .icon {
+    background: var(--bg-surface);
+    border: 1px solid var(--bd);
+  }
+  .rank1Card .icon {
+    background: var(--bg-surface);
+  }
+  .rate {
+    background: var(--nv-soft);
+    border-color: var(--bd);
+    color: var(--nv);
+  }
+  .Top3card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-color: var(--nv-soft);
+    transform: translateY(-4px);
+  }
+}
+
+:root[data-theme="light"] .Top3card,
+.light .Top3card {
+  background: var(--bg-card);
+  border-color: var(--bd);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+:root[data-theme="light"] .Top3card::after,
+.light .Top3card::after {
+  display: none;
+}
+:root[data-theme="light"] .rank1Card,
+.light .rank1Card {
+  background: linear-gradient(180deg, #FFFFFF, #EEF2FF);
+  border-color: var(--bm);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+:root[data-theme="light"] .icon,
+.light .icon {
+  background: var(--bg-surface);
+  border: 1px solid var(--bd);
+}
+:root[data-theme="light"] .rank1Card .icon,
+.light .rank1Card .icon {
+  background: var(--bg-surface);
+}
+:root[data-theme="light"] .rate,
+.light .rate {
+  background: var(--nv-soft);
+  border-color: var(--bd);
+  color: var(--nv);
+}
+:root[data-theme="light"] .Top3card:hover,
+.light .Top3card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-color: var(--nv-soft);
+  transform: translateY(-4px);
 }
 
 @media (max-width: 720px){

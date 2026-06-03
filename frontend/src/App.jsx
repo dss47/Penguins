@@ -5,7 +5,7 @@ import Layout from "./layout/Layout"
 import AdminPage from "./pages/adminPage"
 
 function App() {
-  const user = "admin"; 
+  const user = "user"; 
 
   if (user === "admin") {
     return (

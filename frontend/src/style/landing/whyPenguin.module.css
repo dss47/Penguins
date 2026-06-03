@@ -151,3 +151,15 @@
 .btn:hover{
 box-shadow: 0px 0px 28px 14px rgba(124, 58, 237, .35);
 }
+
+/* ── Light Mode Overrides ───────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .icon {
+    background: var(--nv-soft);
+  }
+}
+
+:root[data-theme="light"] .icon,
+.light .icon {
+    background: var(--nv-soft);
+}

@@ -88,6 +88,7 @@
 
 .card:hover {
   border-color: var(--bg-hover);
+  background-color: var(--bg-hover);
 }
 
 .cardHeader {
@@ -115,9 +116,9 @@
   flex-shrink: 0;
 }
 
-.badgePending  { background-color: color-mix(in srgb, var(--warning) 20%, transparent); color: var(--warning); }
-.badgeApproved { background-color: color-mix(in srgb, var(--success) 20%, transparent); color: var(--success); }
-.badgeRejected { background-color: color-mix(in srgb, var(--danger) 20%, transparent); color: var(--danger); }
+.badgePending  { background-color: var(--warning-bg); color: var(--warning-text); }
+.badgeApproved { background-color: var(--success-bg); color: var(--success-text); }
+.badgeRejected { background-color: var(--danger-bg); color: var(--danger-text); }
 
 .cardDesc {
   font-size: 13px;
@@ -174,9 +175,33 @@
 
 .btnApprove:hover {
   background-color: color-mix(in srgb, var(--success) 15%, transparent);
+  border-color: var(--success);
 }
 
 .btnApprove svg { width: 13px; height: 13px; }
+
+.btnView {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnView svg { width: 13px; height: 13px; }
+
+.btnView:hover {
+  background-color: var(--bd);
+  color: var(--text-primary);
+}
 
 .btnReject {
   flex: 1;
@@ -198,6 +223,7 @@
 
 .btnReject:hover {
   background-color: color-mix(in srgb, var(--danger) 15%, transparent);
+  border-color: var(--danger);
 }
 
 .btnReject svg { width: 13px; height: 13px; }
