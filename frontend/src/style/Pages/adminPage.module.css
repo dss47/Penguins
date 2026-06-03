@@ -1,0 +1,61 @@
+
+
+:root {
+  --bg-base:      #030712;   /* gray-950 */
+  --bg-card:      #111827;   /* gray-900 */
+  --bg-hover:     #1f2937;   /* gray-800 */
+  --border:       #1f2937;
+  --text-primary: #ffffff;
+  --text-muted:   #6b7280;   /* gray-500 */
+  --accent:       #6366f1;   /* indigo-500 */
+  --accent-light: #818cf8;   /* indigo-400 */
+  --success:      #10b981;   /* emerald-500 */
+  --danger:       #ef4444;   /* red-500 */
+  --warning:      #f59e0b;   /* amber-500 */
+
+  /* Spacing */
+  --sidebar-width: 240px;
+  --radius-sm:     6px;
+  --radius-md:     10px;
+  --radius-lg:     16px;
+
+  /* Typography */
+  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ── Reset ───────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Wrapper principal ───────────────────────────────────── */
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+/* ── Zone de contenu (droite) ────────────────────────────── */
+.content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  padding: 32px;
+  min-height: 100vh;
+  overflow-y: auto;
+  background-color: var(--bg-base);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0;
+    padding: 16px;
+  }
+}

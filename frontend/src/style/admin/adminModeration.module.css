@@ -1,0 +1,346 @@
+/* ============================================================
+   adminModeration.module.css — Modération des commentaires
+   Projet : Penguin Admin Panel
+   ============================================================ */
+
+/* ── En-tête page ────────────────────────────────────────── */
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ── Barre de filtres ─────────────────────────────────────── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filterSelect {
+  padding: 9px 12px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: var(--font-sans);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.filterSelect:focus {
+  border-color: var(--accent);
+}
+
+.filterCount {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+/* ── Liste de cards ───────────────────────────────────────── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Card commentaire flaggé ──────────────────────────────── */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--bg-hover);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cardUser {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.userName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.userDate {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── Badges ───────────────────────────────────────────────── */
+.badgeGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge svg {
+  width: 10px;
+  height: 10px;
+}
+
+.badgeDanger  { background-color: color-mix(in srgb, var(--danger) 20%, transparent); color: var(--danger); }
+.badgeWarning { background-color: color-mix(in srgb, var(--warning) 20%, transparent); color: var(--warning); }
+.badgeAI      { background-color: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--accent-light); }
+
+/* ── Contenu commentaire ──────────────────────────────────── */
+.commentBody {
+  background-color: var(--bg-hover);
+  border-left: 3px solid var(--danger);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.55;
+}
+
+/* ── Raison IA ────────────────────────────────────────────── */
+.aiReason {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.aiReason svg {
+  width: 13px;
+  height: 13px;
+  color: var(--accent-light);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.aiReasonLabel {
+  color: var(--accent-light);
+  font-weight: 600;
+}
+
+/* ── Contexte (outil associé) ─────────────────────────────── */
+.context {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.context svg {
+  width: 12px;
+  height: 12px;
+}
+
+.contextLink {
+  color: var(--accent-light);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.contextLink:hover {
+  text-decoration: underline;
+}
+
+/* ── Actions card ─────────────────────────────────────────── */
+.cardActions {
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.btnIgnore {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.btnIgnore:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+.btnIgnore svg { width: 13px; height: 13px; }
+
+.btnDelete {
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.btnDelete:hover {
+  background-color: color-mix(in srgb, var(--danger) 15%, transparent);
+}
+
+.btnDelete svg { width: 13px; height: 13px; }
+
+.btnBan {
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--warning) 40%, transparent);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--warning);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.btnBan:hover {
+  background-color: color-mix(in srgb, var(--warning) 15%, transparent);
+}
+
+.btnBan svg { width: 13px; height: 13px; }
+
+/* ── Confirm ban inline ───────────────────────────────────── */
+.confirmBox {
+  background-color: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+
+.confirmText {
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 8px;
+}
+
+.btnYes {
+  padding: 7px 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--danger);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.btnYes:hover { opacity: 0.85; }
+
+.btnNo {
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnNo:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.empty {
+  text-align: center;
+  padding: 64px 20px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.emptyIcon {
+  width: 40px;
+  height: 40px;
+  color: var(--text-muted);
+  margin: 0 auto 12px;
+  opacity: 0.4;
+}

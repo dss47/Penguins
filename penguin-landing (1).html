@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Penguin — AI Tools Directory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg-void: #04010e;
+  --bg-deep: #0a0520;
+  --bg-surface: #110830;
+  --bg-card: #160d38;
+  --bg-card-h: #1e1250;
+  --nv: #a855f7;
+  --nb: #3b82f6;
+  --np: #ec4899;
+  --nc: #06b6d4;
+  --ng: #22c55e;
+  --ag: #7c3aed;
+  --tp: #f0eaff;
+  --ts: #9d8abf;
+  --tm: #5a4d72;
+  --bd: rgba(168,85,247,0.12);
+  --bm: rgba(168,85,247,0.25);
+  --bg2: rgba(168,85,247,0.5);
+}
+html { scroll-behavior: smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg-void); color:var(--tp); overflow-x:hidden; line-height:1.6; }
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:999; opacity:.4;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+/* ── AMBIENT ── */
+.amb { position:fixed; border-radius:50%; filter:blur(130px); pointer-events:none; z-index:0; }
+.amb1 { width:700px;height:700px;background:rgba(124,58,237,.16);top:-250px;left:-150px; }
+.amb2 { width:500px;height:500px;background:rgba(59,130,246,.11);top:300px;right:-100px; }
+.amb3 { width:400px;height:400px;background:rgba(236,72,153,.09);bottom:600px;left:35%; }
+.amb4 { width:300px;height:300px;background:rgba(6,182,212,.07);bottom:100px;right:5%; }
+
+/* ── COSMIC BLOBS ── */
+.blob-scene { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+.blob {
+  position:absolute; border-radius:50%;
+  filter:blur(2px);
+  animation:blobMorph 12s ease-in-out infinite alternate;
+}
+@keyframes blobMorph {
+  0%   { border-radius:60% 40% 30% 70%/60% 30% 70% 40%; transform:rotate(0deg) scale(1); }
+  25%  { border-radius:30% 60% 70% 40%/50% 60% 30% 60%; transform:rotate(15deg) scale(1.05); }
+  50%  { border-radius:50% 60% 30% 60%/40% 50% 70% 30%; transform:rotate(-10deg) scale(.95); }
+  75%  { border-radius:70% 30% 50% 40%/30% 70% 40% 60%; transform:rotate(20deg) scale(1.08); }
+  100% { border-radius:40% 60% 60% 30%/70% 40% 50% 60%; transform:rotate(-5deg) scale(1); }
+}
+.blob-a {
+  width:340px; height:340px; top:-60px; left:-80px;
+  background:radial-gradient(circle at 40% 40%, rgba(168,85,247,.55) 0%, rgba(124,58,237,.3) 40%, transparent 75%);
+  animation-duration:14s;
+}
+.blob-b {
+  width:280px; height:280px; top:80px; right:-40px;
+  background:radial-gradient(circle at 55% 45%, rgba(59,130,246,.5) 0%, rgba(99,102,241,.25) 40%, transparent 75%);
+  animation-duration:10s; animation-delay:-4s;
+}
+.blob-c {
+  width:200px; height:200px; bottom:120px; left:8%;
+  background:radial-gradient(circle at 50% 50%, rgba(236,72,153,.45) 0%, rgba(168,85,247,.2) 50%, transparent 75%);
+  animation-duration:16s; animation-delay:-2s;
+}
+.blob-d {
+  width:160px; height:160px; bottom:60px; right:12%;
+  background:radial-gradient(circle at 45% 55%, rgba(6,182,212,.4) 0%, rgba(59,130,246,.2) 50%, transparent 75%);
+  animation-duration:11s; animation-delay:-6s;
+}
+.blob-e {
+  width:120px; height:120px; top:45%; left:50%;
+  background:radial-gradient(circle at 50% 50%, rgba(168,85,247,.35) 0%, transparent 70%);
+  animation-duration:9s; animation-delay:-1s;
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding:1rem 3.5rem;
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(4,1,14,.65); backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--bd);
+  transition:border-color .3s;
+}
+.logo-link { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.logo-svg { width:42px; height:42px; flex-shrink:0; }
+.logo-wordmark {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem;
+  letter-spacing:.03em; color:var(--tp);
+}
+.logo-wordmark span { color:var(--nv); }
+.nav-links { display:flex; align-items:center; gap:2.5rem; list-style:none; }
+.nav-links a { font-size:.85rem; color:var(--ts); text-decoration:none; letter-spacing:.04em; transition:color .2s; }
+.nav-links a:hover { color:var(--tp); }
+.nav-cta { display:flex; align-items:center; gap:.875rem; }
+.btn-ghost { padding:.5rem 1.25rem; border:1px solid var(--bm); border-radius:8px; background:transparent; color:var(--ts); font-family:'DM Sans',sans-serif; font-size:.85rem; cursor:pointer; transition:all .2s; text-decoration:none; }
+.btn-ghost:hover { border-color:var(--bg2); color:var(--tp); }
+.btn-p { padding:.5rem 1.5rem; border:none; border-radius:8px; background:linear-gradient(135deg,var(--ag),var(--nb)); color:#fff; font-family:'DM Sans',sans-serif; font-size:.85rem; font-weight:500; cursor:pointer; box-shadow:0 0 24px rgba(124,58,237,.35); transition:all .2s; text-decoration:none; }
+.btn-p:hover { box-shadow:0 0 40px rgba(124,58,237,.55); transform:translateY(-1px); }
+
+/* ── HERO ── */
+.hero {
+  position:relative; z-index:1; min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:9rem 2rem 5rem; overflow:hidden;
+}
+.hero::after {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background-image:linear-gradient(rgba(168,85,247,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.035) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 65% at 50% 50%,black 30%,transparent 100%);
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px; padding:5px 16px;
+  border:1px solid var(--bm); border-radius:100px; background:rgba(168,85,247,.08);
+  font-size:.75rem; color:var(--nv); letter-spacing:.08em; text-transform:uppercase;
+  margin-bottom:1.75rem; animation:fadeUp .8s ease both;
+}
+.bdot { width:6px; height:6px; border-radius:50%; background:var(--nv); box-shadow:0 0 8px var(--nv); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+.hero-h1 {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(2.6rem,5.5vw,5rem);
+  line-height:1.07; letter-spacing:-.025em; margin-bottom:1.25rem;
+  animation:fadeUp .9s ease .1s both;
+}
+.h1-plain { color:var(--tp); }
+.h1-grad {
+  background:linear-gradient(90deg,var(--nv),var(--nb),var(--nc));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  filter:drop-shadow(0 0 28px rgba(168,85,247,.45));
+}
+.hero-sub { font-size:1.1rem; color:var(--ts); max-width:540px; font-weight:300; line-height:1.75; margin-bottom:2.5rem; animation:fadeUp .9s ease .2s both; }
+.search-wrap { position:relative; width:100%; max-width:650px; animation:fadeUp .9s ease .3s both; margin-bottom:1.25rem; }
+.search-bar {
+  width:100%; padding:.95rem 1.5rem .95rem 3.4rem; border-radius:14px;
+  border:1px solid var(--bm); background:rgba(17,8,48,.85); backdrop-filter:blur(12px);
+  color:var(--tp); font-family:'DM Sans',sans-serif; font-size:.95rem; outline:none;
+  transition:all .3s; box-shadow:0 0 0 0 rgba(168,85,247,0);
+}
+.search-bar::placeholder { color:var(--tm); }
+.search-bar:focus { border-color:var(--bg2); box-shadow:0 0 0 3px rgba(168,85,247,.15),0 0 40px rgba(168,85,247,.1); }
+.s-icon { position:absolute; left:1.1rem; top:50%; transform:translateY(-50%); color:var(--tm); pointer-events:none; }
+.s-btn { position:absolute; right:8px; top:50%; transform:translateY(-50%); padding:.5rem 1.25rem; border-radius:9px; border:none; background:linear-gradient(135deg,var(--ag),var(--nb)); color:#fff; font-family:'DM Sans',sans-serif; font-size:.85rem; font-weight:500; cursor:pointer; box-shadow:0 0 20px rgba(124,58,237,.4); transition:all .2s; }
+.s-btn:hover { box-shadow:0 0 32px rgba(124,58,237,.65); }
+.hints { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; animation:fadeUp .9s ease .4s both; }
+.hint { padding:4px 14px; border:1px solid var(--bd); border-radius:100px; background:rgba(168,85,247,.05); font-size:.78rem; color:var(--tm); cursor:pointer; transition:all .2s; }
+.hint:hover { border-color:var(--bm); color:var(--ts); }
+.hero-stats { display:flex; gap:3rem; margin-top:3.5rem; padding-top:3rem; border-top:1px solid var(--bd); animation:fadeUp .9s ease .5s both; }
+.stat-n { font-family:'Syne',sans-serif; font-size:2rem; font-weight:700; background:linear-gradient(90deg,var(--nv),var(--nc)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.stat-l { font-size:.78rem; color:var(--tm); letter-spacing:.04em; margin-top:2px; text-align:center; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
+
+/* ── MARQUEE ── */
+.mq-wrap { position:relative; z-index:1; overflow:hidden; padding:1.75rem 0; border-top:1px solid var(--bd); border-bottom:1px solid var(--bd); mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent); }
+.mq-track { display:flex; gap:1.5rem; animation:mq 30s linear infinite; width:max-content; }
+@keyframes mq { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.mq-item { display:flex; align-items:center; gap:8px; padding:6px 18px; border:1px solid var(--bd); border-radius:100px; background:rgba(168,85,247,.04); font-size:.82rem; color:var(--tm); white-space:nowrap; }
+
+/* ── SECTION ── */
+.sec { position:relative; z-index:1; padding:5.5rem 4rem; max-width:1200px; margin:0 auto; }
+.sec-divider { border-top:1px solid var(--bd); }
+.s-label { display:inline-flex; align-items:center; gap:8px; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--nv); margin-bottom:.875rem; font-weight:500; }
+.s-label::before { content:''; width:22px; height:1px; background:var(--nv); }
+.s-title { font-family:'Syne',sans-serif; font-weight:700; font-size:clamp(1.75rem,2.8vw,2.75rem); line-height:1.15; letter-spacing:-.01em; margin-bottom:.875rem; }
+.s-sub { color:var(--ts); font-size:1rem; max-width:520px; font-weight:300; line-height:1.75; }
+
+/* ── AI CATEGORIES ── */
+.cats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem; margin-top:3rem; }
+.cat-card {
+  padding:1.5rem; border-radius:16px; border:1px solid var(--bd); background:var(--bg-card);
+  cursor:pointer; position:relative; overflow:hidden; transition:all .3s; text-align:center;
+}
+.cat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--bg2),transparent); opacity:0; transition:opacity .3s; }
+.cat-card:hover { border-color:var(--bm); background:var(--bg-card-h); transform:translateY(-4px); box-shadow:0 16px 50px rgba(0,0,0,.35),0 0 30px rgba(168,85,247,.08); }
+.cat-card:hover::before { opacity:1; }
+.cat-icon { font-size:2rem; margin-bottom:.75rem; display:block; }
+.cat-name { font-family:'Syne',sans-serif; font-size:.9rem; font-weight:600; color:var(--tp); margin-bottom:.3rem; }
+.cat-count { font-size:.75rem; color:var(--tm); }
+.cat-tools-popup {
+  position:absolute; inset:0; border-radius:16px;
+  background:rgba(11,5,28,.95); backdrop-filter:blur(12px);
+  padding:1rem; display:flex; flex-direction:column; justify-content:center; gap:7px;
+  opacity:0; transform:translateY(8px); pointer-events:none;
+  transition:all .3s ease; border:1px solid var(--bm);
+}
+.cat-card:hover .cat-tools-popup { opacity:1; transform:none; pointer-events:auto; }
+.popup-title { font-size:.7rem; color:var(--nv); letter-spacing:.08em; text-transform:uppercase; margin-bottom:4px; font-weight:600; }
+.tool-row { display:flex; align-items:center; gap:8px; padding:5px 8px; border-radius:8px; background:rgba(168,85,247,.07); transition:background .2s; }
+.tool-row:hover { background:rgba(168,85,247,.14); }
+.tool-emoji { font-size:.95rem; }
+.tool-info { flex:1; }
+.tool-nm { font-size:.78rem; color:var(--tp); font-weight:500; }
+.tool-stars { font-size:.65rem; color:var(--nv); }
+
+/* ── TOP AIs HALF-CIRCLE ── */
+.topai-section { padding-top:0; }
+.topai-arc-wrap {
+  position:relative; margin-top:3rem; height:420px;
+  display:flex; align-items:flex-end; justify-content:center;
+}
+.arc-bg {
+  position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+  width:680px; height:340px;
+}
+.podium-cards {
+  position:relative; z-index:2; display:flex; align-items:flex-end; gap:1.5rem; padding-bottom:0;
+}
+.pod-card {
+  border-radius:18px; padding:1.5rem 1.25rem; text-align:center;
+  border:1px solid var(--bd); background:var(--bg-card);
+  position:relative; overflow:hidden; transition:all .3s; width:180px;
+}
+.pod-card::after { content:''; position:absolute; inset:0; border-radius:18px; pointer-events:none; }
+.pod-card.rank1 {
+  width:210px; margin-bottom:60px;
+  background:linear-gradient(160deg,rgba(124,58,237,.25),rgba(59,130,246,.15));
+  border-color:rgba(168,85,247,.4);
+  box-shadow:0 0 60px rgba(124,58,237,.25), 0 20px 60px rgba(0,0,0,.5);
+}
+.pod-card.rank2 { margin-bottom:30px; }
+.pod-card.rank3 { margin-bottom:10px; }
+.pod-card:hover { transform:translateY(-6px); box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 30px rgba(168,85,247,.12); }
+.pod-rank {
+  position:absolute; top:-.75rem; left:50%; transform:translateX(-50%);
+  width:28px; height:28px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-size:.75rem; font-weight:700;
+}
+.pod-rank.r1 { background:linear-gradient(135deg,#f59e0b,#fbbf24); color:#000; box-shadow:0 0 16px rgba(251,191,36,.5); }
+.pod-rank.r2 { background:linear-gradient(135deg,#94a3b8,#cbd5e1); color:#000; }
+.pod-rank.r3 { background:linear-gradient(135deg,#c2793a,#d97706); color:#000; }
+.pod-logo { font-size:2.2rem; margin:1rem 0 .5rem; display:block; }
+.pod-name { font-family:'Syne',sans-serif; font-size:.95rem; font-weight:700; color:var(--tp); margin-bottom:.25rem; }
+.pod-cat { font-size:.72rem; color:var(--tm); margin-bottom:.75rem; }
+.pod-stars { display:flex; justify-content:center; gap:2px; font-size:.8rem; color:#f59e0b; margin-bottom:.625rem; }
+.pod-score {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 12px; border-radius:100px; font-size:.72rem; font-weight:600;
+  background:rgba(168,85,247,.12); border:1px solid rgba(168,85,247,.25); color:var(--nv);
+}
+.more-ais { margin-top:3rem; }
+.ai-list-row { display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; margin-top:1.25rem; }
+.ai-mini-card {
+  padding:1rem; border-radius:12px; border:1px solid var(--bd); background:var(--bg-card);
+  display:flex; align-items:center; gap:.75rem; transition:all .25s; cursor:pointer;
+}
+.ai-mini-card:hover { border-color:var(--bm); background:var(--bg-card-h); transform:translateY(-2px); }
+.ai-mini-rank { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800; color:var(--bd2,rgba(168,85,247,.25)); min-width:24px; }
+.ai-mini-emoji { font-size:1.4rem; }
+.ai-mini-info { flex:1; min-width:0; }
+.ai-mini-name { font-size:.8rem; font-weight:500; color:var(--tp); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ai-mini-score { font-size:.72rem; color:var(--nv); }
+
+/* ── FEATURES ── */
+.feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:3rem; }
+.feat-card {
+  padding:1.75rem; border-radius:16px; border:1px solid var(--bd); background:var(--bg-card);
+  position:relative; overflow:hidden; transition:all .3s;
+}
+.feat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--bg2),transparent); opacity:0; transition:opacity .3s; }
+.feat-card:hover { border-color:var(--bm); background:var(--bg-card-h); transform:translateY(-4px); box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 35px rgba(168,85,247,.07); }
+.feat-card:hover::before { opacity:1; }
+.feat-card.span2 { grid-column:span 2; }
+.f-icon { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:1.25rem; }
+.f-icon.v { background:rgba(168,85,247,.15); color:var(--nv); }
+.f-icon.b { background:rgba(59,130,246,.15); color:var(--nb); }
+.f-icon.p { background:rgba(236,72,153,.15); color:var(--np); }
+.f-icon.c { background:rgba(6,182,212,.15); color:var(--nc); }
+.f-icon.g { background:rgba(34,197,94,.15); color:var(--ng); }
+.f-title { font-family:'Syne',sans-serif; font-size:1rem; font-weight:600; margin-bottom:.5rem; color:var(--tp); }
+.f-desc { font-size:.855rem; color:var(--ts); line-height:1.65; font-weight:300; }
+.f-tag { display:inline-flex; margin-top:1.125rem; padding:3px 12px; border-radius:100px; font-size:.7rem; letter-spacing:.05em; border:1px solid; }
+.f-tag.v { border-color:rgba(168,85,247,.3); color:var(--nv); background:rgba(168,85,247,.06); }
+.f-tag.b { border-color:rgba(59,130,246,.3); color:var(--nb); background:rgba(59,130,246,.06); }
+.f-tag.p { border-color:rgba(236,72,153,.3); color:var(--np); background:rgba(236,72,153,.06); }
+.f-tag.c { border-color:rgba(6,182,212,.3); color:var(--nc); background:rgba(6,182,212,.06); }
+.f-tag.g { border-color:rgba(34,197,94,.3); color:var(--ng); background:rgba(34,197,94,.06); }
+
+/* ── WHY PENGUIN ── */
+.why-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:3rem; }
+.why-card {
+  padding:2rem 1.5rem; border-radius:18px; border:1px solid var(--bd); background:var(--bg-card);
+  transition:all .3s; position:relative; overflow:hidden; text-align:center;
+}
+.why-card:hover { border-color:var(--bm); background:var(--bg-card-h); transform:translateY(-5px); box-shadow:0 24px 60px rgba(0,0,0,.4),0 0 40px rgba(168,85,247,.09); }
+.why-num {
+  position:absolute; top:1rem; right:1.25rem;
+  font-family:'Syne',sans-serif; font-size:3.5rem; font-weight:800;
+  color:rgba(168,85,247,.07); line-height:1; pointer-events:none;
+}
+.why-icon { font-size:2.5rem; margin-bottom:1.25rem; display:block; }
+.why-title { font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700; color:var(--tp); margin-bottom:.625rem; }
+.why-desc { font-size:.875rem; color:var(--ts); line-height:1.7; font-weight:300; }
+.why-strip {
+  margin-top:2rem; padding:1.75rem 2.5rem; border-radius:16px;
+  background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(59,130,246,.08));
+  border:1px solid rgba(168,85,247,.18);
+  display:flex; align-items:center; justify-content:space-between; gap:2rem; flex-wrap:wrap;
+}
+.why-strip-text { font-family:'Syne',sans-serif; font-size:1.2rem; font-weight:700; }
+.why-strip-text span { background:linear-gradient(90deg,var(--nv),var(--nc)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.why-strip-sub { font-size:.875rem; color:var(--ts); margin-top:.25rem; }
+.why-strip-cta { padding:.75rem 2rem; border-radius:10px; border:none; background:linear-gradient(135deg,var(--ag),var(--nb)); color:#fff; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:500; cursor:pointer; box-shadow:0 0 28px rgba(124,58,237,.35); transition:all .2s; white-space:nowrap; }
+.why-strip-cta:hover { box-shadow:0 0 44px rgba(124,58,237,.55); transform:translateY(-1px); }
+
+/* ── REVIEWS ── */
+.reviews-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:3rem; }
+.rev-card {
+  padding:1.75rem; border-radius:18px; border:1px solid var(--bd); background:var(--bg-card);
+  transition:all .3s; position:relative; overflow:hidden;
+}
+.rev-card:hover { border-color:var(--bm); transform:translateY(-4px); box-shadow:0 20px 50px rgba(0,0,0,.4); }
+.rev-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.125rem; }
+.rev-avatar {
+  width:44px; height:44px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.85rem; font-weight:700; flex-shrink:0;
+  border:2px solid;
+}
+.rev-stars { display:flex; gap:2px; font-size:.85rem; color:#f59e0b; }
+.rev-meta { margin-bottom:1rem; }
+.rev-name { font-size:.9rem; font-weight:600; color:var(--tp); }
+.rev-role { font-size:.75rem; color:var(--tm); }
+.rev-tool-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:100px; border:1px solid var(--bd); font-size:.72rem; color:var(--ts); background:rgba(168,85,247,.05); margin-bottom:.875rem; }
+.rev-quote { font-size:.875rem; color:var(--ts); line-height:1.7; font-style:italic; font-weight:300; }
+.rev-quote::before { content:'\201C'; font-size:1.5rem; color:var(--nv); line-height:.5; vertical-align:-.4rem; margin-right:3px; }
+.rev-card.featured { border-color:rgba(168,85,247,.35); background:linear-gradient(160deg,rgba(124,58,237,.15),rgba(59,130,246,.08)); }
+.rev-card.featured::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,rgba(168,85,247,.6),transparent); }
+
+/* ── PRICING ── */
+.pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:3rem; }
+.plan-card {
+  padding:2rem 1.75rem; border-radius:20px; border:1px solid var(--bd); background:var(--bg-card);
+  position:relative; overflow:hidden; transition:all .3s; display:flex; flex-direction:column; gap:1.25rem;
+}
+.plan-card:hover { transform:translateY(-5px); box-shadow:0 24px 60px rgba(0,0,0,.4); }
+.plan-card.popular {
+  border-color:rgba(168,85,247,.45);
+  background:linear-gradient(155deg,rgba(124,58,237,.2),rgba(59,130,246,.12));
+  box-shadow:0 0 50px rgba(124,58,237,.18);
+}
+.plan-card.popular::before { content:''; position:absolute; top:0; left:15%; right:15%; height:1px; background:linear-gradient(90deg,transparent,var(--nv),transparent); }
+.plan-badge {
+  position:absolute; top:-1px; right:1.5rem;
+  padding:3px 14px; border-radius:0 0 10px 10px;
+  background:linear-gradient(135deg,var(--ag),var(--nb)); color:#fff;
+  font-size:.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+}
+.plan-name { font-family:'Syne',sans-serif; font-size:1rem; font-weight:600; color:var(--ts); text-transform:uppercase; letter-spacing:.08em; }
+.plan-price { display:flex; align-items:baseline; gap:4px; }
+.plan-amt { font-family:'Syne',sans-serif; font-size:2.75rem; font-weight:800; color:var(--tp); }
+.plan-per { font-size:.85rem; color:var(--tm); }
+.plan-desc { font-size:.85rem; color:var(--tm); line-height:1.6; }
+.plan-divider { height:1px; background:var(--bd); }
+.plan-features { display:flex; flex-direction:column; gap:.75rem; flex:1; }
+.pf-row { display:flex; align-items:center; gap:.75rem; font-size:.85rem; color:var(--ts); }
+.pf-check { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:.65rem; }
+.pf-check.on { background:rgba(168,85,247,.2); color:var(--nv); }
+.pf-check.off { background:rgba(90,77,114,.2); color:var(--tm); }
+.pf-row.dim { color:var(--tm); }
+.plan-btn {
+  padding:.875rem; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:500; cursor:pointer; transition:all .25s; text-align:center; border:1px solid var(--bm); background:transparent; color:var(--ts);
+}
+.plan-btn:hover { border-color:var(--bg2); color:var(--tp); }
+.plan-btn.primary { border:none; background:linear-gradient(135deg,var(--ag),var(--nb)); color:#fff; box-shadow:0 0 28px rgba(124,58,237,.35); }
+.plan-btn.primary:hover { box-shadow:0 0 44px rgba(124,58,237,.55); transform:translateY(-1px); }
+
+/* ── CTA ── */
+.cta-outer { padding:3rem 4rem 6rem; max-width:1200px; margin:0 auto; }
+.cta-wrap {
+  border-radius:24px; padding:5rem 3rem; text-align:center; position:relative; overflow:hidden;
+  background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(59,130,246,.1));
+  border:1px solid rgba(168,85,247,.22);
+}
+.cta-wrap::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 70% 70% at 50% 50%,rgba(124,58,237,.14) 0%,transparent 70%); }
+.cta-wrap::after { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,rgba(168,85,247,.65),transparent); }
+.cta-title { font-family:'Syne',sans-serif; font-size:clamp(2rem,3.5vw,3.2rem); font-weight:800; line-height:1.1; margin-bottom:1rem; letter-spacing:-.02em; }
+.cta-title span { background:linear-gradient(90deg,var(--nv),var(--nc)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.cta-sub { font-size:1.05rem; color:var(--ts); max-width:480px; margin:0 auto 2.5rem; font-weight:300; line-height:1.75; }
+.cta-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+.btn-cta { padding:.875rem 2.5rem; border-radius:12px; border:none; background:linear-gradient(135deg,var(--ag),var(--nb)); color:#fff; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:500; cursor:pointer; box-shadow:0 0 40px rgba(124,58,237,.4); transition:all .25s; text-decoration:none; display:inline-block; }
+.btn-cta:hover { box-shadow:0 0 60px rgba(124,58,237,.6); transform:translateY(-2px); }
+.btn-cta-o { padding:.875rem 2.5rem; border-radius:12px; border:1px solid var(--bm); background:transparent; color:var(--ts); font-family:'DM Sans',sans-serif; font-size:.95rem; cursor:pointer; transition:all .2s; text-decoration:none; display:inline-block; }
+.btn-cta-o:hover { border-color:var(--bg2); color:var(--tp); }
+
+/* ── FOOTER ── */
+footer { position:relative; z-index:1; border-top:1px solid var(--bd); padding:2.5rem 4rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+.footer-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.footer-links { display:flex; gap:2rem; list-style:none; }
+.footer-links a { font-size:.78rem; color:var(--tm); text-decoration:none; transition:color .2s; }
+.footer-links a:hover { color:var(--ts); }
+.footer-copy { font-size:.78rem; color:var(--tm); }
+
+/* ── REVEAL ── */
+.rv { opacity:0; transform:translateY(28px); transition:opacity .7s ease,transform .7s ease; }
+.rv.vis { opacity:1; transform:none; }
+</style>
+</head>
+<body>
+
+<div class="amb amb1"></div>
+<div class="amb amb2"></div>
+<div class="amb amb3"></div>
+<div class="amb amb4"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo-link">
+    <!-- Penguin SVG Logo -->
+    <svg class="logo-svg" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lg1" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#a855f7"/>
+          <stop offset="100%" stop-color="#3b82f6"/>
+        </linearGradient>
+        <linearGradient id="lg2" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#7c3aed"/>
+          <stop offset="100%" stop-color="#06b6d4"/>
+        </linearGradient>
+      </defs>
+      <!-- Body -->
+      <ellipse cx="21" cy="24" rx="11" ry="13" fill="url(#lg1)" opacity="0.95"/>
+      <!-- Belly -->
+      <ellipse cx="21" cy="26" rx="6.5" ry="8" fill="white" opacity="0.15"/>
+      <!-- Head -->
+      <ellipse cx="21" cy="12" rx="8" ry="8.5" fill="url(#lg1)" opacity="0.95"/>
+      <!-- Eye left -->
+      <circle cx="17.5" cy="10.5" r="1.8" fill="white"/>
+      <circle cx="17.8" cy="10.5" r="0.9" fill="#0a0520"/>
+      <!-- Eye right -->
+      <circle cx="24.5" cy="10.5" r="1.8" fill="white"/>
+      <circle cx="24.8" cy="10.5" r="0.9" fill="#0a0520"/>
+      <!-- Beak -->
+      <path d="M19 14.5 L21 17.5 L23 14.5 Z" fill="#f59e0b"/>
+      <!-- Wing left -->
+      <path d="M10 20 Q7 26 10 32 Q14 29 13 22 Z" fill="url(#lg2)" opacity="0.8"/>
+      <!-- Wing right -->
+      <path d="M32 20 Q35 26 32 32 Q28 29 29 22 Z" fill="url(#lg2)" opacity="0.8"/>
+      <!-- Feet -->
+      <path d="M16 35 Q14 38 12 38 Q13 36 15 35 Z" fill="#f59e0b"/>
+      <path d="M16 35 Q16 38 14 39 Q15 37 16 35 Z" fill="#f59e0b"/>
+      <path d="M26 35 Q28 38 30 38 Q29 36 27 35 Z" fill="#f59e0b"/>
+      <path d="M26 35 Q26 38 28 39 Q27 37 26 35 Z" fill="#f59e0b"/>
+      <!-- Glow ring -->
+      <ellipse cx="21" cy="21" rx="19.5" ry="19.5" stroke="url(#lg1)" stroke-width="1" fill="none" opacity="0.35"/>
+    </svg>
+    <span class="logo-wordmark">pen<span>guin</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#categories">Discover</a></li>
+    <li><a href="#top-ais">Top AIs</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="#" class="btn-ghost">Sign in</a>
+    <a href="#" class="btn-p">Get started free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" style="position:relative;">
+  <!-- Cosmic blobs in hero -->
+  <div class="blob-scene">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+    <div class="blob blob-d"></div>
+    <div class="blob blob-e"></div>
+    <!-- Extra micro-orbs -->
+    <div style="position:absolute;width:60px;height:60px;border-radius:50%;background:rgba(168,85,247,.3);top:30%;right:20%;filter:blur(18px);animation:floatA 7s ease-in-out infinite;"></div>
+    <div style="position:absolute;width:40px;height:40px;border-radius:50%;background:rgba(6,182,212,.35);bottom:25%;left:22%;filter:blur(12px);animation:floatB 9s ease-in-out infinite;"></div>
+    <div style="position:absolute;width:30px;height:30px;border-radius:50%;background:rgba(236,72,153,.4);top:20%;left:30%;filter:blur(10px);animation:floatA 11s ease-in-out infinite reverse;"></div>
+    <!-- Star particles -->
+    <div style="position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.6);top:15%;left:45%;box-shadow:120px 80px 0 rgba(255,255,255,.4),200px -30px 0 rgba(255,255,255,.3),320px 120px 0 rgba(255,255,255,.5),-80px 200px 0 rgba(255,255,255,.35),60px 280px 0 rgba(168,85,247,.8);"></div>
+  </div>
+
+  <div class="hero-badge"><span class="bdot"></span>AI-powered discovery platform</div>
+  <h1 class="hero-h1">
+    <span class="h1-plain">Find the right AI tool</span><br>
+    <span class="h1-grad">before you ask twice</span>
+  </h1>
+  <p class="hero-sub">Penguin is an intelligent, community-driven directory. Describe what you need in plain language — our AI engine finds the perfect match instantly.</p>
+  <div class="search-wrap">
+    <svg class="s-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" class="search-bar" placeholder="e.g. "I need a tool to clone my voice for a podcast…"">
+    <button class="s-btn">Search →</button>
+  </div>
+  <div class="hints">
+    <span class="hint" onclick="this.closest('.hero').querySelector('.search-bar').value='AI writing assistants'">✍️ AI writing</span>
+    <span class="hint" onclick="this.closest('.hero').querySelector('.search-bar').value='Voice cloning tools'">🎙️ Voice cloning</span>
+    <span class="hint" onclick="this.closest('.hero').querySelector('.search-bar').value='Image generation AI'">🎨 Image gen</span>
+    <span class="hint" onclick="this.closest('.hero').querySelector('.search-bar').value='Data analysis tools'">📊 Data analysis</span>
+    <span class="hint" onclick="this.closest('.hero').querySelector('.search-bar').value='Video creation AI'">🎬 Video creation</span>
+    <span class="hint" onclick="this.closest('.hero').querySelector('.search-bar').value='Code assistant AI'">💻 Code assistant</span>
+  </div>
+  <div class="hero-stats">
+    <div><div class="stat-n">3,200+</div><div class="stat-l">AI tools catalogued</div></div>
+    <div><div class="stat-n">48</div><div class="stat-l">Categories</div></div>
+    <div><div class="stat-n">12k+</div><div class="stat-l">Community members</div></div>
+    <div><div class="stat-n">99.9%</div><div class="stat-l">Uptime</div></div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="mq-wrap">
+  <div class="mq-track">
+    <div class="mq-item">🎤 ElevenLabs</div><div class="mq-item">🎨 Midjourney</div><div class="mq-item">✍️ Jasper AI</div><div class="mq-item">📹 Runway ML</div><div class="mq-item">🤖 Claude</div><div class="mq-item">📊 Julius AI</div><div class="mq-item">🎵 Suno AI</div><div class="mq-item">🔍 Perplexity</div><div class="mq-item">💻 GitHub Copilot</div><div class="mq-item">🖼️ DALL·E 3</div><div class="mq-item">🧠 Notion AI</div><div class="mq-item">📝 Otter.ai</div><div class="mq-item">🎬 Pika Labs</div><div class="mq-item">🔮 Gemini</div>
+    <div class="mq-item">🎤 ElevenLabs</div><div class="mq-item">🎨 Midjourney</div><div class="mq-item">✍️ Jasper AI</div><div class="mq-item">📹 Runway ML</div><div class="mq-item">🤖 Claude</div><div class="mq-item">📊 Julius AI</div><div class="mq-item">🎵 Suno AI</div><div class="mq-item">🔍 Perplexity</div><div class="mq-item">💻 GitHub Copilot</div><div class="mq-item">🖼️ DALL·E 3</div><div class="mq-item">🧠 Notion AI</div><div class="mq-item">📝 Otter.ai</div><div class="mq-item">🎬 Pika Labs</div><div class="mq-item">🔮 Gemini</div>
+  </div>
+</div>
+
+<!-- AI CATEGORIES -->
+<section class="sec sec-divider" id="categories">
+  <div class="rv">
+    <div class="s-label">Browse by category</div>
+    <h2 class="s-title">Hover to explore tools</h2>
+    <p class="s-sub">8 AI categories. Hover any card to instantly preview the top tools inside.</p>
+  </div>
+  <div class="cats-grid">
+
+    <div class="cat-card rv">
+      <span class="cat-icon">✍️</span>
+      <div class="cat-name">Writing & Content</div>
+      <div class="cat-count">214 tools</div>
+      <div class="cat-tools-popup">
+        <div class="popup-title">Top tools</div>
+        <div class="tool-row"><span class="tool-emoji">✍️</span><div class="tool-info"><div class="tool-nm">Jasper AI</div><div class="tool-stars">★★★★★ 4.9</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">📝</span><div class="tool-info"><div class="tool-nm">Copy.ai</div><div class="tool-stars">★★★★☆ 4.7</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🖊️</span><div class="tool-info"><div class="tool-nm">Writesonic</div><div class="tool-stars">★★★★☆ 4.6</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">📄</span><div class="tool-info"><div class="tool-nm">Notion AI</div><div class="tool-stars">★★★★☆ 4.5</div></div></div>
+      </div>
+    </div>
+
+    <div class="cat-card rv">
+      <span class="cat-icon">🎨</span>
+      <div class="cat-name">Image Generation</div>
+      <div class="cat-count">187 tools</div>
+      <div class="cat-tools-popup">
+        <div class="popup-title">Top tools</div>
+        <div class="tool-row"><span class="tool-emoji">🎨</span><div class="tool-info"><div class="tool-nm">Midjourney</div><div class="tool-stars">★★★★★ 4.9</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🖼️</span><div class="tool-info"><div class="tool-nm">DALL·E 3</div><div class="tool-stars">★★★★★ 4.8</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🎭</span><div class="tool-info"><div class="tool-nm">Stable Diffusion</div><div class="tool-stars">★★★★☆ 4.6</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">✨</span><div class="tool-info"><div class="tool-nm">Adobe Firefly</div><div class="tool-stars">★★★★☆ 4.5</div></div></div>
+      </div>
+    </div>
+
+    <div class="cat-card rv">
+      <span class="cat-icon">🎤</span>
+      <div class="cat-name">Voice & Audio</div>
+      <div class="cat-count">143 tools</div>
+      <div class="cat-tools-popup">
+        <div class="popup-title">Top tools</div>
+        <div class="tool-row"><span class="tool-emoji">🎤</span><div class="tool-info"><div class="tool-nm">ElevenLabs</div><div class="tool-stars">★★★★★ 4.9</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🎙️</span><div class="tool-info"><div class="tool-nm">Murf AI</div><div class="tool-stars">★★★★☆ 4.7</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🎵</span><div class="tool-info"><div class="tool-nm">Suno AI</div><div class="tool-stars">★★★★☆ 4.6</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">📝</span><div class="tool-info"><div class="tool-nm">Otter.ai</div><div class="tool-stars">★★★★☆ 4.5</div></div></div>
+      </div>
+    </div>
+
+    <div class="cat-card rv">
+      <span class="cat-icon">💻</span>
+      <div class="cat-name">Code & Dev</div>
+      <div class="cat-count">198 tools</div>
+      <div class="cat-tools-popup">
+        <div class="popup-title">Top tools</div>
+        <div class="tool-row"><span class="tool-emoji">💻</span><div class="tool-info"><div class="tool-nm">GitHub Copilot</div><div class="tool-stars">★★★★★ 4.9</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🤖</span><div class="tool-info"><div class="tool-nm">Claude Code</div><div class="tool-stars">★★★★★ 4.8</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">⚡</span><div class="tool-info"><div class="tool-nm">Cursor</div><div class="tool-stars">★★★★☆ 4.7</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🔧</span><div class="tool-info"><div class="tool-nm">Tabnine</div><div class="tool-stars">★★★★☆ 4.4</div></div></div>
+      </div>
+    </div>
+
+    <div class="cat-card rv">
+      <span class="cat-icon">📹</span>
+      <div class="cat-name">Video Creation</div>
+      <div class="cat-count">112 tools</div>
+      <div class="cat-tools-popup">
+        <div class="popup-title">Top tools</div>
+        <div class="tool-row"><span class="tool-emoji">📹</span><div class="tool-info"><div class="tool-nm">Runway ML</div><div class="tool-stars">★★★★★ 4.8</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🎬</span><div class="tool-info"><div class="tool-nm">Pika Labs</div><div class="tool-stars">★★★★☆ 4.6</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🎥</span><div class="tool-info"><div class="tool-nm">Synthesia</div><div class="tool-stars">★★★★☆ 4.5</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">✂️</span><div class="tool-info"><div class="tool-nm">Descript</div><div class="tool-stars">★★★★☆ 4.4</div></div></div>
+      </div>
+    </div>
+
+    <div class="cat-card rv">
+      <span class="cat-icon">📊</span>
+      <div class="cat-name">Data & Analytics</div>
+      <div class="cat-count">96 tools</div>
+      <div class="cat-tools-popup">
+        <div class="popup-title">Top tools</div>
+        <div class="tool-row"><span class="tool-emoji">📊</span><div class="tool-info"><div class="tool-nm">Julius AI</div><div class="tool-stars">★★★★★ 4.8</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🔍</span><div class="tool-info"><div class="tool-nm">Perplexity</div><div class="tool-stars">★★★★☆ 4.7</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">📈</span><div class="tool-info"><div class="tool-nm">Obviously AI</div><div class="tool-stars">★★★★☆ 4.5</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🧮</span><div class="tool-info"><div class="tool-nm">Polymer</div><div class="tool-stars">★★★★☆ 4.3</div></div></div>
+      </div>
+    </div>
+
+    <div class="cat-card rv">
+      <span class="cat-icon">🤖</span>
+      <div class="cat-name">Chatbots & LLMs</div>
+      <div class="cat-count">231 tools</div>
+      <div class="cat-tools-popup">
+        <div class="popup-title">Top tools</div>
+        <div class="tool-row"><span class="tool-emoji">🤖</span><div class="tool-info"><div class="tool-nm">Claude</div><div class="tool-stars">★★★★★ 4.9</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">💬</span><div class="tool-info"><div class="tool-nm">ChatGPT</div><div class="tool-stars">★★★★★ 4.9</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🔮</span><div class="tool-info"><div class="tool-nm">Gemini</div><div class="tool-stars">★★★★☆ 4.7</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🦙</span><div class="tool-info"><div class="tool-nm">Llama 3</div><div class="tool-stars">★★★★☆ 4.6</div></div></div>
+      </div>
+    </div>
+
+    <div class="cat-card rv">
+      <span class="cat-icon">🔍</span>
+      <div class="cat-name">Search & Research</div>
+      <div class="cat-count">88 tools</div>
+      <div class="cat-tools-popup">
+        <div class="popup-title">Top tools</div>
+        <div class="tool-row"><span class="tool-emoji">🔍</span><div class="tool-info"><div class="tool-nm">Perplexity AI</div><div class="tool-stars">★★★★★ 4.9</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🌐</span><div class="tool-info"><div class="tool-nm">You.com</div><div class="tool-stars">★★★★☆ 4.6</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">📚</span><div class="tool-info"><div class="tool-nm">Consensus</div><div class="tool-stars">★★★★☆ 4.5</div></div></div>
+        <div class="tool-row"><span class="tool-emoji">🧐</span><div class="tool-info"><div class="tool-nm">Elicit</div><div class="tool-stars">★★★★☆ 4.4</div></div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TOP AIs -->
+<section class="sec topai-section" id="top-ais">
+  <div class="rv" style="text-align:center;">
+    <div class="s-label" style="justify-content:center;">Community rated</div>
+    <h2 class="s-title" style="text-align:center;">The Penguin Hall of Fame</h2>
+    <p class="s-sub" style="margin:0 auto; text-align:center;">Ranked by thousands of verified community reviews.</p>
+  </div>
+
+  <div class="topai-arc-wrap rv">
+    <!-- Arc SVG background -->
+    <svg class="arc-bg" viewBox="0 0 680 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="arcG" x1="0" y1="0" x2="680" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="rgba(168,85,247,0)"/>
+          <stop offset="30%" stop-color="rgba(168,85,247,0.3)"/>
+          <stop offset="50%" stop-color="rgba(124,58,237,0.5)"/>
+          <stop offset="70%" stop-color="rgba(59,130,246,0.3)"/>
+          <stop offset="100%" stop-color="rgba(59,130,246,0)"/>
+        </linearGradient>
+        <linearGradient id="arcG2" x1="0" y1="0" x2="680" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="rgba(168,85,247,0)"/>
+          <stop offset="50%" stop-color="rgba(168,85,247,0.08)"/>
+          <stop offset="100%" stop-color="rgba(168,85,247,0)"/>
+        </linearGradient>
+      </defs>
+      <!-- Outer arc -->
+      <path d="M 40 340 A 300 300 0 0 1 640 340" stroke="url(#arcG)" stroke-width="1.5" fill="none"/>
+      <!-- Mid arc -->
+      <path d="M 100 340 A 240 240 0 0 1 580 340" stroke="url(#arcG)" stroke-width="1" fill="none" opacity="0.5"/>
+      <!-- Inner arc -->
+      <path d="M 160 340 A 180 180 0 0 1 520 340" stroke="url(#arcG)" stroke-width="1" fill="none" opacity="0.3"/>
+      <!-- Arc fill glow -->
+      <path d="M 40 340 A 300 300 0 0 1 640 340 L 640 340 L 40 340 Z" fill="url(#arcG2)" opacity="0.4"/>
+      <!-- Tick marks on outer arc -->
+      <g stroke="rgba(168,85,247,0.3)" stroke-width="1">
+        <line x1="340" y1="40" x2="340" y2="55"/>
+        <line x1="190" y1="88" x2="197" y2="100"/>
+        <line x1="490" y1="88" x2="483" y2="100"/>
+        <line x1="95" y1="220" x2="107" y2="225"/>
+        <line x1="585" y1="220" x2="573" y2="225"/>
+      </g>
+      <!-- Center glow -->
+      <ellipse cx="340" cy="340" rx="200" ry="60" fill="rgba(124,58,237,0.07)"/>
+    </svg>
+
+    <!-- Podium cards -->
+    <div class="podium-cards">
+      <!-- #2 -->
+      <div class="pod-card rank2 rv">
+        <div class="pod-rank r2">2</div>
+        <span class="pod-logo">🎨</span>
+        <div class="pod-name">Midjourney</div>
+        <div class="pod-cat">Image Generation</div>
+        <div class="pod-stars">★★★★★</div>
+        <span class="pod-score">4.87 / 5</span>
+      </div>
+      <!-- #1 -->
+      <div class="pod-card rank1 rv">
+        <div class="pod-rank r1">1</div>
+        <span class="pod-logo">🤖</span>
+        <div class="pod-name">Claude</div>
+        <div class="pod-cat">AI Assistant</div>
+        <div class="pod-stars">★★★★★</div>
+        <span class="pod-score">4.96 / 5</span>
+      </div>
+      <!-- #3 -->
+      <div class="pod-card rank3 rv">
+        <div class="pod-rank r3">3</div>
+        <span class="pod-logo">🎤</span>
+        <div class="pod-name">ElevenLabs</div>
+        <div class="pod-cat">Voice & Audio</div>
+        <div class="pod-stars">★★★★★</div>
+        <span class="pod-score">4.83 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ranks 4–8 -->
+  <div class="more-ais rv">
+    <div style="font-size:.78rem;color:var(--tm);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.75rem;">Ranks 4 – 8</div>
+    <div class="ai-list-row">
+      <div class="ai-mini-card"><div class="ai-mini-rank">4</div><div class="ai-mini-emoji">💻</div><div class="ai-mini-info"><div class="ai-mini-name">GitHub Copilot</div><div class="ai-mini-score">★ 4.81</div></div></div>
+      <div class="ai-mini-card"><div class="ai-mini-rank">5</div><div class="ai-mini-emoji">🔍</div><div class="ai-mini-info"><div class="ai-mini-name">Perplexity AI</div><div class="ai-mini-score">★ 4.78</div></div></div>
+      <div class="ai-mini-card"><div class="ai-mini-rank">6</div><div class="ai-mini-emoji">📹</div><div class="ai-mini-info"><div class="ai-mini-name">Runway ML</div><div class="ai-mini-score">★ 4.75</div></div></div>
+      <div class="ai-mini-card"><div class="ai-mini-rank">7</div><div class="ai-mini-emoji">✍️</div><div class="ai-mini-info"><div class="ai-mini-name">Jasper AI</div><div class="ai-mini-score">★ 4.72</div></div></div>
+      <div class="ai-mini-card"><div class="ai-mini-rank">8</div><div class="ai-mini-emoji">🎵</div><div class="ai-mini-info"><div class="ai-mini-name">Suno AI</div><div class="ai-mini-score">★ 4.69</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="sec sec-divider" id="features">
+  <div class="rv">
+    <div class="s-label">Platform pillars</div>
+    <h2 class="s-title">Everything you need.<br>Nothing you don't.</h2>
+    <p class="s-sub">Five systems working together so you discover smarter and build faster.</p>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card span2 rv"><div class="f-icon v">🔍</div><div class="f-title">Semantic AI Search</div><p class="f-desc">Forget keywords. Describe what you need, Penguin's AI understands the intent and returns perfectly matched tools — saving each search to your sidebar automatically.</p><span class="f-tag v">AI-powered intent engine</span></div>
+    <div class="feat-card rv"><div class="f-icon b">🛡️</div><div class="f-title">Auto-Moderation</div><p class="f-desc">Every review is scanned instantly. Toxic or spam content is silently flagged before it reaches the community.</p><span class="f-tag b">Community shield</span></div>
+    <div class="feat-card rv"><div class="f-icon c">✨</div><div class="f-title">Human-in-the-Loop Curation</div><p class="f-desc">Users propose tools, AI pre-cleans the data, Managers approve in one click. Clean catalog, always.</p><span class="f-tag c">Collaborative curation</span></div>
+    <div class="feat-card rv"><div class="f-icon p">❤️</div><div class="f-title">Personalized Shelves</div><p class="f-desc">Quick-save favorites or build custom Shelves — like playlists for your AI stack. "My Audio Tools", "Coding Arsenal"…</p><span class="f-tag p">User retention engine</span></div>
+    <div class="feat-card rv"><div class="f-icon g">🔐</div><div class="f-title">Enterprise RBAC</div><p class="f-desc">Guest, User, Manager, Admin — strict permissions, soft deletion, and 30-day grace periods with nightly cleanup.</p><span class="f-tag g">Role-based access</span></div>
+  </div>
+</section>
+
+<!-- WHY PENGUIN -->
+<section class="sec sec-divider" id="why">
+  <div class="rv">
+    <div class="s-label">Why us</div>
+    <h2 class="s-title">Why choose Penguin?</h2>
+    <p class="s-sub">Three reasons thousands of builders trust us over any other directory.</p>
+  </div>
+  <div class="why-grid">
+    <div class="why-card rv">
+      <div class="why-num">01</div>
+      <span class="why-icon">🧠</span>
+      <div class="why-title">AI That Truly Understands You</div>
+      <p class="why-desc">No more keyword guessing. Our semantic engine reads your intent, not just your words. Find the right tool the first time, every time.</p>
+    </div>
+    <div class="why-card rv">
+      <div class="why-num">02</div>
+      <span class="why-icon">🌍</span>
+      <div class="why-title">Community-Verified Quality</div>
+      <p class="why-desc">Every rating, every review is real — moderated by AI and validated by thousands of actual users. No fake stars, no paid placements.</p>
+    </div>
+    <div class="why-card rv">
+      <div class="why-num">03</div>
+      <span class="why-icon">⚡</span>
+      <div class="why-title">Your Personal AI Workspace</div>
+      <p class="why-desc">Save tools, build Shelves, revisit searches. Penguin grows with your workflow — a second brain for your AI stack, always at hand.</p>
+    </div>
+  </div>
+  <div class="why-strip rv">
+    <div>
+      <div class="why-strip-text">Join <span>12,000+ builders</span> discovering smarter.</div>
+      <div class="why-strip-sub">Free forever. No credit card required.</div>
+    </div>
+    <button class="why-strip-cta">Start discovering →</button>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="sec sec-divider" id="reviews">
+  <div class="rv">
+    <div class="s-label">Community voices</div>
+    <h2 class="s-title">Loved by builders<br>and creators</h2>
+  </div>
+  <div class="reviews-grid">
+
+    <div class="rev-card rv">
+      <div class="rev-top">
+        <div class="rev-avatar" style="background:rgba(168,85,247,.18);border-color:rgba(168,85,247,.35);color:var(--nv);">SR</div>
+        <div class="rev-stars">★★★★★</div>
+      </div>
+      <div class="rev-meta">
+        <div class="rev-name">Sadia Rahman</div>
+        <div class="rev-role">Podcast Producer · Morocco</div>
+      </div>
+      <span class="rev-tool-tag">🎤 ElevenLabs</span>
+      <p class="rev-quote">Found a voice cloning tool in 8 seconds. Described exactly what I needed, Penguin nailed it. Saved it to my podcast shelf. That's genuinely impressive.</p>
+    </div>
+
+    <div class="rev-card featured rv">
+      <div class="rev-top">
+        <div class="rev-avatar" style="background:rgba(59,130,246,.18);border-color:rgba(59,130,246,.35);color:var(--nb);">ML</div>
+        <div class="rev-stars">★★★★★</div>
+      </div>
+      <div class="rev-meta">
+        <div class="rev-name">Marc Leblanc</div>
+        <div class="rev-role">Indie Developer · Canada</div>
+      </div>
+      <span class="rev-tool-tag">💻 GitHub Copilot</span>
+      <p class="rev-quote">The curation engine is brilliant. I submitted a tool, AI cleaned my sloppy description, a manager approved it in an hour. My tool is now live and getting traction.</p>
+    </div>
+
+    <div class="rev-card rv">
+      <div class="rev-top">
+        <div class="rev-avatar" style="background:rgba(6,182,212,.18);border-color:rgba(6,182,212,.35);color:var(--nc);">YK</div>
+        <div class="rev-stars">★★★★★</div>
+      </div>
+      <div class="rev-meta">
+        <div class="rev-name">Yuki Kashiwagi</div>
+        <div class="rev-role">Head of AI · Japan</div>
+      </div>
+      <span class="rev-tool-tag">🧠 Notion AI</span>
+      <p class="rev-quote">Penguin Shelves replaced three shared spreadsheets we had for tracking AI tools. My entire team actually uses it now — and they're picky about new tools.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="sec sec-divider" id="pricing">
+  <div class="rv" style="text-align:center;">
+    <div class="s-label" style="justify-content:center;">Pricing</div>
+    <h2 class="s-title" style="text-align:center;">Simple. Transparent. Fair.</h2>
+    <p class="s-sub" style="margin:0 auto;text-align:center;">Start free. Upgrade when you need more power.</p>
+  </div>
+  <div class="pricing-grid">
+
+    <!-- Free -->
+    <div class="plan-card rv">
+      <div class="plan-name">Free</div>
+      <div class="plan-price"><span class="plan-amt">$0</span><span class="plan-per">/ month</span></div>
+      <div class="plan-desc">Everything you need to start discovering AI tools and building your first shelf.</div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="pf-row"><span class="pf-check on">✓</span>Semantic AI search</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Browse all 3,200+ tools</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>5 saved searches</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>1 custom Shelf</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Rate & review tools</div>
+        <div class="pf-row dim"><span class="pf-check off">–</span>Advanced filters</div>
+        <div class="pf-row dim"><span class="pf-check off">–</span>Priority support</div>
+      </div>
+      <button class="plan-btn">Get started free</button>
+    </div>
+
+    <!-- Pro (popular) -->
+    <div class="plan-card popular rv">
+      <div class="plan-badge">Most Popular</div>
+      <div class="plan-name" style="color:var(--nv);">Pro</div>
+      <div class="plan-price"><span class="plan-amt">$12</span><span class="plan-per">/ month</span></div>
+      <div class="plan-desc">For creators and developers who live and breathe AI tools and want a full workspace.</div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="pf-row"><span class="pf-check on">✓</span>Everything in Free</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Unlimited saved searches</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Unlimited Shelves</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Advanced filters & sort</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Submit tools for review</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Early access to new tools</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Priority support</div>
+      </div>
+      <button class="plan-btn primary">Start Pro — 14 days free</button>
+    </div>
+
+    <!-- Team -->
+    <div class="plan-card rv">
+      <div class="plan-name">Team</div>
+      <div class="plan-price"><span class="plan-amt">$39</span><span class="plan-per">/ month</span></div>
+      <div class="plan-desc">For teams managing a shared AI stack. Shared Shelves, admin controls, and usage analytics.</div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="pf-row"><span class="pf-check on">✓</span>Everything in Pro</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Up to 10 team members</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Shared team Shelves</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Team admin dashboard</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Usage analytics</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>RBAC team roles</div>
+        <div class="pf-row"><span class="pf-check on">✓</span>Dedicated onboarding</div>
+      </div>
+      <button class="plan-btn">Start team trial</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-outer">
+  <div class="cta-wrap rv">
+    <h2 class="cta-title">Your AI toolkit,<br><span>organized at last.</span></h2>
+    <p class="cta-sub">Join thousands of creators and developers who use Penguin to discover, organize, and master AI tools that matter.</p>
+    <div class="cta-btns">
+      <a href="#" class="btn-cta">Get started — it's free</a>
+      <a href="#" class="btn-cta-o">Browse the directory →</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="footer-logo">
+    <svg width="30" height="30" viewBox="0 0 42 42" fill="none"><defs><linearGradient id="flg" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient></defs><ellipse cx="21" cy="24" rx="11" ry="13" fill="url(#flg)" opacity=".9"/><ellipse cx="21" cy="12" rx="8" ry="8.5" fill="url(#flg)" opacity=".9"/><circle cx="17.5" cy="10.5" r="1.8" fill="white"/><circle cx="17.8" cy="10.5" r=".9" fill="#0a0520"/><circle cx="24.5" cy="10.5" r="1.8" fill="white"/><circle cx="24.8" cy="10.5" r=".9" fill="#0a0520"/><path d="M19 14.5 L21 17.5 L23 14.5 Z" fill="#f59e0b"/></svg>
+    <span style="font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--ts);">penguin</span>
+  </a>
+  <ul class="footer-links">
+    <li><a href="#">About</a></li>
+    <li><a href="#">Directory</a></li>
+    <li><a href="#">Submit a Tool</a></li>
+    <li><a href="#">API</a></li>
+    <li><a href="#">Privacy</a></li>
+    <li><a href="#">Terms</a></li>
+  </ul>
+  <span class="footer-copy">© 2025 Penguin. All rights reserved.</span>
+</footer>
+
+<style>
+@keyframes floatA { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-18px) rotate(5deg)} }
+@keyframes floatB { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(14px) rotate(-4deg)} }
+</style>
+
+<script>
+// Scroll reveal
+const rvEls = document.querySelectorAll('.rv');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const sibs = [...e.target.parentElement.querySelectorAll('.rv')];
+      const i = sibs.indexOf(e.target);
+      setTimeout(() => e.target.classList.add('vis'), i * 90);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+rvEls.forEach(el => io.observe(el));
+
+// Nav on scroll
+window.addEventListener('scroll', () => {
+  document.querySelector('nav').style.borderBottomColor =
+    window.scrollY > 40 ? 'rgba(168,85,247,0.2)' : 'rgba(168,85,247,0.07)';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Profile — AI Tools Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:         #0b0c10;
+      --surface:    #13151c;
+      --surface2:   #1c1f2b;
+      --border:     #252836;
+      --accent:     #e8ff5a;
+      --accent2:    #5affd6;
+      --accent3:    #ff7070;
+      --text:       #edeef5;
+      --muted:      #6b6f82;
+      --pill-bg:    #1e2130;
+      --radius:     14px;
+      --radius-sm:  8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── noise overlay ─── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── glow blobs ─── */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.12;
+    }
+    .blob-1 { width: 600px; height: 600px; background: var(--accent2); top: -200px; left: -100px; }
+    .blob-2 { width: 500px; height: 500px; background: var(--accent);  bottom: -150px; right: -100px; }
+
+    /* ─── layout ─── */
+    .shell {
+      position: relative;
+      z-index: 1;
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ─── top nav bar ─── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 56px;
+      animation: fadeUp .5s ease both;
+    }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+    .nav-right { display: flex; gap: 10px; align-items: center; }
+    .btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .8rem;
+      font-weight: 500;
+      padding: 8px 18px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+    }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+    .btn-primary:hover { background: #d4f03c; color: var(--bg); }
+
+    /* ─── profile hero ─── */
+    .hero {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 32px;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 40px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp .5s .1s ease both;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 340px; height: 100%;
+      background: linear-gradient(135deg, transparent 60%, rgba(232,255,90,.04) 100%);
+      pointer-events: none;
+    }
+    .avatar-wrap {
+      position: relative;
+    }
+    .avatar {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--bg);
+      flex-shrink: 0;
+    }
+    .avatar-status {
+      position: absolute;
+      bottom: 3px; right: 3px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #2dde98;
+      border: 2.5px solid var(--surface);
+    }
+    .hero-info h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.7rem;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+    .hero-info .email {
+      font-size: .88rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: .74rem;
+      font-weight: 500;
+      padding: 4px 11px;
+      border-radius: 50px;
+      background: var(--pill-bg);
+      border: 1px solid var(--border);
+    }
+    .tag.role  { border-color: rgba(232,255,90,.3); color: var(--accent); }
+    .tag.status{ border-color: rgba(90,255,214,.3); color: var(--accent2); }
+    .tag.prof  { border-color: var(--border); color: var(--muted); }
+    .tag .dot  { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .hero-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      min-width: 150px;
+    }
+    .hero-meta .meta-item {
+      font-size: .75rem;
+      color: var(--muted);
+      text-align: right;
+    }
+    .hero-meta .meta-item strong {
+      display: block;
+      font-size: 1.4rem;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ─── stats row ─── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 40px;
+      animation: fadeUp .5s .2s ease both;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: border-color .2s, transform .2s;
+      cursor: default;
+    }
+    .stat-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .stat-card .icon {
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+    }
+    .stat-card .num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.8rem;
+      letter-spacing: -0.04em;
+    }
+    .stat-card .label {
+      font-size: .75rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+    .stat-card.accent .num { color: var(--accent); }
+    .stat-card.teal .num   { color: var(--accent2); }
+    .stat-card.red  .num   { color: var(--accent3); }
+
+    /* ─── main grid ─── */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .grid .full { grid-column: 1 / -1; }
+
+    /* ─── section card ─── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      animation: fadeUp .5s ease both;
+    }
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 26px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-head h2 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-head .count {
+      font-size: .75rem;
+      background: var(--pill-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 2px 9px;
+      border-radius: 50px;
+    }
+    .see-all {
+      font-size: .75rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .see-all:hover { color: var(--accent); }
+    .card-body { padding: 20px 26px; }
+
+    /* ─── reviews ─── */
+    .review-item {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .review-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .review-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .review-tool {
+      font-weight: 500;
+      font-size: .9rem;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .tool-badge {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .7rem;
+      flex-shrink: 0;
+    }
+    .stars { display: flex; gap: 2px; }
+    .star { color: var(--accent); font-size: .8rem; }
+    .star.empty { color: var(--border); }
+    .review-status {
+      font-size: .68rem;
+      padding: 2px 8px;
+      border-radius: 50px;
+      background: var(--pill-bg);
+    }
+    .review-status.approved { color: #2dde98; border: 1px solid rgba(45,222,152,.25); }
+    .review-status.pending  { color: #ffbb55; border: 1px solid rgba(255,187,85,.25); }
+    .review-status.flagged  { color: var(--accent3); border: 1px solid rgba(255,112,112,.25); }
+    .review-comment { font-size: .82rem; color: var(--muted); line-height: 1.55; margin-top: 4px; }
+    .review-date { font-size: .7rem; color: var(--border); margin-top: 6px; }
+
+    /* ─── favorites ─── */
+    .fav-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .fav-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+      transition: border-color .2s, transform .2s;
+      cursor: pointer;
+    }
+    .fav-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .fav-logo {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--surface), var(--border));
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem;
+      flex-shrink: 0;
+    }
+    .fav-info .fav-name { font-size: .85rem; font-weight: 500; }
+    .fav-info .fav-cat  { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+    .fav-info .rating   { font-size: .72rem; color: var(--accent); margin-top: 3px; }
+
+    /* ─── shelves ─── */
+    .shelf-list { display: flex; flex-direction: column; gap: 12px; }
+    .shelf-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: border-color .2s;
+      cursor: pointer;
+    }
+    .shelf-item:hover { border-color: var(--accent2); }
+    .shelf-left { display: flex; align-items: center; gap: 14px; }
+    .shelf-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(90,255,214,.12), rgba(90,255,214,.04));
+      border: 1px solid rgba(90,255,214,.18);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .shelf-name { font-size: .88rem; font-weight: 500; }
+    .shelf-desc { font-size: .74rem; color: var(--muted); margin-top: 2px; }
+    .shelf-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .shelf-count {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent2);
+    }
+    .shelf-count-label { font-size: .68rem; color: var(--muted); }
+    .shelf-date { font-size: .68rem; color: var(--border); }
+
+    /* ─── search history ─── */
+    .history-list { display: flex; flex-direction: column; gap: 8px; }
+    .history-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: border-color .2s;
+      cursor: pointer;
+    }
+    .history-item:hover { border-color: rgba(232,255,90,.3); }
+    .history-type-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .8rem;
+      flex-shrink: 0;
+    }
+    .history-type-icon.ai       { background: rgba(232,255,90,.1);  color: var(--accent); border: 1px solid rgba(232,255,90,.2); }
+    .history-type-icon.keyword  { background: rgba(90,255,214,.08); color: var(--accent2);border: 1px solid rgba(90,255,214,.2); }
+    .history-content { flex: 1; min-width: 0; }
+    .history-title  { font-size: .82rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-prompt { font-size: .72rem; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-meta { text-align: right; flex-shrink: 0; }
+    .history-type-label { font-size: .66rem; color: var(--muted); }
+    .history-date   { font-size: .66rem; color: var(--border); margin-top: 2px; }
+    .history-cats   { display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
+    .history-cat-tag {
+      font-size: .62rem;
+      padding: 2px 7px;
+      border-radius: 50px;
+      background: var(--pill-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* ─── suggestions ─── */
+    .suggestion-list { display: flex; flex-direction: column; gap: 12px; }
+    .suggestion-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+    }
+    .sug-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+    .sug-name { font-size: .9rem; font-weight: 600; }
+    .sug-website { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+    .sug-status {
+      font-size: .68rem;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: var(--pill-bg);
+      flex-shrink: 0;
+    }
+    .sug-status.approved          { color: #2dde98; border: 1px solid rgba(45,222,152,.25); }
+    .sug-status.pending_ai        { color: #c9a0ff; border: 1px solid rgba(201,160,255,.25); }
+    .sug-status.pending_manager   { color: #ffbb55; border: 1px solid rgba(255,187,85,.25); }
+    .sug-status.rejected_ai,
+    .sug-status.rejected_manager  { color: var(--accent3); border: 1px solid rgba(255,112,112,.25); }
+    .sug-desc { font-size: .78rem; color: var(--muted); line-height: 1.55; }
+    .sug-footer { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .sug-chip {
+      font-size: .67rem;
+      padding: 2px 8px;
+      border-radius: 50px;
+      background: var(--pill-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .sug-chip span { opacity: .5; }
+    .sug-rejection {
+      margin-top: 8px;
+      font-size: .75rem;
+      color: rgba(255,112,112,.8);
+      background: rgba(255,112,112,.06);
+      border: 1px solid rgba(255,112,112,.15);
+      border-radius: 6px;
+      padding: 6px 10px;
+      line-height: 1.5;
+    }
+
+    /* ─── account settings preview ─── */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .settings-field {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+    }
+    .settings-label { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+    .settings-val   { font-size: .88rem; font-weight: 500; }
+    .settings-val.monospace { font-family: 'Courier New', monospace; font-size: .78rem; color: var(--accent2); }
+    .settings-val.redacted  { color: var(--muted); letter-spacing: .15em; }
+
+    /* ─── tab bar ─── */
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 4px;
+      margin-bottom: 24px;
+      width: fit-content;
+      animation: fadeUp .5s .25s ease both;
+    }
+    .tab {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .8rem;
+      font-weight: 500;
+      padding: 7px 18px;
+      border-radius: 50px;
+      border: none;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .tab.active { background: var(--accent); color: var(--bg); font-weight: 600; }
+    .tab:hover:not(.active) { color: var(--text); }
+
+    /* ─── animations ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:nth-child(1) { animation-delay: .3s; }
+    .card:nth-child(2) { animation-delay: .35s; }
+    .card:nth-child(3) { animation-delay: .4s; }
+    .card:nth-child(4) { animation-delay: .45s; }
+    .card:nth-child(5) { animation-delay: .5s; }
+    .card:nth-child(6) { animation-delay: .55s; }
+
+    /* ─── empty state ─── */
+    .empty {
+      text-align: center;
+      padding: 32px 20px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    .empty .e-icon { font-size: 2rem; margin-bottom: 8px; opacity: .4; }
+
+    /* ─── scrollbar ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ─── responsive ─── */
+    @media (max-width: 860px) {
+      .stats { grid-template-columns: repeat(3, 1fr); }
+      .grid  { grid-template-columns: 1fr; }
+      .hero  { grid-template-columns: auto 1fr; }
+      .hero-meta { display: none; }
+      .fav-grid { grid-template-columns: 1fr; }
+      .settings-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 540px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .hero  { grid-template-columns: 1fr; text-align: center; }
+      .tags  { justify-content: center; }
+      .avatar-wrap { margin: 0 auto; }
+      .tab-bar { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<div class="shell">
+
+  <!-- ─── NAV ─── -->
+  <nav>
+    <div class="logo">AI<span>.</span>Hub</div>
+    <div class="nav-right">
+      <a href="#" class="btn">Settings</a>
+      <a href="#" class="btn btn-primary">Edit Profile</a>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <div class="hero">
+    <div class="avatar-wrap">
+      <div class="avatar">SA</div>
+      <div class="avatar-status"></div>
+    </div>
+    <div class="hero-info">
+      <h1>Sarah Amara</h1>
+      <div class="email">sarah.amara@aitools.io</div>
+      <div class="tags">
+        <span class="tag role"><span class="dot"></span> Manager</span>
+        <span class="tag status"><span class="dot"></span> Active</span>
+        <span class="tag prof">🎨 UX Designer</span>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <strong>127</strong>
+        days active
+      </div>
+      <div class="meta-item" style="margin-top:8px; font-size:.7rem;">
+        Joined March 2025
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── STATS ─── -->
+  <div class="stats">
+    <div class="stat-card accent">
+      <div class="icon">⭐</div>
+      <div class="num">24</div>
+      <div class="label">Favorites</div>
+    </div>
+    <div class="stat-card teal">
+      <div class="icon">📚</div>
+      <div class="num">6</div>
+      <div class="label">Shelves</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon">✍️</div>
+      <div class="num">18</div>
+      <div class="label">Reviews</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon">🔍</div>
+      <div class="num">52</div>
+      <div class="label">Searches</div>
+    </div>
+    <div class="stat-card red">
+      <div class="icon">💡</div>
+      <div class="num">3</div>
+      <div class="label">Suggestions</div>
+    </div>
+  </div>
+
+  <!-- ─── CONTENT GRID ─── -->
+  <div class="grid">
+
+    <!-- ─── REVIEWS ─── -->
+    <div class="card">
+      <div class="card-head">
+        <h2>✍️ Reviews <span class="count">18</span></h2>
+        <a href="#" class="see-all">See all →</a>
+      </div>
+      <div class="card-body">
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-tool">
+              <div class="tool-badge">🤖</div>
+              Midjourney
+            </div>
+            <span class="review-status approved">approved</span>
+          </div>
+          <div class="stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <div class="review-comment">Absolutely transformed my design workflow. The v6 model is insane for concept art generation — I can ideate 10× faster now.</div>
+          <div class="review-date">May 14, 2025</div>
+        </div>
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-tool">
+              <div class="tool-badge">✍️</div>
+              Notion AI
+            </div>
+            <span class="review-status approved">approved</span>
+          </div>
+          <div class="stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span>
+          </div>
+          <div class="review-comment">Great for summarizing meeting notes. Wish the writing suggestions were a bit more context-aware, but overall solid.</div>
+          <div class="review-date">Apr 29, 2025</div>
+        </div>
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-tool">
+              <div class="tool-badge">🎧</div>
+              ElevenLabs
+            </div>
+            <span class="review-status pending">pending</span>
+          </div>
+          <div class="stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span><span class="star empty">★</span>
+          </div>
+          <div class="review-comment">Voice cloning is impressive but pricing feels steep for small teams. The API could use better documentation too.</div>
+          <div class="review-date">Jun 1, 2025</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── FAVORITES ─── -->
+    <div class="card">
+      <div class="card-head">
+        <h2>⭐ Favorites <span class="count">24</span></h2>
+        <a href="#" class="see-all">See all →</a>
+      </div>
+      <div class="card-body">
+        <div class="fav-grid">
+          <div class="fav-card">
+            <div class="fav-logo">🎨</div>
+            <div class="fav-info">
+              <div class="fav-name">Figma AI</div>
+              <div class="fav-cat">Design</div>
+              <div class="rating">★ 4.8</div>
+            </div>
+          </div>
+          <div class="fav-card">
+            <div class="fav-logo">🤖</div>
+            <div class="fav-info">
+              <div class="fav-name">Claude</div>
+              <div class="fav-cat">Writing</div>
+              <div class="rating">★ 4.9</div>
+            </div>
+          </div>
+          <div class="fav-card">
+            <div class="fav-logo">🖼️</div>
+            <div class="fav-info">
+              <div class="fav-name">DALL·E 3</div>
+              <div class="fav-cat">Image Gen</div>
+              <div class="rating">★ 4.6</div>
+            </div>
+          </div>
+          <div class="fav-card">
+            <div class="fav-logo">📊</div>
+            <div class="fav-info">
+              <div class="fav-name">Julius AI</div>
+              <div class="fav-cat">Data Analysis</div>
+              <div class="rating">★ 4.5</div>
+            </div>
+          </div>
+          <div class="fav-card">
+            <div class="fav-logo">🎵</div>
+            <div class="fav-info">
+              <div class="fav-name">Suno</div>
+              <div class="fav-cat">Audio</div>
+              <div class="rating">★ 4.4</div>
+            </div>
+          </div>
+          <div class="fav-card">
+            <div class="fav-logo">💬</div>
+            <div class="fav-info">
+              <div class="fav-name">Perplexity</div>
+              <div class="fav-cat">Search</div>
+              <div class="rating">★ 4.7</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SHELVES ─── -->
+    <div class="card">
+      <div class="card-head">
+        <h2>📚 My Shelves <span class="count">6</span></h2>
+        <a href="#" class="see-all">New shelf +</a>
+      </div>
+      <div class="card-body">
+        <div class="shelf-list">
+          <div class="shelf-item">
+            <div class="shelf-left">
+              <div class="shelf-icon">🎨</div>
+              <div>
+                <div class="shelf-name">Design Arsenal</div>
+                <div class="shelf-desc">My go-to tools for creative work</div>
+              </div>
+            </div>
+            <div class="shelf-right">
+              <div class="shelf-count">12</div>
+              <div class="shelf-count-label">tools</div>
+              <div class="shelf-date">Updated 2d ago</div>
+            </div>
+          </div>
+          <div class="shelf-item">
+            <div class="shelf-left">
+              <div class="shelf-icon">🚀</div>
+              <div>
+                <div class="shelf-name">Productivity Stack</div>
+                <div class="shelf-desc">Writing, research & automation</div>
+              </div>
+            </div>
+            <div class="shelf-right">
+              <div class="shelf-count">9</div>
+              <div class="shelf-count-label">tools</div>
+              <div class="shelf-date">Updated 1w ago</div>
+            </div>
+          </div>
+          <div class="shelf-item">
+            <div class="shelf-left">
+              <div class="shelf-icon">🧠</div>
+              <div>
+                <div class="shelf-name">LLM Experiments</div>
+                <div class="shelf-desc">Large language models I'm testing</div>
+              </div>
+            </div>
+            <div class="shelf-right">
+              <div class="shelf-count">7</div>
+              <div class="shelf-count-label">tools</div>
+              <div class="shelf-date">Updated 3d ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SEARCH HISTORY ─── -->
+    <div class="card">
+      <div class="card-head">
+        <h2>🔍 Search History <span class="count">52</span></h2>
+        <a href="#" class="see-all">Clear →</a>
+      </div>
+      <div class="card-body">
+        <div class="history-list">
+          <div class="history-item">
+            <div class="history-type-icon ai">✦</div>
+            <div class="history-content">
+              <div class="history-title">Best tools for UX wireframing in 2025</div>
+              <div class="history-prompt">Find me AI-powered wireframing tools that integrate with Figma...</div>
+              <div class="history-cats">
+                <span class="history-cat-tag">Design</span>
+                <span class="history-cat-tag">Productivity</span>
+              </div>
+            </div>
+            <div class="history-meta">
+              <div class="history-type-label">AI Prompt</div>
+              <div class="history-date">Jun 1</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-type-icon keyword">⌕</div>
+            <div class="history-content">
+              <div class="history-title">voice synthesis free tier</div>
+              <div class="history-prompt">voice synthesis free tier</div>
+              <div class="history-cats">
+                <span class="history-cat-tag">Audio</span>
+              </div>
+            </div>
+            <div class="history-meta">
+              <div class="history-type-label">Keyword</div>
+              <div class="history-date">May 29</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-type-icon ai">✦</div>
+            <div class="history-content">
+              <div class="history-title">AI tools for competitor analysis</div>
+              <div class="history-prompt">Suggest tools for market research and brand tracking with AI...</div>
+              <div class="history-cats">
+                <span class="history-cat-tag">Analytics</span>
+                <span class="history-cat-tag">Research</span>
+              </div>
+            </div>
+            <div class="history-meta">
+              <div class="history-type-label">AI Prompt</div>
+              <div class="history-date">May 24</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-type-icon keyword">⌕</div>
+            <div class="history-content">
+              <div class="history-title">open source llm deployment</div>
+              <div class="history-prompt">open source llm deployment</div>
+            </div>
+            <div class="history-meta">
+              <div class="history-type-label">Keyword</div>
+              <div class="history-date">May 18</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SUGGESTIONS ─── -->
+    <div class="card full">
+      <div class="card-head">
+        <h2>💡 My Suggestions <span class="count">3</span></h2>
+        <a href="#" class="see-all">Submit new →</a>
+      </div>
+      <div class="card-body">
+        <div class="suggestion-list">
+
+          <div class="suggestion-item">
+            <div class="sug-header">
+              <div>
+                <div class="sug-name">Framer AI</div>
+                <div class="sug-website">framer.com</div>
+              </div>
+              <span class="sug-status approved">approved</span>
+            </div>
+            <div class="sug-desc">AI-powered website builder with real-time design suggestions and CMS integration. Allows designers to go from prototype to production without writing code.</div>
+            <div class="sug-footer">
+              <span class="sug-chip"><span>Category</span> Design</span>
+              <span class="sug-chip"><span>Provider</span> Framer Inc.</span>
+              <span class="sug-chip"><span>Release</span> Jan 2024</span>
+              <span class="sug-chip">🏷️ no-code, website builder</span>
+            </div>
+          </div>
+
+          <div class="suggestion-item">
+            <div class="sug-header">
+              <div>
+                <div class="sug-name">Luma AI</div>
+                <div class="sug-website">lumalabs.ai</div>
+              </div>
+              <span class="sug-status pending_manager">pending manager</span>
+            </div>
+            <div class="sug-desc">3D scene capture and neural radiance field rendering for product shots and immersive media. Particularly useful for e-commerce and architecture visualization.</div>
+            <div class="sug-footer">
+              <span class="sug-chip"><span>Category</span> 3D / Vision</span>
+              <span class="sug-chip"><span>Provider</span> Luma AI</span>
+              <span class="sug-chip"><span>Release</span> Mar 2024</span>
+              <span class="sug-chip">🏷️ NeRF, 3D capture</span>
+            </div>
+          </div>
+
+          <div class="suggestion-item">
+            <div class="sug-header">
+              <div>
+                <div class="sug-name">MusicGen Studio</div>
+                <div class="sug-website">musicgen.ai</div>
+              </div>
+              <span class="sug-status rejected_ai">rejected by AI</span>
+            </div>
+            <div class="sug-desc">Text-to-music generation tool with stem separation and DAW plugin support. Focused on royalty-free music generation for content creators.</div>
+            <div class="sug-footer">
+              <span class="sug-chip"><span>Category</span> Audio</span>
+              <span class="sug-chip"><span>Provider</span> Proposed: MetaAI</span>
+            </div>
+            <div class="sug-rejection">⚠️ Rejection reason: Duplicate entry — a similar tool with overlapping features already exists in the Audio category. Please review existing listings before re-submitting.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── ACCOUNT SETTINGS ─── -->
+    <div class="card full">
+      <div class="card-head">
+        <h2>⚙️ Account Details</h2>
+        <a href="#" class="see-all">Edit →</a>
+      </div>
+      <div class="card-body">
+        <div class="settings-grid">
+          <div class="settings-field">
+            <div class="settings-label">Full Name</div>
+            <div class="settings-val">Sarah Amara</div>
+          </div>
+          <div class="settings-field">
+            <div class="settings-label">Email Address</div>
+            <div class="settings-val monospace">sarah.amara@aitools.io</div>
+          </div>
+          <div class="settings-field">
+            <div class="settings-label">Role</div>
+            <div class="settings-val">Manager</div>
+          </div>
+          <div class="settings-field">
+            <div class="settings-label">Account Status</div>
+            <div class="settings-val" style="color:#2dde98;">● Active</div>
+          </div>
+          <div class="settings-field">
+            <div class="settings-label">Profession</div>
+            <div class="settings-val">UX Designer</div>
+          </div>
+          <div class="settings-field">
+            <div class="settings-label">Password</div>
+            <div class="settings-val redacted">●●●●●●●●●●</div>
+          </div>
+          <div class="settings-field">
+            <div class="settings-label">Member Since</div>
+            <div class="settings-val">March 6, 2025</div>
+          </div>
+          <div class="settings-field">
+            <div class="settings-label">Last Updated</div>
+            <div class="settings-val">June 1, 2025</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /grid -->
+</div><!-- /shell -->
+
+</body>
+</html>
