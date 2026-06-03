@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import styles from "../../style/admin/adminSidebar.module.css";
 
 // ── Icônes SVG inline (pas de dépendance Lucide dans la sidebar) ──
@@ -44,17 +45,14 @@ const icons = {
 const NAV_ITEMS = [
   { id: "dashboard",   label: "Tableau de bord", icon: "dashboard" },
   { id: "users",       label: "Utilisateurs",    icon: "users",       badge: null },
-  { id: "suggestions", label: "Suggestions",     icon: "suggestions", badge: 5, badgeVariant: "warning" },
+  { id: "suggestions", label: "Validations",     icon: "suggestions", badge: 5, badgeVariant: "warning" },
   { id: "moderation",  label: "Modération",      icon: "moderation",  badge: 3, badgeVariant: "danger" },
 ];
 
 /**
  * AdminSidebar
- * Props:
- *   activeTab: string
- *   setActiveTab: (tab: string) => void
  */
-export default function AdminSidebar({ activeTab, setActiveTab }) {
+export default function AdminSidebar() {
   return (
     <aside className={styles.sidebar}>
       {/* ── Logo ── */}
@@ -71,10 +69,12 @@ export default function AdminSidebar({ activeTab, setActiveTab }) {
         <span className={styles.navSection}>Navigation</span>
 
         {NAV_ITEMS.map((item) => (
-          <button
+          <NavLink
             key={item.id}
-            className={`${styles.navBtn} ${activeTab === item.id ? styles.navBtnActive : ""}`}
-            onClick={() => setActiveTab(item.id)}
+            to={`/admin/${item.id}`}
+            className={({ isActive }) =>
+              `${styles.navBtn} ${isActive ? styles.navBtnActive : ""}`
+            }
           >
             {icons[item.icon]}
             {item.label}
@@ -91,7 +91,7 @@ export default function AdminSidebar({ activeTab, setActiveTab }) {
                 {item.badge}
               </span>
             )}
-          </button>
+          </NavLink>
         ))}
       </nav>
 
