@@ -2,8 +2,8 @@
 .navbar {
     width: 100%;
     background:rgba(4,1,14,.65); backdrop-filter:blur(24px); /* Deep dark background */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    color: #ffffff;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.05) /* var(--tp-rgb) fallback */;
+    color: var(--tp);
     font-family: sans-serif;
     position: relative;
     overflow: hidden;
@@ -47,7 +47,7 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: linear-gradient(to bottom right, #6366f1, #9333ea);
+    background: linear-gradient(to bottom right, var(--nv), var(--nv));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -58,7 +58,7 @@
     font-size: 1.25rem;
     font-weight: 700;
     letter-spacing: 0.025em;
-    color: #ffffff;
+    color: var(--tp);
     text-decoration: none;
 }
 
@@ -120,24 +120,24 @@
 }
 
 .navLinks li:hover {
-    color: #3b82f6; /* Example: changes text to blue on hover */
+    color: var(--nb); /* Example: changes text to blue on hover */
     cursor: pointer;
 }
 
 .navLinks a, .navLinksApp a {
     font-size: 14px;
     font-weight: 500;
-    color: #9ca3af;
+    color: var(--ts);
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .navLinks a:hover {
-    color: #ffffff;
+    color: var(--tp);
 }
 
 .navLinksApp a:hover {
-    color: #818cf8; /* Indigo hover for app side */
+    color: var(--nv); /* Indigo hover for app side */
 }
 
 /* --- Sliding Buttons --- */
@@ -150,7 +150,7 @@
     border-radius: 0.45rem;
     background-color: transparent;
     border: 1px solid transparent;
-    color: #9ca3af;
+    color: var(--ts);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
@@ -166,9 +166,9 @@
 }
 
 .slideBtnRight:hover, .slideBtnLeft:hover {
-    background-color: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
+    background-color: rgba(15, 23, 42, 0.06) /* var(--tp-rgb) fallback */;
+    border-color: rgba(15, 23, 42, 0.08) /* var(--tp-rgb) fallback */;
+    color: var(--tp);
     transform: translateY(-1px);
 }
 
@@ -192,21 +192,21 @@
 .textLink {
     font-size: 13px;
     font-weight: 500;
-    color: #d1d5db;
+    color: var(--ts);
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .textLink:hover {
-    color: #ffffff;
+    color: var(--tp);
 }
 
 .outlineBtn {
     padding: 0.5rem 1.25rem;
     border-radius: 0.5rem;
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #ffffff;
+    background-color: rgba(15, 23, 42, 0.05) /* var(--tp-rgb) fallback */;
+    border: 1px solid rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */;
+    color: var(--tp);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
@@ -214,14 +214,14 @@
 }
 
 .outlineBtn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */;
 }
 
 .primaryBtn {
     padding: 0.625rem 1.25rem;
     border-radius: 0.5rem;
-    background: linear-gradient(to right, #2563eb, #4f46e5); /* Blue to Indigo */
-    color: #ffffff;
+    background: linear-gradient(to right, var(--nb), var(--nb)); /* Blue to Indigo */
+    color: var(--tp);
     font-size: 13px;
     font-weight: 600;
     text-decoration: none;

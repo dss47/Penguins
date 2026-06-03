@@ -1,22 +1,4 @@
-:root {
-  --bg-void: #04010e;
-  --bg-deep: #0a0520;
-  --bg-surface: #110830;
-  --bg-card: #160d38;
-  --bg-card-h: #1e1250;
-  --nv: #a855f7;
-  --nb: #3b82f6;
-  --np: #ec4899;
-  --nc: #06b6d4;
-  --ng: #22c55e;
-  --ag: #7c3aed;
-  --tp: #f0eaff;
-  --ts: #9d8abf;
-  --tm: #5a4d72;
-  --bd: rgba(168,85,247,0.12);
-  --bm: rgba(168,85,247,0.25);
-  --bg2: rgba(168,85,247,0.5);
-}
+
 
 /* Container & Background styling */
 .main {
@@ -24,7 +6,7 @@
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    color: #ffffff;
+    color: var(--tp);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     padding: 4rem 1rem 2rem;
     text-align: center;
@@ -128,7 +110,7 @@ position: relative;
 }
 
 .input::placeholder {
-    color: #4b5563;
+    color: var(--tm);
 }
 
 /* Search Button */
@@ -141,7 +123,7 @@ position: relative;
     border-radius: 9px;
     border: none;
     background: linear-gradient(135deg, var(--ag), var(--nb));
-    color: #fff;
+    color: var(--tp);
     font-family: 'DM Sans', sans-serif;
     font-size: .85rem;
     font-weight: 500;
@@ -237,7 +219,7 @@ position: relative;
     font-size: 2.5rem;
     font-weight: 700;
     margin: 0;
-    background: linear-gradient(to right, #a855f7, #06b6d4);
+    background: linear-gradient(to right, var(--nv), #06b6d4);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -249,7 +231,7 @@ position: relative;
 .categoriesNum span,
 .communauteNum span,
 .disponibiliteNum span {
-    background: linear-gradient(to right, #a855f7, #06b6d4);
+    background: linear-gradient(to right, var(--nv), #06b6d4);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -261,7 +243,7 @@ position: relative;
 .categories,
 .communaute,
 .disponibilite {
-    color: #6b7280;
+    color: var(--tm);
     font-size: 0.85rem;
     font-weight: 500;
     margin: 0;

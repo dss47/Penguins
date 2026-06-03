@@ -1,22 +1,4 @@
-:global(:root) {
-  --bg-void: #04010e;
-  --bg-deep: #0a0520;
-  --bg-surface: #110830;
-  --bg-card: #160d38;
-  --bg-card-h: #1e1250;
-  --nv: #a855f7;
-  --nb: #3b82f6;
-  --np: #ec4899;
-  --nc: #06b6d4;
-  --ng: #22c55e;
-  --ag: #7c3aed;
-  --tp: #f0eaff;
-  --ts: #9d8abf;
-  --tm: #5a4d72;
-  --bd: rgba(168,85,247,0.12);
-  --bm: rgba(168,85,247,0.25);
-  --bg2: rgba(168,85,247,0.5);
-}
+
 
 .allToolsContainer {
     position: relative;
@@ -265,7 +247,7 @@
     font-size: 0.95rem;
     font-weight: 600;
     font-family: sans-serif;
-    color: #fff;
+    color: var(--tp);
     background: var(--nc);
     padding: 0.7rem 1rem;
     border-radius: 10px;
@@ -283,8 +265,8 @@
 }
 
 .activeCategoryBtn .categoryCount {
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
+    background: rgba(15, 23, 42, 0.2) /* var(--tp-rgb) fallback */;
+    color: var(--tp);
 }
 
 /* Right Column (Grid) */
@@ -349,7 +331,7 @@
     background-size: 100px 100px;
     transform: rotate(45deg);
     opacity: 0.5;
-    mask-image: radial-gradient(circle, rgba(255, 255, 255, 1) 10%, transparent 60%);
+    mask-image: radial-gradient(circle, rgba(15, 23, 42, 1) /* var(--tp-rgb) fallback */ 10%, transparent 60%);
     pointer-events: none;
     z-index: 0;
 }

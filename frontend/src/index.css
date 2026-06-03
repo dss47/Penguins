@@ -8,7 +8,9 @@
     margin: 0;
     padding: 0;
 }
+
 :root {
+  /* Default to Dark Mode */
   --bg-void: #04010e;
   --bg-deep: #0a0520;
   --bg-surface: #110830;
@@ -26,16 +28,69 @@
   --bd: rgba(168,85,247,0.12);
   --bm: rgba(168,85,247,0.25);
   --bg2: rgba(168,85,247,0.5);
+  --gradient-1: rgba(139, 92, 246, 0.15);
+  --gradient-2: rgba(56, 189, 248, 0.15);
 }
+
+/* Light mode based on system preference */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg-void: #f8fafc;
+    --bg-deep: #f1f5f9;
+    --bg-surface: #e2e8f0;
+    --bg-card: #ffffff;
+    --bg-card-h: #f1f5f9;
+    --nv: #9333ea;
+    --nb: #2563eb;
+    --np: #db2777;
+    --nc: #0891b2;
+    --ng: #16a34a;
+    --ag: #6d28d9;
+    --tp: #0f172a;
+    --ts: #334155;
+    --tm: #475569;
+    --bd: rgba(147, 51, 234, 0.2);
+    --bm: rgba(147, 51, 234, 0.4);
+    --bg2: rgba(147, 51, 234, 0.1);
+    --gradient-1: rgba(147, 51, 234, 0.1);
+    --gradient-2: rgba(8, 145, 178, 0.1);
+  }
+}
+
+/* Light mode based on explicit class/attribute (override) */
+:root[data-theme="light"],
+.light {
+  --bg-void: #f8fafc;
+  --bg-deep: #f1f5f9;
+  --bg-surface: #e2e8f0;
+  --bg-card: #ffffff;
+  --bg-card-h: #f1f5f9;
+  --nv: #9333ea;
+  --nb: #2563eb;
+  --np: #db2777;
+  --nc: #0891b2;
+  --ng: #16a34a;
+  --ag: #6d28d9;
+  --tp: #0f172a;
+  --ts: #334155;
+  --tm: #475569;
+  --bd: rgba(147, 51, 234, 0.2);
+  --bm: rgba(147, 51, 234, 0.4);
+  --bg2: rgba(147, 51, 234, 0.1);
+  --gradient-1: rgba(147, 51, 234, 0.1);
+  --gradient-2: rgba(8, 145, 178, 0.1);
+}
+
 html, body {
     width: 100%;
     height: 100%;
-    background-color: #06060c;
+    background-color: var(--bg-void);
     background-image: 
-        radial-gradient(circle at 15% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.15) 0%, transparent 40%);
+        radial-gradient(circle at 15% 70%, var(--gradient-1) 0%, transparent 40%),
+        radial-gradient(circle at 85% 30%, var(--gradient-2) 0%, transparent 40%);
     overflow-x: hidden;
 }
+
 body{
     font-family: 'DM Sans', sans-serif;
     color: var(--tp);

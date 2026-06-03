@@ -26,8 +26,8 @@
 
 /* ── CARD ── */
 .form-card {
-  background: #0f1629;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-surface);
+  border: 1px solid rgba(15, 23, 42, 0.08) /* var(--tp-rgb) fallback */;
   border-radius: 20px;
   padding: 2.5rem;
   display: flex;
@@ -70,15 +70,15 @@
 .form-label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #a0a8c8;
+  color: var(--tm);
 }
 
 /* ── INPUT ── */
 .form-input {
-  background: #1a2240; /* Lightened from #141b35 */
-  border: 1px solid rgba(255, 255, 255, 0.15); /* Increased contrast */
+  background: var(--bg-card-h); /* Lightened from #141b35 */
+  border: 1px solid rgba(15, 23, 42, 0.15) /* var(--tp-rgb) fallback */; /* Increased contrast */
   border-radius: 12px;
-  color: #e8eaf0;
+  color: var(--tp);
   font-size: 0.88rem;
   padding: 0.75rem 1rem;
   outline: none;
@@ -91,22 +91,22 @@
 }
 
 .form-input:focus {
-  background: #1f284b;
-  border-color: #7c6bff;
+  background: var(--bg-card);
+  border-color: var(--nv);
   box-shadow: 0 0 0 3px rgba(124, 107, 255, 0.15);
 }
 
 .form-input::placeholder {
-  color: #6b7394;
+  color: var(--tm);
   font-size: 0.85rem;
 }
 
 /* ── TEXTAREA ── */
 .form-textarea {
-  background: #1a2240; /* Lightened from #141b35 */
-  border: 1px solid rgba(255, 255, 255, 0.15); /* Increased contrast */
+  background: var(--bg-card-h); /* Lightened from #141b35 */
+  border: 1px solid rgba(15, 23, 42, 0.15) /* var(--tp-rgb) fallback */; /* Increased contrast */
   border-radius: 12px;
-  color: #e8eaf0;
+  color: var(--tp);
   font-size: 0.88rem;
   padding: 0.75rem 1rem;
   outline: none;
@@ -119,20 +119,20 @@
 }
 
 .form-textarea:focus {
-  background: #1f284b;
-  border-color: #7c6bff;
+  background: var(--bg-card);
+  border-color: var(--nv);
   box-shadow: 0 0 0 3px rgba(124, 107, 255, 0.15);
 }
 
 .form-textarea::placeholder {
-  color: #6b7394;
+  color: var(--tm);
 }
 
 /* ── UPLOAD ZONE ── */
 .upload-zone {
   border: 2px dashed rgba(124, 107, 255, 0.45); /* Increased contrast */
   border-radius: 12px;
-  background: #1a2240; /* Lightened from #141b35 */
+  background: var(--bg-card-h); /* Lightened from #141b35 */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -148,7 +148,7 @@
 }
 
 .upload-zone:hover {
-  border-color: #7c6bff;
+  border-color: var(--nv);
   background: rgba(124, 107, 255, 0.08);
 }
 
@@ -158,28 +158,28 @@
 
 .upload-icon {
   font-size: 1.8rem;
-  color: #7c6bff;
+  color: var(--nv);
 }
 
 .upload-text {
   font-size: 0.8rem;
-  color: #a0a8c8;
+  color: var(--tm);
   line-height: 1.4;
 }
 
 .upload-text strong {
-  color: #ffffff;
+  color: var(--tp);
 }
 
 .upload-hint {
   font-size: 0.72rem;
-  color: #94a3b8;
+  color: var(--tm);
 }
 
 /* ── HINT ── */
 .form-hint {
   font-size: 0.75rem;
-  color: #94a3b8; /* Boosted legibility from #6b7394 */
+  color: var(--tm); /* Boosted legibility from var(--tm) */
   line-height: 1.4;
   white-space: normal;
   word-break: break-word;
@@ -188,7 +188,7 @@
 /* ── COUNTER ── */
 .form-counter {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--tm);
   text-align: right;
 }
 
@@ -198,24 +198,24 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(15, 23, 42, 0.08) /* var(--tp-rgb) fallback */;
   margin-top: 1rem;
 }
 
 .btn-cancel {
   padding: 0.65rem 1.6rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */;
   border-radius: 10px;
   background: transparent;
-  color: #a0a8c8;
+  color: var(--tm);
   font-size: 0.9rem;
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s;
 }
 
 .btn-cancel:hover {
-  border-color: #7c6bff;
-  color: #fff;
+  border-color: var(--nv);
+  color: var(--tp);
 }
 
 .btn-cancel:disabled {
@@ -225,15 +225,15 @@
 
 .form-autosave {
   font-size: 0.82rem;
-  color: #22c55e;
+  color: var(--ng);
 }
 
 .btn-submit {
   padding: 0.65rem 1.8rem;
-  background: linear-gradient(135deg, #7c6bff, #5b4fd4);
+  background: linear-gradient(135deg, var(--nv), var(--nv));
   border: none;
   border-radius: 10px;
-  color: #fff;
+  color: var(--tp);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -260,7 +260,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .ia {
-  color: #7c6bff;
+  color: var(--nv);
 }
 
 /* ── STEPPER ── */
@@ -283,8 +283,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  color: #6b7394;
+  border: 2px solid rgba(15, 23, 42, 0.15) /* var(--tp-rgb) fallback */;
+  color: var(--tm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -295,9 +295,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .step-active .step-number {
-  background: #7c6bff;
-  border-color: #7c6bff;
-  color: #fff;
+  background: var(--nv);
+  border-color: var(--nv);
+  color: var(--tp);
 }
 
 .step-info {
@@ -309,24 +309,24 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .step-title {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #6b7394;
+  color: var(--tm);
   white-space: nowrap;
 }
 
 .step-active .step-title {
-  color: #7c6bff;
+  color: var(--nv);
 }
 
 .step-sub {
   font-size: 0.72rem;
-  color: #4a5280;
+  color: var(--tm);
   white-space: nowrap;
 }
 
 .step-line {
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */;
   min-width: 20px;
 }
 
@@ -367,11 +367,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* ── MOVED INLINE STYLES ── */
 .step-text-title {
-  color: #fff;
+  color: var(--tp);
 }
 
 .step-text-detail {
-  color: #a0a8c8;
+  color: var(--tm);
 }
 
 .success-container {
@@ -380,13 +380,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .success-title {
-  color: #7c6bff;
+  color: var(--nv);
 }
 
 /* ── REACT SELECT CUSTOM STYLES ── */
 :global(.react-select__control) {
-  background-color: #1a2240 !important; /* Lightened */
-  border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Higher contrast */
+  background-color: var(--bg-card-h) !important; /* Lightened */
+  border: 1px solid rgba(15, 23, 42, 0.15) /* var(--tp-rgb) fallback */ !important; /* Higher contrast */
   border-radius: 12px !important;
   min-height: 55px !important;
   box-shadow: none !important;
@@ -394,8 +394,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transition: border-color 0.2s, background 0.2s !important;
 }
 :global(.react-select__control--is-focused) {
-  background-color: #1f284b !important;
-  border: 1px solid #7c6bff !important;
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--nv) !important;
   box-shadow: 0 0 0 3px rgba(124, 107, 255, 0.15) !important;
 }
 :global(.react-select__value-container) {
@@ -403,20 +403,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   gap: 6px !important;
 }
 :global(.react-select__menu) {
-  background-color: #1a2240 !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background-color: var(--bg-card-h) !important;
+  border: 1px solid rgba(15, 23, 42, 0.15) /* var(--tp-rgb) fallback */ !important;
   border-radius: 10px !important;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
   z-index: 10 !important;
 }
 :global(.react-select__option) {
-  background-color: #1a2240 !important;
+  background-color: var(--bg-card-h) !important;
   color: white !important;
   cursor: pointer !important;
   padding: 10px 14px !important;
 }
 :global(.react-select__option--is-focused) {
-  background-color: #7c6bff !important;
+  background-color: var(--nv) !important;
 }
 :global(.react-select__single-value) {
   color: white !important;
@@ -427,10 +427,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 0 !important;
 }
 :global(.react-select__placeholder) {
-  color: #8b93b0 !important;
+  color: var(--tm) !important;
 }
 :global(.react-select__multi-value) {
-  background-color: #7c6bff !important;
+  background-color: var(--nv) !important;
   border-radius: 6px !important;
   margin: 2px !important;
 }
@@ -446,7 +446,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer !important;
 }
 :global(.react-select__multi-value__remove:hover) {
-  background-color: #5b4fd4 !important;
+  background-color: var(--nv) !important;
   color: white !important;
   border-radius: 0 6px 6px 0 !important;
 }

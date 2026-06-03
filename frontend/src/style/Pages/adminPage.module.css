@@ -1,17 +1,17 @@
 
 
 :root {
-  --bg-base:      #030712;   /* gray-950 */
-  --bg-card:      #111827;   /* gray-900 */
-  --bg-hover:     #1f2937;   /* gray-800 */
-  --border:       #1f2937;
-  --text-primary: #ffffff;
-  --text-muted:   #6b7280;   /* gray-500 */
-  --accent:       #6366f1;   /* indigo-500 */
-  --accent-light: #818cf8;   /* indigo-400 */
-  --success:      #10b981;   /* emerald-500 */
-  --danger:       #ef4444;   /* red-500 */
-  --warning:      #f59e0b;   /* amber-500 */
+  --bg-base:      var(--bg-void);   /* gray-950 */
+  --bg-card:      var(--bg-card);   /* gray-900 */
+  --bg-hover:     var(--bg-card-h);   /* gray-800 */
+  --border:       var(--bd);
+  --text-primary: var(--tp);
+  --text-muted:   var(--tm);   /* gray-500 */
+  --accent:       var(--nv);   /* indigo-500 */
+  --accent-light: var(--nv);   /* indigo-400 */
+  --success:      var(--ng);   /* emerald-500 */
+  --danger:       var(--np);   /* red-500 */
+  --warning:      var(--np);   /* amber-500 */
 
   /* Spacing */
   --sidebar-width: 240px;

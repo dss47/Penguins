@@ -12,13 +12,13 @@
 }
 
 .tableOutils thead tr {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) /* var(--tp-rgb) fallback */;
 }
 
 .tableOutils th {
   padding: 12px 16px;
   text-align: left;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(15, 23, 42, 0.4) /* var(--tp-rgb) fallback */;
   font-weight: 500;
   font-size: 12px;
   text-transform: uppercase;
@@ -26,22 +26,22 @@
 }
 
 .tableOutils tbody tr {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.05) /* var(--tp-rgb) fallback */;
   transition: background 0.15s;
 }
 
 .tableOutils tbody tr:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(15, 23, 42, 0.03) /* var(--tp-rgb) fallback */;
 }
 
 .tableOutils td {
   padding: 14px 16px;
-  color: #fff;
+  color: var(--tp);
   vertical-align: middle;
 }
 
 .tdMuted {
-  color: rgba(255, 255, 255, 0.55) !important;
+  color: rgba(15, 23, 42, 0.55) /* var(--tp-rgb) fallback */ !important;
 }
 
 /* Outil logo + nom */
@@ -60,19 +60,19 @@
   justify-content: center;
   font-weight: 700;
   font-size: 16px;
-  color: #fff;
+  color: var(--tp);
   flex-shrink: 0;
 }
 
 .outilNom {
   font-weight: 600;
   font-size: 13px;
-  color: #fff;
+  color: var(--tp);
 }
 
 .outilUrl {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(15, 23, 42, 0.35) /* var(--tp-rgb) fallback */;
   margin-top: 2px;
 }
 
@@ -89,25 +89,25 @@
 
 .badgeAttente {
   background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  color: var(--np);
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .badgeAccepte {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--ng);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .badgeRejete {
   background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  color: var(--np);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .badgeModif {
   background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
+  color: var(--nv);
   border: 1px solid rgba(99, 102, 241, 0.3);
 }
 
@@ -119,21 +119,21 @@
 }
 
 .btnVoir {
-  background: rgba(255, 255, 255, 0.06);
-  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.06) /* var(--tp-rgb) fallback */;
+  border: 0.5px solid rgba(15, 23, 42, 0.12) /* var(--tp-rgb) fallback */;
   border-radius: 8px;
   padding: 6px 10px;
-  color: #fff;
+  color: var(--tp);
   cursor: pointer;
   font-size: 13px;
 }
 
 .btnAccepter {
-  background: rgba(255, 255, 255, 0.06);
-  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.06) /* var(--tp-rgb) fallback */;
+  border: 0.5px solid rgba(15, 23, 42, 0.12) /* var(--tp-rgb) fallback */;
   border-radius: 8px;
   padding: 6px 12px;
-  color: #fff;
+  color: var(--tp);
   cursor: pointer;
   font-size: 13px;
   white-space: nowrap;
@@ -141,20 +141,20 @@
 
 .btnRejeter {
   background: transparent;
-  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  border: 0.5px solid rgba(15, 23, 42, 0.12) /* var(--tp-rgb) fallback */;
   border-radius: 8px;
   padding: 6px 10px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(15, 23, 42, 0.5) /* var(--tp-rgb) fallback */;
   cursor: pointer;
   font-size: 13px;
 }
 
-.btnAccepter:hover { background: rgba(255, 255, 255, 0.1); }
-.btnRejeter:hover  { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-.btnVoir:hover     { background: rgba(255, 255, 255, 0.1); }
+.btnAccepter:hover { background: rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */; }
+.btnRejeter:hover  { background: rgba(239, 68, 68, 0.1); color: var(--np); }
+.btnVoir:hover     { background: rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */; }
 
 .actionPublie {
-  color: #10b981;
+  color: var(--ng);
   font-size: 13px;
 }
 
@@ -164,15 +164,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(15, 23, 42, 0.08) /* var(--tp-rgb) fallback */;
 }
 
 .pageBtn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.04) /* var(--tp-rgb) fallback */;
+  border: 1px solid rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */;
   border-radius: 8px;
   padding: 8px 16px;
-  color: #fff;
+  color: var(--tp);
   cursor: pointer;
   font-size: 13px;
   transition: all 0.2s ease;
@@ -180,8 +180,8 @@
 }
 
 .pageBtn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */;
+  border-color: rgba(15, 23, 42, 0.2) /* var(--tp-rgb) fallback */;
 }
 
 .pageBtn:disabled {
@@ -190,7 +190,7 @@
 }
 
 .pageInfo {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(15, 23, 42, 0.5) /* var(--tp-rgb) fallback */;
   font-size: 13px;
   font-weight: 500;
 }

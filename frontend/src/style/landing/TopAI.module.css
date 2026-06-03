@@ -115,7 +115,7 @@
     height: 10px;
     transform: translateX(-50%);
     border-radius: 50%;
-    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    background: linear-gradient(135deg, var(--np), #fbbf24);
     box-shadow: 0 0 14px rgba(245,158,11,.65);
     z-index: 1;
 }

@@ -126,7 +126,7 @@
 }
 
 .card:hover .featureItem {
-    color: #fff;
+    color: var(--tp);
     background: var(--nc);
     border-color: var(--nc);
 }

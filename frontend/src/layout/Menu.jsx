@@ -1,12 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faArrowLeftLong} from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faArrowLeftLong, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 import style from "../style/layout/Menu.module.css";
 
 const Menu = ({ scrollToSection, refs }) => {
     const [activated, setActivated] = useState('landing');
     const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [theme, setTheme] = useState(
+        localStorage.getItem('theme') || 
+        (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+    );
+
+    useEffect(() => {
+        if (theme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.documentElement.classList.add('light');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.documentElement.classList.remove('light');
+        }
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(theme === 'light' ? 'dark' : 'light');
+    };
 
     const onMainActivated = () => setActivated('main');
     const onLandingActivated = () => setActivated('landing');
@@ -68,6 +87,9 @@ const Menu = ({ scrollToSection, refs }) => {
                     </div>
                 </div>
                 <div className={style.authSection}>
+                    <button onClick={toggleTheme} className={style.outlineBtn} style={{marginRight: '10px', padding: '0.5rem 0.8rem'}}>
+                        <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
+                    </button>
                     {isLoggedIn ? (
                         <>
                             <button onClick={logOut} className={style.outlineBtn}>Se déconnecter</button>

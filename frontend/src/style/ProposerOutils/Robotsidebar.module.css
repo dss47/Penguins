@@ -15,12 +15,12 @@
 
 /* ── BULLE MESSAGE ── */
 .robot-bubble {
-  background: #1a2140;
+  background: var(--bg-card-h);
   border: 1px solid rgba(124, 107, 255, 0.4);
   border-radius: 16px 16px 16px 4px;
   padding: 0.75rem 1rem;
   font-size: 0.82rem;
-  color: #e8eaf0;
+  color: var(--tp);
   line-height: 1.5;
   text-align: left;
   max-width: 170px;
@@ -131,15 +131,15 @@
   position: absolute;
   width: 5px; height: 5px;
   border-radius: 50%;
-  background: #7c6bff;
+  background: var(--nv);
   opacity: 0;
 }
 .particle-1 { left: 20%;  top: 60%; animation: pfloat 4s ease-in-out infinite 0s; }
-.particle-2 { left: 75%;  top: 50%; animation: pfloat 4s ease-in-out infinite 0.7s;  background: #22c55e; }
+.particle-2 { left: 75%;  top: 50%; animation: pfloat 4s ease-in-out infinite 0.7s;  background: var(--ng); }
 .particle-3 { left: 40%;  top: 75%; animation: pfloat 4s ease-in-out infinite 1.2s; }
-.particle-4 { left: 85%;  top: 70%; animation: pfloat 4s ease-in-out infinite 1.8s;  background: #f59e0b; }
+.particle-4 { left: 85%;  top: 70%; animation: pfloat 4s ease-in-out infinite 1.8s;  background: var(--np); }
 .particle-5 { left: 10%;  top: 80%; animation: pfloat 4s ease-in-out infinite 2.3s; }
-.particle-6 { left: 60%;  top: 85%; animation: pfloat 4s ease-in-out infinite 2.9s;  background: #a855f7; }
+.particle-6 { left: 60%;  top: 85%; animation: pfloat 4s ease-in-out infinite 2.9s;  background: var(--nv); }
 
 @keyframes pfloat {
   0%   { opacity: 0;   transform: translateY(0)     scale(1);   }

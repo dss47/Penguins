@@ -59,12 +59,12 @@
     font-weight: 700;
 }
 .rank1{
-    background: linear-gradient(135deg,#f59e0b,#fbbf24);
+    background: linear-gradient(135deg,var(--np),#fbbf24);
     color: #000;
     box-shadow: 0 0 16px rgba(251,191,36,.5);
 }
 .rank2{
-    background: linear-gradient(135deg,#94a3b8,#cbd5e1);
+    background: linear-gradient(135deg,var(--tm),#cbd5e1);
     color: #000;
 }
 .rank3{
@@ -108,7 +108,7 @@
     justify-content: center;
     gap: 2px;
     font-size: .8rem;
-    color: #f59e0b;
+    color: var(--np);
     margin-bottom: .625rem;
 }
 .rate{

@@ -6,8 +6,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 5%;
-    background: #090622;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--bg-void);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.05) /* var(--tp-rgb) fallback */;
     z-index: 1000;
 }
 
@@ -27,7 +27,7 @@
     position: relative;
     padding: 1rem 1.5rem;
     text-decoration: none;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(15, 23, 42, 0.6) /* var(--tp-rgb) fallback */;
     font-size: 1.3rem;
     font-weight: bold;
     font-family: sans-serif;
@@ -39,8 +39,8 @@
 }
 
 .navLink:hover:not(.active) {
-    color: rgba(255, 255, 255, 0.9);
-    background: rgba(255, 255, 255, 0.03);
+    color: rgba(15, 23, 42, 0.9) /* var(--tp-rgb) fallback */;
+    background: rgba(15, 23, 42, 0.03) /* var(--tp-rgb) fallback */;
 }
 
 .navLink.active {
@@ -58,7 +58,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #6356df;
+    background-color: var(--nv);
     border-radius: 8px;
     z-index: 1;
     box-shadow: 0 4px 15px rgba(99, 86, 223, 0.3);
