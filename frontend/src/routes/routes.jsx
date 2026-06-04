@@ -4,6 +4,8 @@ import ProposerOutils from "../pages/ProposerOutils"
 import ToolPage from "../pages/toolsPage"
 import Validations from "../pages/Validations"
 import MainPage from "../pages/MainPage"
+import Library from "../pages/Library"
+import ShelfItems from "../components/library/ShelfItems"
 
 import AdminDashboard from "../components/admin/AdminDashboard";
 import AdminUsers from "../components/admin/AdminUsers";
@@ -16,6 +18,8 @@ export const publicRoutes = [
     { path: '/tools', element: <ToolPage/>, name: 'tools' },
     { path: '/Validations', element: <Validations/>, name: 'Validations' },
     { path: '/MainPage', element: <MainPage/>, name: 'Main Page' },
+    { path: '/Library', element: <Library/>, name: 'Library' },
+    { path: '/Library/Shelf/:shelfIndex', element: <ShelfItems/>, name: 'Shelf Items' },
 ]
 
 export const adminRoutes = [

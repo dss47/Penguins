@@ -1,0 +1,287 @@
+/* ─── Tool Card ───────────────────────────────────────────────── */
+
+.toolCard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 22px;
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.toolCard:hover {
+    transform: translateY(-5px);
+    border-color: var(--border-hover);
+    box-shadow: 0 0 30px 4px rgba(139, 92, 246, 0.2), 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Top gradient accent per card */
+.toolCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    pointer-events: none;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+
+.toolCard[data-accent="violet"]::before { background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), transparent); }
+.toolCard[data-accent="rose"]::before   { background: linear-gradient(135deg, rgba(244, 63, 94, 0.09), transparent); }
+.toolCard[data-accent="teal"]::before   { background: linear-gradient(135deg, rgba(20, 184, 166, 0.09), transparent); }
+.toolCard[data-accent="blue"]::before   { background: linear-gradient(135deg, rgba(59, 130, 246, 0.09), transparent); }
+.toolCard[data-accent="purple"]::before { background: linear-gradient(135deg, rgba(168, 85, 247, 0.09), transparent); }
+.toolCard[data-accent="green"]::before  { background: linear-gradient(135deg, rgba(34, 197, 94, 0.09), transparent); }
+
+/* ─── Top Row ────────────────────────────────────────────────── */
+
+.cardTop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.logoBox {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(139, 92, 246, 0.14));
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.toolName {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-head);
+    letter-spacing: -0.01em;
+    flex: 1;
+}
+
+.heartBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    font-size: 1rem;
+    transition: transform 0.15s;
+    border-radius: 6px;
+}
+
+.heartBtn:hover {
+    transform: scale(1.28);
+}
+
+.heartActive {
+    animation: heartPop 0.35s ease forwards;
+}
+
+.topActions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.bookmarkBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    border-radius: 6px;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s, opacity 0.2s;
+}
+
+.bookmarkBtn:hover {
+    opacity: 0.5;
+    color: #6b7280;
+}
+
+/* ─── Description ────────────────────────────────────────────── */
+
+.cardDesc {
+    font-size: 0.83rem;
+    color: var(--text-body);
+    line-height: 1.6;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    margin: 0;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────── */
+
+.cardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+}
+
+.rating {
+    font-size: 0.83rem;
+    color: #e2e8f0;
+    font-weight: 500;
+}
+
+.tagPill {
+    display: inline-block;
+    padding: 3px 11px;
+    border-radius: var(--radius-pill);
+    font-size: 0.72rem;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #c4b5fd;
+    letter-spacing: 0.01em;
+}
+
+/* ─── Card Enter Animation ───────────────────────────────────── */
+
+.cardEnter {
+    animation: scaleIn 0.45s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.cardEnter:nth-child(1) { animation-delay: 0.04s; }
+.cardEnter:nth-child(2) { animation-delay: 0.10s; }
+.cardEnter:nth-child(3) { animation-delay: 0.16s; }
+.cardEnter:nth-child(4) { animation-delay: 0.22s; }
+.cardEnter:nth-child(5) { animation-delay: 0.28s; }
+.cardEnter:nth-child(6) { animation-delay: 0.34s; }
+
+/* ─── Light Mode Overrides ───────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .toolCard {
+        background: #ffffff;
+        border-color: #e4e4e7;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+    }
+
+    :root:not([data-theme="dark"]) .toolCard:hover {
+        border-color: rgba(139, 92, 246, 0.4);
+        box-shadow: 0 0 24px 4px rgba(139, 92, 246, 0.1), 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    :root:not([data-theme="dark"]) .logoBox {
+        border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    :root:not([data-theme="dark"]) .toolName {
+        color: #18181b;
+    }
+
+    :root:not([data-theme="dark"]) .cardDesc {
+        color: #71717a;
+    }
+
+    :root:not([data-theme="dark"]) .rating {
+        color: #52525b;
+    }
+
+    :root:not([data-theme="dark"]) .tagPill {
+        background: rgba(0, 0, 0, 0.05);
+        border-color: rgba(0, 0, 0, 0.06);
+        color: var(--accent-1);
+    }
+
+    :root:not([data-theme="dark"]) .bookmarkBtn {
+        color: #a1a1aa;
+    }
+
+    :root:not([data-theme="dark"]) .bookmarkBtn:hover {
+        color: #71717a;
+        opacity: 0.5;
+    }
+
+    :root:not([data-theme="dark"]) .toolCard[data-accent="violet"]::before { background: linear-gradient(135deg, rgba(139, 92, 246, 0.06), transparent); }
+    :root:not([data-theme="dark"]) .toolCard[data-accent="rose"]::before   { background: linear-gradient(135deg, rgba(244, 63, 94, 0.05), transparent); }
+    :root:not([data-theme="dark"]) .toolCard[data-accent="teal"]::before   { background: linear-gradient(135deg, rgba(20, 184, 166, 0.05), transparent); }
+    :root:not([data-theme="dark"]) .toolCard[data-accent="blue"]::before   { background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), transparent); }
+    :root:not([data-theme="dark"]) .toolCard[data-accent="purple"]::before { background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), transparent); }
+    :root:not([data-theme="dark"]) .toolCard[data-accent="green"]::before  { background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), transparent); }
+}
+
+:root[data-theme="light"] .toolCard,
+.light .toolCard {
+    background: #ffffff;
+    border-color: #e4e4e7;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+}
+
+:root[data-theme="light"] .toolCard:hover,
+.light .toolCard:hover {
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: 0 0 24px 4px rgba(139, 92, 246, 0.1), 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+:root[data-theme="light"] .logoBox,
+.light .logoBox {
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme="light"] .toolName,
+.light .toolName {
+    color: #18181b;
+}
+
+:root[data-theme="light"] .cardDesc,
+.light .cardDesc {
+    color: #71717a;
+}
+
+:root[data-theme="light"] .rating,
+.light .rating {
+    color: #52525b;
+}
+
+:root[data-theme="light"] .tagPill,
+.light .tagPill {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.06);
+    color: var(--accent-1);
+}
+
+:root[data-theme="light"] .bookmarkBtn,
+.light .bookmarkBtn {
+    color: #a1a1aa;
+}
+
+:root[data-theme="light"] .bookmarkBtn:hover,
+.light .bookmarkBtn:hover {
+    color: #71717a;
+    opacity: 0.5;
+}
+
+:root[data-theme="light"] .toolCard[data-accent="violet"]::before,
+.light .toolCard[data-accent="violet"]::before { background: linear-gradient(135deg, rgba(139, 92, 246, 0.06), transparent); }
+:root[data-theme="light"] .toolCard[data-accent="rose"]::before,
+.light .toolCard[data-accent="rose"]::before   { background: linear-gradient(135deg, rgba(244, 63, 94, 0.05), transparent); }
+:root[data-theme="light"] .toolCard[data-accent="teal"]::before,
+.light .toolCard[data-accent="teal"]::before   { background: linear-gradient(135deg, rgba(20, 184, 166, 0.05), transparent); }
+:root[data-theme="light"] .toolCard[data-accent="blue"]::before,
+.light .toolCard[data-accent="blue"]::before   { background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), transparent); }
+:root[data-theme="light"] .toolCard[data-accent="purple"]::before,
+.light .toolCard[data-accent="purple"]::before { background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), transparent); }
+:root[data-theme="light"] .toolCard[data-accent="green"]::before,
+.light .toolCard[data-accent="green"]::before  { background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), transparent); }

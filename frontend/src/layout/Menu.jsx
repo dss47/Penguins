@@ -7,6 +7,7 @@ import style from "../style/layout/Menu.module.css";
 const Menu = ({ scrollToSection, refs }) => {
     const [activated, setActivated] = useState('landing');
     const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [theme, setTheme] = useState(
         localStorage.getItem('theme') || 
         (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
@@ -60,7 +61,6 @@ const Menu = ({ scrollToSection, refs }) => {
                                 <li onClick={() => scrollToSection(refs.whyPenguinRef)}>Pourquoi Penguin</li>
                                 <li>Découvrir</li>
                                 <li onClick={() => scrollToSection(refs.topAiRef)}>Meilleures IA</li>
-                                <li>Tarifs</li>
                                 <li onClick={() => scrollToSection(refs.communityVoicesRef)}>Communauté</li>
                                 <li>contact</li>
                             </ul>
@@ -87,19 +87,32 @@ const Menu = ({ scrollToSection, refs }) => {
                     </div>
                 </div>
                 <div className={style.authSection}>
-                    <button onClick={toggleTheme} className={style.outlineBtn} style={{marginRight: '10px', padding: '0.5rem 0.8rem'}}>
-                        <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
-                    </button>
-                    {isLoggedIn ? (
-                        <>
-                            <button onClick={logOut} className={style.outlineBtn}>Se déconnecter</button>
-                        </>
-                    ) : (
-                        <>
-                            <Link to="/Auth" className={style.textLink}>Se connecter</Link>
-                            <Link to="/Auth" className={style.primaryBtn}>Commencez gratuitement</Link>
-                        </>
-                    )}
+                    <div className={style.dropdownWrapper}>
+                        <button className={style.avatarBtn} onClick={() => setIsDropdownOpen(!isDropdownOpen)} aria-label="Menu utilisateur">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M20 21a8 8 0 1 0-16 0" />
+                            </svg>
+                        </button>
+                        {isDropdownOpen && (
+                            <div className={style.dropdownMenu}>
+                                <button onClick={toggleTheme} className={style.dropdownItem}>
+                                    <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
+                                    <span>Mode {theme === 'light' ? 'sombre' : 'clair'}</span>
+                                </button>
+                                {isLoggedIn ? (
+                                    <button onClick={logOut} className={style.dropdownItem}>
+                                        Se déconnecter
+                                    </button>
+                                ) : (
+                                    <>
+                                        <Link to="/Auth" className={style.dropdownItem}>Se connecter</Link>
+                                        <Link to="/Auth" className={style.dropdownItem}>Commencez gratuitement</Link>
+                                    </>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
                 
             </div>

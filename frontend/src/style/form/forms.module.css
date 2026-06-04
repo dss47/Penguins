@@ -37,7 +37,7 @@
     margin: 0;
     padding-bottom: 1.5rem;
     font-family: sans-serif;
-    color: rgba(15, 23, 42, 0.6) /* var(--tp-rgb) fallback */;
+    color: var(--ts);
     max-width: 350px;
 }
 
@@ -59,11 +59,11 @@
     width: 100%;
     height: 3.8rem;
     background: var(--bg-card);
-    border: 1px solid rgba(15, 23, 42, 0.05) /* var(--tp-rgb) fallback */;
+    border: 1px solid var(--bd);
     border-radius: 15px;
     padding: 0 1.5rem;
     margin: 0;
-    color: white;
+    color: var(--tp);
     font-size: 1.1rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     outline: none;
@@ -77,7 +77,7 @@
 
 .input::placeholder,
 .passwordInput::placeholder {
-    color: rgba(15, 23, 42, 0.5) /* var(--tp-rgb) fallback */;
+    color: var(--tm);
 }
 
 .input:focus,
@@ -93,7 +93,7 @@
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    color: rgba(15, 23, 42, 0.5) /* var(--tp-rgb) fallback */;
+    color: var(--tm);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -101,7 +101,7 @@
 }
 
 .passwordToggle:hover {
-    color: white;
+    color: var(--tp);
 }
 
 .submitBtn {
@@ -139,7 +139,7 @@
     right: 1.2rem;
     top: 50%;
     transform: translateY(-50%);
-    color: rgba(15, 23, 42, 0.5) /* var(--tp-rgb) fallback */;
+    color: var(--tm);
     pointer-events: none; 
     transition: color 0.3s ease;
     cursor: default;
@@ -164,7 +164,7 @@
 .switchContainer p {
     font-size: 1.1rem;
     font-weight: 500;
-    color: rgba(15, 23, 42, 0.5) /* var(--tp-rgb) fallback */;
+    color: var(--tm);
     font-family: sans-serif;
     margin: 0;
 }

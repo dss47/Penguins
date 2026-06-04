@@ -1,0 +1,267 @@
+/* ─── Shelf Card ──────────────────────────────────────────────── */
+
+.shelfLink {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+}
+
+.shelfCard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 22px;
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.shelfCard:hover {
+    transform: translateY(-5px);
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 0 26px 4px rgba(99, 102, 241, 0.18), 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Per-shelf gradient accent ::before */
+.shelfCard::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: var(--radius-card);
+}
+
+.shelfCard[data-shelf="1"]::before { background: radial-gradient(ellipse at top left, rgba(139, 92, 246, 0.08), transparent 55%); }
+.shelfCard[data-shelf="2"]::before { background: radial-gradient(ellipse at top left, rgba(244, 63, 94, 0.07), transparent 55%); }
+.shelfCard[data-shelf="3"]::before { background: radial-gradient(ellipse at top left, rgba(20, 184, 166, 0.07), transparent 55%); }
+.shelfCard[data-shelf="4"]::before { background: radial-gradient(ellipse at top left, rgba(245, 158, 11, 0.07), transparent 55%); }
+.shelfCard[data-shelf="5"]::before { background: radial-gradient(ellipse at top left, rgba(59, 130, 246, 0.07), transparent 55%); }
+
+/* ─── Header ─────────────────────────────────────────────────── */
+
+.shelfHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+}
+
+.shelfIcon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.shelfCard[data-shelf="1"] .shelfIcon { background: linear-gradient(135deg, rgba(139, 92, 246, 0.28), rgba(99, 102, 241, 0.14)); }
+.shelfCard[data-shelf="2"] .shelfIcon { background: linear-gradient(135deg, rgba(244, 63, 94, 0.28), rgba(249, 115, 22, 0.14)); }
+.shelfCard[data-shelf="3"] .shelfIcon { background: linear-gradient(135deg, rgba(20, 184, 166, 0.28), rgba(6, 182, 212, 0.14)); }
+.shelfCard[data-shelf="4"] .shelfIcon { background: linear-gradient(135deg, rgba(245, 158, 11, 0.28), rgba(234, 179, 8, 0.14)); }
+.shelfCard[data-shelf="5"] .shelfIcon { background: linear-gradient(135deg, rgba(59, 130, 246, 0.28), rgba(99, 102, 241, 0.14)); }
+
+.dotsBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    color: #6b7280;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1;
+}
+
+.dotsBtn:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: #9ca3af;
+}
+
+/* ─── Body ───────────────────────────────────────────────────── */
+
+.shelfBody {
+    position: relative;
+    z-index: 1;
+}
+
+.shelfName {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text-head);
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+}
+
+.shelfDesc {
+    font-size: 0.82rem;
+    color: var(--text-body);
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────── */
+
+.shelfFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    z-index: 1;
+}
+
+.toolCountBadge {
+    display: inline-block;
+    padding: 3px 11px;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    animation: badgePop 0.4s cubic-bezier(.34, 1.56, .64, 1) 0.2s both;
+}
+
+.shelfCard[data-shelf="1"] .toolCountBadge { background: rgba(139, 92, 246, 0.18); color: #c4b5fd; }
+.shelfCard[data-shelf="2"] .toolCountBadge { background: rgba(244, 63, 94, 0.16); color: #fda4af; }
+.shelfCard[data-shelf="3"] .toolCountBadge { background: rgba(20, 184, 166, 0.16); color: #5eead4; }
+.shelfCard[data-shelf="4"] .toolCountBadge { background: rgba(245, 158, 11, 0.16); color: #fcd34d; }
+.shelfCard[data-shelf="5"] .toolCountBadge { background: rgba(59, 130, 246, 0.16); color: #93c5fd; }
+
+.shelfUpdated {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+}
+
+/* ─── Card Enter Animation ───────────────────────────────────── */
+
+.cardEnter {
+    animation: scaleIn 0.45s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.cardEnter:nth-child(1) { animation-delay: 0.04s; }
+.cardEnter:nth-child(2) { animation-delay: 0.10s; }
+.cardEnter:nth-child(3) { animation-delay: 0.16s; }
+.cardEnter:nth-child(4) { animation-delay: 0.22s; }
+.cardEnter:nth-child(5) { animation-delay: 0.28s; }
+
+/* ─── Light Mode Overrides ───────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .shelfCard {
+        background: #ffffff;
+        border-color: #e4e4e7;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+    }
+
+    :root:not([data-theme="dark"]) .shelfCard:hover {
+        border-color: rgba(99, 102, 241, 0.4);
+        box-shadow: 0 0 20px 4px rgba(99, 102, 241, 0.12), 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    :root:not([data-theme="dark"]) .shelfIcon {
+        border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    :root:not([data-theme="dark"]) .dotsBtn:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #6b7280;
+    }
+
+    :root:not([data-theme="dark"]) .shelfName {
+        color: #18181b;
+    }
+
+    :root:not([data-theme="dark"]) .shelfDesc {
+        color: #71717a;
+    }
+
+    :root:not([data-theme="dark"]) .shelfFooter {
+        border-top-color: rgba(0, 0, 0, 0.06);
+    }
+
+    :root:not([data-theme="dark"]) .toolCountBadge {
+        border-color: rgba(0, 0, 0, 0.06);
+    }
+
+    :root:not([data-theme="dark"]) .shelfCard[data-shelf="1"] .toolCountBadge { background: rgba(139, 92, 246, 0.12); color: #7c3aed; }
+    :root:not([data-theme="dark"]) .shelfCard[data-shelf="2"] .toolCountBadge { background: rgba(244, 63, 94, 0.10); color: #e11d48; }
+    :root:not([data-theme="dark"]) .shelfCard[data-shelf="3"] .toolCountBadge { background: rgba(20, 184, 166, 0.10); color: #0d9488; }
+    :root:not([data-theme="dark"]) .shelfCard[data-shelf="4"] .toolCountBadge { background: rgba(245, 158, 11, 0.10); color: #d97706; }
+    :root:not([data-theme="dark"]) .shelfCard[data-shelf="5"] .toolCountBadge { background: rgba(59, 130, 246, 0.10); color: #2563eb; }
+
+    :root:not([data-theme="dark"]) .shelfUpdated {
+        color: #a1a1aa;
+    }
+}
+
+:root[data-theme="light"] .shelfCard,
+.light .shelfCard {
+    background: #ffffff;
+    border-color: #e4e4e7;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+}
+
+:root[data-theme="light"] .shelfCard:hover,
+.light .shelfCard:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 0 20px 4px rgba(99, 102, 241, 0.12), 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme="light"] .shelfIcon,
+.light .shelfIcon {
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme="light"] .dotsBtn:hover,
+.light .dotsBtn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #6b7280;
+}
+
+:root[data-theme="light"] .shelfName,
+.light .shelfName {
+    color: #18181b;
+}
+
+:root[data-theme="light"] .shelfDesc,
+.light .shelfDesc {
+    color: #71717a;
+}
+
+:root[data-theme="light"] .shelfFooter,
+.light .shelfFooter {
+    border-top-color: rgba(0, 0, 0, 0.06);
+}
+
+:root[data-theme="light"] .toolCountBadge,
+.light .toolCountBadge {
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+:root[data-theme="light"] .shelfCard[data-shelf="1"] .toolCountBadge,
+.light .shelfCard[data-shelf="1"] .toolCountBadge { background: rgba(139, 92, 246, 0.12); color: #7c3aed; }
+:root[data-theme="light"] .shelfCard[data-shelf="2"] .toolCountBadge,
+.light .shelfCard[data-shelf="2"] .toolCountBadge { background: rgba(244, 63, 94, 0.10); color: #e11d48; }
+:root[data-theme="light"] .shelfCard[data-shelf="3"] .toolCountBadge,
+.light .shelfCard[data-shelf="3"] .toolCountBadge { background: rgba(20, 184, 166, 0.10); color: #0d9488; }
+:root[data-theme="light"] .shelfCard[data-shelf="4"] .toolCountBadge,
+.light .shelfCard[data-shelf="4"] .toolCountBadge { background: rgba(245, 158, 11, 0.10); color: #d97706; }
+:root[data-theme="light"] .shelfCard[data-shelf="5"] .toolCountBadge,
+.light .shelfCard[data-shelf="5"] .toolCountBadge { background: rgba(59, 130, 246, 0.10); color: #2563eb; }
+
+:root[data-theme="light"] .shelfUpdated,
+.light .shelfUpdated {
+    color: #a1a1aa;
+}

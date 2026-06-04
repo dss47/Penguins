@@ -1,0 +1,191 @@
+/* ─── Page Wrapper ────────────────────────────────────────────── */
+
+.pageWrapper {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+    background: #05050A;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6rem 2rem;
+}
+
+.pageContainer {
+    position: relative;
+    width: 100%;
+    max-width: 1400px;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* ─── Shelf Header ───────────────────────────────────────────── */
+
+.shelfHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.backBtn {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-1);
+    text-decoration: none;
+    transition: opacity 0.2s;
+    width: fit-content;
+}
+
+.backBtn:hover {
+    opacity: 0.8;
+}
+
+.shelfInfo {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.shelfIconLarge {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(139, 92, 246, 0.14));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.shelfTitle {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    color: var(--text-head);
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    margin: 0 0 4px;
+}
+
+.shelfDesc {
+    font-size: 0.9rem;
+    color: #6b7280;
+    font-weight: 300;
+    margin: 0;
+}
+
+.toolCount {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* ─── Tools Grid ─────────────────────────────────────────────── */
+
+.toolsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 20px;
+}
+
+/* ─── Empty State ────────────────────────────────────────────── */
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    text-align: center;
+    gap: 0.75rem;
+}
+
+.emptyIcon {
+    font-size: 3rem;
+    margin: 0;
+}
+
+.emptyText {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-head);
+    margin: 0;
+}
+
+.emptySub {
+    font-size: 0.9rem;
+    color: var(--text-body);
+    margin: 0;
+}
+
+.emptyBack {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-1);
+    text-decoration: none;
+    margin-top: 0.5rem;
+    padding: 8px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    transition: background 0.2s;
+}
+
+.emptyBack:hover {
+    background: var(--accent-soft);
+}
+
+/* ─── Light Mode Overrides ───────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .pageWrapper {
+        background: var(--bg-void);
+    }
+
+    :root:not([data-theme="dark"]) .shelfIconLarge {
+        border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    :root:not([data-theme="dark"]) .shelfDesc {
+        color: #71717a;
+    }
+
+    :root:not([data-theme="dark"]) .emptyBack {
+        border-color: #e4e4e7;
+    }
+
+    :root:not([data-theme="dark"]) .emptyBack:hover {
+        background: rgba(79, 70, 229, 0.08);
+    }
+}
+
+:root[data-theme="light"] .pageWrapper,
+.light .pageWrapper {
+    background: var(--bg-void);
+}
+
+:root[data-theme="light"] .shelfIconLarge,
+.light .shelfIconLarge {
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme="light"] .shelfDesc,
+.light .shelfDesc {
+    color: #71717a;
+}
+
+:root[data-theme="light"] .emptyBack,
+.light .emptyBack {
+    border-color: #e4e4e7;
+}
+
+:root[data-theme="light"] .emptyBack:hover,
+.light .emptyBack:hover {
+    background: rgba(79, 70, 229, 0.08);
+}

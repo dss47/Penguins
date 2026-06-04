@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Library — Penguin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+<style>
+/* ─── Reset & Base ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:           #05050A;
+  --surface:      rgba(255,255,255,0.03);
+  --border:       rgba(255,255,255,0.08);
+  --border-hover: rgba(139,92,246,0.55);
+  --text-head:    #f0f0f8;
+  --text-body:    #9ca3af;
+  --text-muted:   #4b5563;
+  --accent-1:     #6366f1;
+  --accent-2:     #7c3aed;
+  --accent-soft:  rgba(99,102,241,0.18);
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --radius-card:  16px;
+  --radius-pill:  99px;
+  --blur:         blur(14px);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-head);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ─── Ambient Background ────────────────────────────────── */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+body::before {
+  width: 560px; height: 560px;
+  background: radial-gradient(circle, rgba(99,102,241,0.13) 0%, transparent 70%);
+  top: -120px; left: -140px;
+  animation: orbPulse 7s ease-in-out infinite;
+}
+body::after {
+  width: 460px; height: 460px;
+  background: radial-gradient(circle, rgba(139,92,246,0.11) 0%, transparent 70%);
+  bottom: -100px; right: -100px;
+  animation: orbPulse 9s ease-in-out infinite reverse;
+}
+
+/* Noise overlay */
+.noise {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+}
+
+/* ─── Animations ────────────────────────────────────────── */
+@keyframes orbPulse {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50%       { opacity: 0.7;  transform: scale(1.05); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96) translateY(14px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes heartPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  70%  { transform: scale(0.88); }
+  100% { transform: scale(1); }
+}
+@keyframes badgePop {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+@keyframes tabSlide {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.page-enter         { animation: fadeUp 0.6s cubic-bezier(.22,1,.36,1) both; }
+.card-enter         { animation: scaleIn 0.45s cubic-bezier(.22,1,.36,1) both; }
+.card-enter:nth-child(1) { animation-delay: 0.04s; }
+.card-enter:nth-child(2) { animation-delay: 0.10s; }
+.card-enter:nth-child(3) { animation-delay: 0.16s; }
+.card-enter:nth-child(4) { animation-delay: 0.22s; }
+.card-enter:nth-child(5) { animation-delay: 0.28s; }
+.card-enter:nth-child(6) { animation-delay: 0.34s; }
+
+/* ─── Layout ────────────────────────────────────────────── */
+.wrapper {
+  position: relative; z-index: 1;
+  max-width: 1400px; margin: 0 auto; padding: 0 24px;
+}
+
+/* ─── Top Nav ───────────────────────────────────────────── */
+.topnav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(5,5,10,0.82);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.topnav-inner {
+  max-width: 1400px; margin: 0 auto; padding: 0 24px;
+  height: 62px; display: flex; align-items: center; justify-content: space-between;
+}
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.brand-icon { font-size: 1.5rem; line-height: 1; }
+.brand-name {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 1.1rem;
+  color: var(--text-head); letter-spacing: -0.02em;
+}
+.brand-badge {
+  font-size: 0.68rem; padding: 2px 8px; border-radius: 6px;
+  background: rgba(99,102,241,0.18); color: #a5b4fc;
+  border: 1px solid rgba(99,102,241,0.28);
+  font-weight: 700; letter-spacing: 0.06em;
+  font-family: var(--font-display);
+}
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.82rem; font-weight: 800; color: #fff;
+  font-family: var(--font-display);
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(124,58,237,0.35);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.avatar:hover { box-shadow: 0 0 22px rgba(124,58,237,0.6); transform: scale(1.06); }
+
+/* ─── Page Header ───────────────────────────────────────── */
+.page-header {
+  padding: 52px 0 0;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  flex-wrap: wrap; gap: 28px;
+}
+.header-left .eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.74rem; font-weight: 600;
+  color: var(--accent-1); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.header-left h1 {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: clamp(2rem, 4vw, 2.6rem);
+  color: var(--text-head); letter-spacing: -0.035em;
+  line-height: 1.1; margin-bottom: 10px;
+}
+.header-left .subtitle {
+  font-size: 0.9rem; color: #6b7280; font-weight: 300;
+}
+
+/* Stats strip */
+.stats-strip { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.stat-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 12px 20px;
+  backdrop-filter: var(--blur);
+  text-align: center; min-width: 80px;
+  animation: badgePop 0.4s cubic-bezier(.34,1.56,.64,1) both;
+}
+.stat-box:nth-child(1) { animation-delay: 0.2s; }
+.stat-box:nth-child(2) { animation-delay: 0.3s; }
+.stat-box:nth-child(3) { animation-delay: 0.4s; }
+.stat-value {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 1.6rem; line-height: 1;
+}
+.stat-label { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+
+/* ─── Tab Toggle ────────────────────────────────────────── */
+.tab-bar {
+  display: inline-flex; gap: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 4px; margin-top: 32px;
+}
+.tab-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 22px; border-radius: var(--radius-pill);
+  border: none; background: transparent;
+  font-family: var(--font-display); font-weight: 600; font-size: 0.875rem;
+  color: #6b7280; cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  position: relative; overflow: hidden;
+}
+.tab-btn .tab-icon { font-size: 0.9rem; }
+.tab-badge {
+  background: rgba(255,255,255,0.07);
+  border-radius: var(--radius-pill);
+  padding: 1px 7px; font-size: 0.72rem; font-weight: 700;
+  transition: background 0.2s;
+}
+.tab-btn:hover:not(.active) { background: rgba(255,255,255,0.07); color: #c4b5fd; }
+.tab-btn.active {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  box-shadow: 0 0 22px rgba(124,58,237,0.45), 0 2px 10px rgba(0,0,0,0.5);
+}
+.tab-btn.active .tab-badge { background: rgba(255,255,255,0.22); }
+
+/* ─── Grid Wrapper ──────────────────────────────────────── */
+.grid-section { padding: 32px 0 80px; }
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 20px;
+}
+.shelves-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 20px;
+}
+
+/* ─── Tool Card ─────────────────────────────────────────── */
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 22px;
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  display: flex; flex-direction: column; gap: 14px;
+  position: relative; overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+.tool-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--border-hover);
+  box-shadow: 0 0 30px 4px rgba(139,92,246,0.2), 0 10px 40px rgba(0,0,0,0.5);
+}
+/* top gradient accent per card */
+.tool-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 70px;
+  pointer-events: none; border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+.tool-card[data-accent="violet"]::before { background: linear-gradient(135deg, rgba(139,92,246,0.1), transparent); }
+.tool-card[data-accent="rose"]::before   { background: linear-gradient(135deg, rgba(244,63,94,0.09), transparent); }
+.tool-card[data-accent="teal"]::before   { background: linear-gradient(135deg, rgba(20,184,166,0.09), transparent); }
+.tool-card[data-accent="blue"]::before   { background: linear-gradient(135deg, rgba(59,130,246,0.09), transparent); }
+.tool-card[data-accent="purple"]::before { background: linear-gradient(135deg, rgba(168,85,247,0.09), transparent); }
+.tool-card[data-accent="green"]::before  { background: linear-gradient(135deg, rgba(34,197,94,0.09), transparent); }
+
+.card-top { display: flex; align-items: center; gap: 12px; position: relative; z-index: 1; }
+
+.logo-box {
+  width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(99,102,241,0.22), rgba(139,92,246,0.14));
+  border: 1px solid rgba(255,255,255,0.09);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+}
+.tool-name {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 1rem; color: var(--text-head);
+  letter-spacing: -0.01em; flex: 1;
+}
+.heart-btn {
+  background: none; border: none; cursor: pointer;
+  padding: 5px; line-height: 1; font-size: 1rem;
+  transition: transform 0.15s;
+  border-radius: 6px;
+}
+.heart-btn:hover { transform: scale(1.28); }
+.heart-btn.active { animation: heartPop 0.35s ease forwards; }
+
+.card-desc {
+  font-size: 0.83rem; color: var(--text-body);
+  line-height: 1.6; flex: 1; position: relative; z-index: 1;
+}
+.card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative; z-index: 1;
+}
+.rating { font-size: 0.83rem; color: #e2e8f0; font-weight: 500; }
+.tag-pill {
+  display: inline-block; padding: 3px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem; font-weight: 500;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #c4b5fd; letter-spacing: 0.01em;
+}
+
+/* ─── Shelf Card ────────────────────────────────────────── */
+.shelf-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 22px;
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  display: flex; flex-direction: column; gap: 16px;
+  position: relative; overflow: hidden; cursor: pointer;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+.shelf-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(99,102,241,0.5);
+  box-shadow: 0 0 26px 4px rgba(99,102,241,0.18), 0 10px 40px rgba(0,0,0,0.5);
+}
+.shelf-card::before {
+  content: ''; position: absolute; inset: 0;
+  pointer-events: none; border-radius: var(--radius-card);
+}
+.shelf-card[data-shelf="1"]::before { background: radial-gradient(ellipse at top left, rgba(139,92,246,0.08), transparent 55%); }
+.shelf-card[data-shelf="2"]::before { background: radial-gradient(ellipse at top left, rgba(244,63,94,0.07), transparent 55%); }
+.shelf-card[data-shelf="3"]::before { background: radial-gradient(ellipse at top left, rgba(20,184,166,0.07), transparent 55%); }
+.shelf-card[data-shelf="4"]::before { background: radial-gradient(ellipse at top left, rgba(245,158,11,0.07), transparent 55%); }
+
+.shelf-header { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+.shelf-icon {
+  width: 46px; height: 46px; border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+}
+.shelf-card[data-shelf="1"] .shelf-icon { background: linear-gradient(135deg, rgba(139,92,246,0.28), rgba(99,102,241,0.14)); }
+.shelf-card[data-shelf="2"] .shelf-icon { background: linear-gradient(135deg, rgba(244,63,94,0.28), rgba(249,115,22,0.14)); }
+.shelf-card[data-shelf="3"] .shelf-icon { background: linear-gradient(135deg, rgba(20,184,166,0.28), rgba(6,182,212,0.14)); }
+.shelf-card[data-shelf="4"] .shelf-icon { background: linear-gradient(135deg, rgba(245,158,11,0.28), rgba(234,179,8,0.14)); }
+
+.dots-btn {
+  background: none; border: none; cursor: pointer;
+  padding: 6px 8px; border-radius: 8px;
+  font-size: 1.1rem; color: #6b7280;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+.dots-btn:hover { background: rgba(255,255,255,0.07); color: #9ca3af; }
+
+.shelf-body { position: relative; z-index: 1; }
+.shelf-name {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 1.05rem; color: var(--text-head);
+  letter-spacing: -0.01em; margin-bottom: 6px;
+}
+.shelf-desc { font-size: 0.82rem; color: var(--text-body); line-height: 1.55; }
+
+.shelf-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  position: relative; z-index: 1;
+}
+.tool-count-badge {
+  display: inline-block; padding: 3px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem; font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.07);
+  animation: badgePop 0.4s cubic-bezier(.34,1.56,.64,1) 0.2s both;
+}
+.shelf-card[data-shelf="1"] .tool-count-badge { background: rgba(139,92,246,0.18); color: #c4b5fd; }
+.shelf-card[data-shelf="2"] .tool-count-badge { background: rgba(244,63,94,0.16); color: #fda4af; }
+.shelf-card[data-shelf="3"] .tool-count-badge { background: rgba(20,184,166,0.16); color: #5eead4; }
+.shelf-card[data-shelf="4"] .tool-count-badge { background: rgba(245,158,11,0.16); color: #fcd34d; }
+
+.shelf-updated { font-size: 0.74rem; color: var(--text-muted); }
+
+/* ─── New Shelf Card ────────────────────────────────────── */
+.new-shelf-card {
+  border: 1.5px dashed rgba(99,102,241,0.35);
+  border-radius: var(--radius-card); padding: 24px;
+  background: rgba(99,102,241,0.03);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 14px; cursor: pointer; min-height: 165px;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.22s;
+}
+.new-shelf-card:hover {
+  background: rgba(99,102,241,0.08);
+  border-color: rgba(99,102,241,0.6);
+  box-shadow: 0 0 26px rgba(99,102,241,0.18);
+  transform: translateY(-5px);
+}
+.new-shelf-icon {
+  width: 50px; height: 50px; border-radius: 12px;
+  background: rgba(99,102,241,0.1);
+  border: 1.5px dashed rgba(99,102,241,0.42);
+  display: flex; align-items: center; justify-content: center;
+}
+.plus-svg { width: 26px; height: 26px; }
+.new-shelf-label {
+  font-family: var(--font-display); font-weight: 700;
+  color: var(--accent-1); font-size: 0.95rem; text-align: center;
+  margin-bottom: 4px;
+}
+.new-shelf-sub { font-size: 0.78rem; color: var(--text-muted); text-align: center; }
+
+/* ─── View Sections (show/hide) ─────────────────────────── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ─── Divider line ──────────────────────────────────────── */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.06) 70%, transparent);
+  margin: 32px 0 0;
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.55); }
+</style>
+</head>
+
+<body>
+<div class="noise"></div>
+
+<!-- ── Top Nav ─────────────────────────────────── -->
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="#" class="brand">
+      <span class="brand-icon">🐧</span>
+      <span class="brand-name">Penguin</span>
+      <span class="brand-badge">BETA</span>
+    </a>
+    <div class="avatar" title="Account">A</div>
+  </div>
+</nav>
+
+<!-- ── Main ────────────────────────────────────── -->
+<main>
+  <div class="wrapper">
+
+    <!-- Page header -->
+    <div class="page-header page-enter" style="animation-delay:0.05s">
+
+      <div class="header-left">
+        <p class="eyebrow">Personal Space</p>
+        <h1>My Library</h1>
+        <p class="subtitle">Your saved tools, organized the way you work.</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-strip">
+        <div class="stat-box">
+          <div class="stat-value" style="color:#c4b5fd" id="stat-fav">6</div>
+          <div class="stat-label">Favorites</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" style="color:#93c5fd">4</div>
+          <div class="stat-label">Shelves</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" style="color:#86efac">31</div>
+          <div class="stat-label">Total Tools</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab toggle -->
+    <div class="tab-bar page-enter" style="animation-delay:0.12s" role="tablist">
+      <button class="tab-btn active" id="tab-favorites" onclick="switchTab('favorites')" role="tab" aria-selected="true">
+        <span class="tab-icon">❤️</span>
+        Favorites
+        <span class="tab-badge" id="badge-fav">6</span>
+      </button>
+      <button class="tab-btn" id="tab-shelves" onclick="switchTab('shelves')" role="tab" aria-selected="false">
+        <span class="tab-icon">📁</span>
+        My Shelves
+        <span class="tab-badge">4</span>
+      </button>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- ── Favorites View ────────────────────── -->
+    <div class="view active grid-section" id="view-favorites" role="tabpanel">
+      <div class="tools-grid">
+
+        <article class="tool-card card-enter" data-accent="violet">
+          <div class="card-top">
+            <div class="logo-box">🔊</div>
+            <span class="tool-name">ElevenLabs</span>
+            <button class="heart-btn" title="Remove from favorites" onclick="toggleHeart(this)">❤️</button>
+          </div>
+          <p class="card-desc">Ultra-realistic AI voice synthesis and cloning — produce studio-quality voiceovers from text in seconds.</p>
+          <div class="card-footer">
+            <span class="rating">⭐ 4.9</span>
+            <span class="tag-pill">Voice Cloning</span>
+          </div>
+        </article>
+
+        <article class="tool-card card-enter" data-accent="rose">
+          <div class="card-top">
+            <div class="logo-box">🎨</div>
+            <span class="tool-name">Midjourney</span>
+            <button class="heart-btn" title="Remove from favorites" onclick="toggleHeart(this)">❤️</button>
+          </div>
+          <p class="card-desc">Industry-leading AI image generation with stunning artistic fidelity and stylistic range.</p>
+          <div class="card-footer">
+            <span class="rating">⭐ 4.8</span>
+            <span class="tag-pill">Image Gen</span>
+          </div>
+        </article>
+
+        <article class="tool-card card-enter" data-accent="teal">
+          <div class="card-top">
+            <div class="logo-box">🎬</div>
+            <span class="tool-name">Runway ML</span>
+            <button class="heart-btn" title="Remove from favorites" onclick="toggleHeart(this)">❤️</button>
+          </div>
+          <p class="card-desc">Next-generation AI video editing suite — remove backgrounds, generate clips, and apply cinematic effects.</p>
+          <div class="card-footer">
+            <span class="rating">⭐ 4.7</span>
+            <span class="tag-pill">Video Editing</span>
+          </div>
+        </article>
+
+        <article class="tool-card card-enter" data-accent="blue">
+          <div class="card-top">
+            <div class="logo-box">🧠</div>
+            <span class="tool-name">Perplexity AI</span>
+            <button class="heart-btn" title="Remove from favorites" onclick="toggleHeart(this)">❤️</button>
+          </div>
+          <p class="card-desc">AI-powered research assistant delivering cited, real-time answers across any subject with depth.</p>
+          <div class="card-footer">
+            <span class="rating">⭐ 4.8</span>
+            <span class="tag-pill">Research</span>
+          </div>
+        </article>
+
+        <article class="tool-card card-enter" data-accent="purple">
+          <div class="card-top">
+            <div class="logo-box">✂️</div>
+            <span class="tool-name">Descript</span>
+            <button class="heart-btn" title="Remove from favorites" onclick="toggleHeart(this)">❤️</button>
+          </div>
+          <p class="card-desc">Edit audio and video by editing the transcript — transcription, overdub, and screen recording in one.</p>
+          <div class="card-footer">
+            <span class="rating">⭐ 4.6</span>
+            <span class="tag-pill">Podcasting</span>
+          </div>
+        </article>
+
+        <article class="tool-card card-enter" data-accent="green">
+          <div class="card-top">
+            <div class="logo-box">🎵</div>
+            <span class="tool-name">Suno AI</span>
+            <button class="heart-btn" title="Remove from favorites" onclick="toggleHeart(this)">❤️</button>
+          </div>
+          <p class="card-desc">Generate full songs with vocals and instruments from a simple text prompt. Music creation reimagined.</p>
+          <div class="card-footer">
+            <span class="rating">⭐ 4.7</span>
+            <span class="tag-pill">Music Gen</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- ── Shelves View ─────────────────────── -->
+    <div class="view grid-section" id="view-shelves" role="tabpanel">
+      <div class="shelves-grid">
+
+        <!-- New shelf -->
+        <div class="new-shelf-card card-enter" onclick="alert('Create new shelf — coming soon!')">
+          <div class="new-shelf-icon">
+            <svg class="plus-svg" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.2" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5"  y1="12" x2="19" y2="12"/>
+            </svg>
+          </div>
+          <div>
+            <p class="new-shelf-label">Create New Shelf</p>
+            <p class="new-shelf-sub">Organize tools into a workspace</p>
+          </div>
+        </div>
+
+        <article class="shelf-card card-enter" data-shelf="1">
+          <div class="shelf-header">
+            <div class="shelf-icon">🎙️</div>
+            <button class="dots-btn" title="Options">⋮</button>
+          </div>
+          <div class="shelf-body">
+            <h3 class="shelf-name">Podcast Stack</h3>
+            <p class="shelf-desc">All tools I use for recording, editing, and distributing my weekly podcast.</p>
+          </div>
+          <div class="shelf-footer">
+            <span class="tool-count-badge">8 tools</span>
+            <span class="shelf-updated">Updated 2 days ago</span>
+          </div>
+        </article>
+
+        <article class="shelf-card card-enter" data-shelf="2">
+          <div class="shelf-header">
+            <div class="shelf-icon">🎬</div>
+            <button class="dots-btn" title="Options">⋮</button>
+          </div>
+          <div class="shelf-body">
+            <h3 class="shelf-name">Video Editing</h3>
+            <p class="shelf-desc">My go-to video production toolkit — from raw footage to final export-ready content.</p>
+          </div>
+          <div class="shelf-footer">
+            <span class="tool-count-badge">5 tools</span>
+            <span class="shelf-updated">Updated 1 week ago</span>
+          </div>
+        </article>
+
+        <article class="shelf-card card-enter" data-shelf="3">
+          <div class="shelf-header">
+            <div class="shelf-icon">✍️</div>
+            <button class="dots-btn" title="Options">⋮</button>
+          </div>
+          <div class="shelf-body">
+            <h3 class="shelf-name">Content Writing</h3>
+            <p class="shelf-desc">AI writing, grammar, SEO, and research tools for crafting high-performing content.</p>
+          </div>
+          <div class="shelf-footer">
+            <span class="tool-count-badge">11 tools</span>
+            <span class="shelf-updated">Updated 3 days ago</span>
+          </div>
+        </article>
+
+        <article class="shelf-card card-enter" data-shelf="4">
+          <div class="shelf-header">
+            <div class="shelf-icon">🎨</div>
+            <button class="dots-btn" title="Options">⋮</button>
+          </div>
+          <div class="shelf-body">
+            <h3 class="shelf-name">Design Kit</h3>
+            <p class="shelf-desc">Image generation, UI design assistants, and asset creation tools for my design workflow.</p>
+          </div>
+          <div class="shelf-footer">
+            <span class="tool-count-badge">7 tools</span>
+            <span class="shelf-updated">Updated 5 days ago</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+  </div><!-- /wrapper -->
+</main>
+
+<script>
+// ── Tab switching ────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected', 'false');
+  });
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).setAttribute('aria-selected', 'true');
+
+  const view = document.getElementById('view-' + tab);
+  view.classList.add('active');
+
+  // re-trigger card animations
+  view.querySelectorAll('.card-enter, .new-shelf-card').forEach(el => {
+    el.style.animation = 'none';
+    void el.offsetWidth; // reflow
+    el.style.animation = '';
+  });
+}
+
+// ── Heart toggle ─────────────────────────────────────────
+let favCount = 6;
+
+function toggleHeart(btn) {
+  btn.classList.add('active');
+  const isFav = btn.textContent.trim() === '❤️';
+  btn.textContent = isFav ? '🤍' : '❤️';
+  btn.title = isFav ? 'Add to favorites' : 'Remove from favorites';
+  favCount = isFav ? favCount - 1 : favCount + 1;
+  document.getElementById('stat-fav').textContent = favCount;
+  document.getElementById('badge-fav').textContent = favCount;
+  btn.addEventListener('animationend', () => btn.classList.remove('active'), { once: true });
+}
+</script>
+</body>
+</html>

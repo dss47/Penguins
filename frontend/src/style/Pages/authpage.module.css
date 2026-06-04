@@ -12,11 +12,11 @@
 
     background:
         linear-gradient(115deg,
-            #1c1635 0%,
-            #0b0820 25%,
-            #070312 50%,
-            #120a2b 75%,
-            #090514 100%);
+            var(--bg-deep) 0%,
+            var(--bg-void) 25%,
+            var(--bg-void) 50%,
+            var(--bg-deep) 75%,
+            var(--bg-void) 100%);
     z-index: 0;
 }
 
@@ -31,10 +31,10 @@
     left: -250px;
 
     background-image:
-        linear-gradient(rgba(15, 23, 42, 0.05) /* var(--tp-rgb) fallback */ 1px,
+        linear-gradient(var(--bd) 1px,
             transparent 1px),
         linear-gradient(90deg,
-            rgba(15, 23, 42, 0.05) /* var(--tp-rgb) fallback */ 1px,
+            var(--bd) 1px,
             transparent 1px);
 
     background-size: 90px 90px;
@@ -63,8 +63,8 @@
     transform: translateY(-50%);
 
     background: radial-gradient(circle,
-            rgba(140, 82, 255, 0.18) 0%,
-            rgba(140, 82, 255, 0.08) 35%,
+            rgba(99, 102, 241, 0.15) 0%,
+            rgba(99, 102, 241, 0.06) 35%,
             transparent 70%);
 
     filter: blur(90px);
@@ -98,7 +98,7 @@
     line-height: 1.6;
     letter-spacing: 0.3px;
     margin: 20px 0;
-    color: rgba(15, 23, 42, 0.9) /* var(--tp-rgb) fallback */;
+    color: var(--ts);
 }
 
 .toggleContainer {
@@ -193,7 +193,7 @@
 .loginBubble,
 .signupBubble {
     position: absolute;
-    background: #e1e1e2;
+    background: var(--bg-card);
     color: var(--nv);
     padding: 1.3rem 2.5rem;
     box-shadow: 0 4px 24px 0 rgba(99, 86, 223, 0.10);
@@ -234,4 +234,17 @@
     100% {
         transform: translateY(0);
     }
+}
+
+/* ── Light Mode Overrides ─────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .pageWrapper::after {
+        opacity: 0.4;
+    }
+}
+
+:root[data-theme="light"] .pageWrapper::after,
+.light .pageWrapper::after {
+    opacity: 0.4;
 }
