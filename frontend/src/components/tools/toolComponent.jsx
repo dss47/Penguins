@@ -12,28 +12,26 @@ const ToolCard = ({ icon, name, rating, features, provider }) => {
                     <h3 className={styles.toolName}>{name}</h3>
                     <p className={styles.provider}>By {provider}</p>
                     <div className={styles.rating}>
-                        <Star size={20} fill="#ffb800" color="#ffb800" />
-                        <span>{rating}<span className={styles.ratingMax}> / 5</span></span>
+                        <Star size={16} fill="#fbbf24" color="#fbbf24" />
+                        <span>{rating}</span>
                     </div>
                 </div>
             </div>
-            
-            <div className={styles.cardBody}>
-                <ul className={styles.featureList}>
-                    {features.map((feature, index) => (
-                        <li key={index} className={styles.featureItem}>
-                            {feature}
-                        </li>
-                    ))}
-                </ul>
-            </div>
+
+            <ul className={styles.featureList}>
+                {features.map((feature, index) => (
+                    <li key={index} className={styles.featureItem}>
+                        {feature}
+                    </li>
+                ))}
+            </ul>
 
             <div className={styles.cardFooter}>
                 <button className={`${styles.secondaryBtn} ${styles.favorite}`} aria-label="Ajouter aux favoris">
-                    <Heart size={23} />
+                    <Heart size={20} />
                 </button>
-                <button className={`${styles.secondaryBtn} ${styles.shelf}`} aria-label="Ajouter au shelf">
-                    <Bookmark size={23} />
+                <button className={styles.secondaryBtn} aria-label="Sauvegarder dans la bibliothèque">
+                    <Bookmark size={20} />
                 </button>
                 <button className={styles.actionBtn}>
                     Détails
@@ -46,10 +44,10 @@ const ToolCard = ({ icon, name, rating, features, provider }) => {
 
 export default function ToolComponent({ tools = [] }) {
     return (
-        <div className={styles.toolContainer}>
+        <>
             {tools.map((tool, index) => (
                 <ToolCard key={index} {...tool} />
             ))}
-        </div>
+        </>
     );
 }

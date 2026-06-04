@@ -27,7 +27,7 @@
 /* ── CARD ── */
 .form-card {
   background: var(--bg-surface);
-  border: 1px solid rgba(15, 23, 42, 0.08) /* var(--tp-rgb) fallback */;
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 2.5rem;
   display: flex;
@@ -198,13 +198,13 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(15, 23, 42, 0.08) /* var(--tp-rgb) fallback */;
+  border-top: 1px solid var(--border);
   margin-top: 1rem;
 }
 
 .btn-cancel {
   padding: 0.65rem 1.6rem;
-  border: 1px solid rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */;
+  border: 1px solid var(--border);
   border-radius: 10px;
   background: transparent;
   color: var(--tm);
@@ -233,7 +233,7 @@
   background: linear-gradient(135deg, var(--nv), var(--nv));
   border: none;
   border-radius: 10px;
-  color: var(--tp);
+  color: #FFFFFF;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -285,7 +285,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 2px solid rgba(15, 23, 42, 0.15) /* var(--tp-rgb) fallback */;
+  border: 2px solid var(--border);
   color: var(--tm);
   display: flex;
   align-items: center;
@@ -328,7 +328,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .step-line {
   flex: 1;
   height: 1px;
-  background: rgba(15, 23, 42, 0.1) /* var(--tp-rgb) fallback */;
+  background: var(--border);
   min-width: 20px;
 }
 
@@ -387,12 +387,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* ── REACT SELECT CUSTOM STYLES ── */
 :global(.react-select__control) {
-  background-color: var(--bg-card-h) !important; /* Lightened */
-  border: 1px solid rgba(15, 23, 42, 0.15) /* var(--tp-rgb) fallback */ !important; /* Higher contrast */
+  background-color: var(--bg-card-h) !important;
+  border: 1px solid var(--border) !important;
   border-radius: 12px !important;
   min-height: 55px !important;
   box-shadow: none !important;
-  color: white !important;
+  color: var(--tp) !important;
   transition: border-color 0.2s, background 0.2s !important;
 }
 :global(.react-select__control--is-focused) {
@@ -406,14 +406,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 :global(.react-select__menu) {
   background-color: var(--bg-card-h) !important;
-  border: 1px solid rgba(15, 23, 42, 0.15) /* var(--tp-rgb) fallback */ !important;
+  border: 1px solid var(--border) !important;
   border-radius: 10px !important;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
   z-index: 10 !important;
 }
 :global(.react-select__option) {
   background-color: var(--bg-card-h) !important;
-  color: white !important;
+  color: var(--tp) !important;
   cursor: pointer !important;
   padding: 10px 14px !important;
 }
@@ -421,10 +421,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: var(--nv) !important;
 }
 :global(.react-select__single-value) {
-  color: white !important;
+  color: var(--tp) !important;
 }
 :global(.react-select__input-container) {
-  color: white !important;
+  color: var(--tp) !important;
   margin: 0 !important;
   padding: 0 !important;
 }
@@ -437,93 +437,155 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin: 2px !important;
 }
 :global(.react-select__multi-value__label) {
-  color: white !important;
+  color: #FFFFFF !important;
   font-weight: 600 !important;
   padding: 4px 8px !important;
   font-size: 0.85rem !important;
 }
 :global(.react-select__multi-value__remove) {
-  color: white !important;
+  color: #FFFFFF !important;
   padding: 0 6px !important;
   cursor: pointer !important;
 }
 :global(.react-select__multi-value__remove:hover) {
   background-color: var(--nv) !important;
-  color: white !important;
+  color: #FFFFFF !important;
   border-radius: 0 6px 6px 0 !important;
 }
 
-/* ── Light Mode Overrides ───────────────────────────────────── */
+/* ── Light Mode Date Picker ──────────────────────────────────── */
 @media (prefers-color-scheme: light) {
-  .form-label {
-    color: #0F172A !important;
-    font-weight: 500 !important;
-  }
-  .form-hint {
-    color: #64748B !important;
-  }
-  .form-input,
-  .form-textarea {
-    color: #0F172A !important;
-    border: 1px solid #CBD5E1 !important;
-    background-color: #FFFFFF !important;
-  }
-  .form-input::placeholder,
-  .form-textarea::placeholder {
-    color: #A1A1AA;
-  }
-  .upload-zone {
-    background-color: #F8FAFC;
-    border-color: #CBD5E1;
-  }
-  .upload-text {
-    color: #0F172A !important;
-  }
-  .upload-text strong {
-    color: #0F172A !important;
-  }
-  .upload-hint {
-    color: #64748B !important;
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0);
   }
 }
 
-:root[data-theme="light"] .form-label,
-.light .form-label {
-  color: #0F172A !important;
-  font-weight: 500 !important;
+:root[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator,
+.light input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0);
 }
-:root[data-theme="light"] .form-hint,
-.light .form-hint {
-  color: #64748B !important;
+
+
+/* ── Aggressive Dark Mode Overrides ──────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  /* Stepper Titles & Subtext */
+  .step-title {
+    color: var(--tp, #FFFFFF) !important;
+  }
+  .step-sub {
+    color: var(--ts, #94A3B8) !important;
+  }
+  .step-number {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: var(--ts, #94A3B8) !important;
+  }
+  .step-active .step-number {
+    background: var(--nv) !important;
+    border-color: var(--nv) !important;
+    color: #FFFFFF !important;
+  }
+
+  /* Form Inputs & Textareas */
+  .form-input,
+  .form-textarea {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: var(--tp, #FFFFFF) !important;
+  }
+  .form-input:focus,
+  .form-textarea:focus {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--nv) !important;
+  }
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+    color: #94A3B8 !important;
+  }
+
+  /* Labels & Helper Text */
+  .form-label {
+    color: var(--tp, #FFFFFF) !important;
+  }
+  .form-hint {
+    color: var(--ts, #94A3B8) !important;
+  }
+  .form-counter {
+    color: var(--ts, #94A3B8) !important;
+  }
+
+  /* Upload Zone */
+  .upload-zone {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+  .upload-zone:hover {
+    border-color: var(--nv) !important;
+    background: rgba(124, 107, 255, 0.08) !important;
+  }
+  .upload-text {
+    color: var(--ts, #94A3B8) !important;
+  }
+  .upload-text strong {
+    color: var(--tp, #FFFFFF) !important;
+  }
+  .upload-hint {
+    color: var(--ts, #94A3B8) !important;
+  }
 }
-:root[data-theme="light"] .form-input,
-.light .form-input,
-:root[data-theme="light"] .form-textarea,
-.light .form-textarea {
-  color: #0F172A !important;
-  border: 1px solid #CBD5E1 !important;
-  background-color: #FFFFFF !important;
+
+:root[data-theme="dark"] .step-title {
+  color: var(--tp, #FFFFFF) !important;
 }
-:root[data-theme="light"] .form-input::placeholder,
-.light .form-input::placeholder,
-:root[data-theme="light"] .form-textarea::placeholder,
-.light .form-textarea::placeholder {
-  color: #A1A1AA;
+:root[data-theme="dark"] .step-sub {
+  color: var(--ts, #94A3B8) !important;
 }
-:root[data-theme="light"] .upload-zone,
-.light .upload-zone {
-  background-color: #F8FAFC;
-  border-color: #CBD5E1;
+:root[data-theme="dark"] .step-number {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: var(--ts, #94A3B8) !important;
 }
-:root[data-theme="light"] .upload-text,
-.light .upload-text {
-  color: #0F172A !important;
+:root[data-theme="dark"] .step-active .step-number {
+  background: var(--nv) !important;
+  border-color: var(--nv) !important;
+  color: #FFFFFF !important;
 }
-:root[data-theme="light"] .upload-text strong,
-.light .upload-text strong {
-  color: #0F172A !important;
+:root[data-theme="dark"] .form-input,
+:root[data-theme="dark"] .form-textarea {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: var(--tp, #FFFFFF) !important;
 }
-:root[data-theme="light"] .upload-hint,
-.light .upload-hint {
-  color: #64748B !important;
+:root[data-theme="dark"] .form-input:focus,
+:root[data-theme="dark"] .form-textarea:focus {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: var(--nv) !important;
+}
+:root[data-theme="dark"] .form-input::placeholder,
+:root[data-theme="dark"] .form-textarea::placeholder {
+  color: #94A3B8 !important;
+}
+:root[data-theme="dark"] .form-label {
+  color: var(--tp, #FFFFFF) !important;
+}
+:root[data-theme="dark"] .form-hint {
+  color: var(--ts, #94A3B8) !important;
+}
+:root[data-theme="dark"] .form-counter {
+  color: var(--ts, #94A3B8) !important;
+}
+:root[data-theme="dark"] .upload-zone {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+:root[data-theme="dark"] .upload-zone:hover {
+  border-color: var(--nv) !important;
+  background: rgba(124, 107, 255, 0.08) !important;
+}
+:root[data-theme="dark"] .upload-text {
+  color: var(--ts, #94A3B8) !important;
+}
+:root[data-theme="dark"] .upload-text strong {
+  color: var(--tp, #FFFFFF) !important;
+}
+:root[data-theme="dark"] .upload-hint {
+  color: var(--ts, #94A3B8) !important;
 }

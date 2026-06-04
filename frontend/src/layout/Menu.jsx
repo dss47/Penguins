@@ -44,7 +44,7 @@ const Menu = ({ scrollToSection, refs }) => {
                         penguin
                 </div>
                 :
-                <Link to='/MainPage' className={style.Link}>
+                <Link to='/HomeSearch' className={style.Link}>
                     <div className={style.logoSection} style={{cursor: 'pointer'}} >
                         <div className={style.logoIcon}>🐧</div>
                             penguin

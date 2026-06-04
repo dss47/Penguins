@@ -6,6 +6,7 @@ import Validations from "../pages/Validations"
 import MainPage from "../pages/MainPage"
 import Library from "../pages/Library"
 import ShelfItems from "../components/library/ShelfItems"
+import HomeSearch from "../pages/HomeSearch"
 
 import AdminDashboard from "../components/admin/AdminDashboard";
 import AdminUsers from "../components/admin/AdminUsers";
@@ -20,6 +21,7 @@ export const publicRoutes = [
     { path: '/MainPage', element: <MainPage/>, name: 'Main Page' },
     { path: '/Library', element: <Library/>, name: 'Library' },
     { path: '/Library/Shelf/:shelfIndex', element: <ShelfItems/>, name: 'Shelf Items' },
+    { path: '/HomeSearch', element: <HomeSearch/>, name: 'Home Search' },
 ]
 
 export const adminRoutes = [

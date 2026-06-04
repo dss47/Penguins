@@ -157,6 +157,7 @@ export default function ToolPage() {
 
     return (
         <div className={styles.allToolsContainer}>
+            <div className={styles.noise}></div>
             <div className={styles.headerSection}>
                 <h1>Découvrez nos Meilleurs Outils IA</h1>
                 <div className={styles.searchBox}>
