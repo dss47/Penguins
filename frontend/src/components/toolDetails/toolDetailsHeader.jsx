@@ -1,37 +1,31 @@
 import styles from "../../style/toolDetails/tooldetailsheader.module.css"
-import { ArrowLeft,Star } from "lucide-react";
+import { Star, Heart, Share2 } from "lucide-react";
 
 export default function ToolDetailsHeader({Tool}) {
+    const getInitials = (name) => name.slice(0, 2).toUpperCase();
+
     return (
-        <>
-        <div className={styles.toolHeader}>
-            <button type="button" className={styles.backBtn} onClick={() => window.history.back()}>
-                <ArrowLeft size={18} />
-                Retour
-            </button>
-            <div className={styles.toolNameContainer}>
-                <div className={styles.iconWrapper}>
-                    <img src={Tool.logo_url} alt={Tool.name} className={styles.toolIconImage} />
-                </div>
-                <div className={styles.headerInfo}>
-                    <div className={styles.titleRow}>
-                        <div>
-                            <h3 className={styles.toolName}>{Tool.name}</h3>
-                            <p className={styles.provider}>By {Tool.provider}</p>
-                        </div>
-                        <div className={styles.rating}>
-                            <div className={styles.starWrapper}>
-                                <Star size={24} fill="currentColor" />
-                            </div>
-                            <div>
-                                <span className={styles.ratingScore}>{Tool.global_rating}</span>
-                                <span className={styles.ratingMax}>/ 5</span>
-                            </div>
-                        </div>
+        <div className={styles.hero}>
+            <div className={styles.heroIcon}>
+                <span className={styles.initials}>{getInitials(Tool.name)}</span>
+            </div>
+            <div className={styles.heroInfo}>
+                <h1 className={styles.heroTitle}>{Tool.name}</h1>
+                <p className={styles.heroBy}>par <span>{Tool.provider}</span></p>
+                <div className={styles.heroActions}>
+                    <div className={styles.ratingBadge}>
+                        <span className={styles.star}>★</span>
+                        <strong>{Tool.global_rating}</strong>
+                        <span>/ 5</span>
                     </div>
+                    <button className={styles.actionIconBtn} title="Ajouter aux favoris">
+                        <Heart size={15} />
+                    </button>
+                    <button className={styles.actionIconBtn} title="Partager">
+                        <Share2 size={15} />
+                    </button>
                 </div>
             </div>
         </div>
-        </>
     );
 }

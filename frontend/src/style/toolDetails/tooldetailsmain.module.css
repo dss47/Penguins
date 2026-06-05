@@ -1,15 +1,81 @@
-.mainContainer {
-    display: flex;
-    flex-direction: column;
-    flex: 2;
-    gap: 2rem;
-    background: var(--bg-card);
-    border: 1px solid var(--bd);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: var(--shadow-md);
-    height: 100%;
+.leftColumn {
+    display:flex; 
+    flex-direction:column; 
+    gap:20px;
 }
+
+.aboutCard,
+.featuresCard,
+.modelsCard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 28px;
+    transition: border-color 0.3s;
+}
+.aboutCard:hover,
+.featuresCard:hover,
+.modelsCard:hover { border-color: var(--border-hover); }
+
+.aboutCard h2,
+.featuresCard h2,
+.modelsCard h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.3px;
+}
+
+.aboutCard { animation-delay: 0.05s; }
+
+.aboutCard p {
+    color: var(--text-secondary);
+    line-height: 1.75;
+    font-size: 14.5px;
+}
+
+.featuresCard { animation-delay: 0.1s; }
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    border-radius: 8px;
+    padding: 5px 13px;
+    font-size: 13px;
+    color: var(--accent-light);
+    font-weight: 500;
+    transition: background 0.2s, border-color 0.2s;
+    cursor: default;
+}
+.tag:hover { background: rgba(124,92,252,0.18); }
+
+.modelsCard { animation-delay: 0.15s; }
+
+.modelTags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.modelTag {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-family: 'DM Sans', monospace;
+    transition: border-color 0.2s, color 0.2s;
+}
+.modelTag:hover { border-color: var(--accent); color: var(--accent-light); }
+
 
 .section {
     display: flex;
@@ -47,6 +113,17 @@
     font-weight: 600;
     border: 1px solid var(--bd);
 }
+
+.modelTag {
+    background: var(--bg-surface);
+    color: var(--ts);
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid var(--bd);
+}
+
 
 .ratingCard {
     display: flex;

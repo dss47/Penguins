@@ -2,48 +2,18 @@ import styles from "../style/Pages/tooldetailspage.module.css"
 import ToolDetailsHeader from "../components/toolDetails/toolDetailsHeader";
 import ToolDetailsMain from "../components/toolDetails/toolDetailsMain";
 import ToolDetailsSide from "../components/toolDetails/toolDetailsSide";
+import { useParams } from "react-router-dom";
+import { TOOLS_DATA } from "../data/tools.js";
+import SimilarTools from "../components/toolDetails/SimilarTools";
 
-const TOOL_DATA = {
-    created_by: "Salma Sabiri",
-    validated_by: "Ahmed Lagmili",
-    name: "ChatGPT",
-    description: "ChatGPT est une intelligence artificielle conversationnelle et un grand modèle de langage qui utilise le traitement du langage naturel pour comprendre des instructions complexes et générer du texte, de l'audio et des images de manière très naturelle. L'acronyme 'GPT' signifie 'Generative Pre-trained Transformer' (Transformateur génératif pré-entraîné), décrivant une architecture d'IA qui est entraînée sur de vastes quantités de données internet. Au lieu de penser comme un humain, il fonctionne comme un moteur avancé de reconnaissance de modèles qui prédit la suite de mots la plus probable pour aider les utilisateurs à trouver des idées, rédiger des textes, résoudre des bugs de programmation et analyser divers contenus. Accessible directement via un navigateur web, il s'améliore continuellement grâce aux retours pour fournir une assistance à des centaines de millions d'utilisateurs à travers le monde, agissant comme un assistant numérique extrêmement polyvalent.",
-    provider: "OpenAI",
-    logo_url: "https://openai.com/favicon.ico",
-    website_url: "https://chat.openai.com",
-    global_rating: 4.9,
-    release_date: "2024-01-15",
-    status: "active",
-    category: "Chatbot",
-    created_at: "2024-01-10 14:22:11",
-    updated_at: "2024-05-03 09:15:42",
-    features: ["Conversation", "IA de référence", "OpenAI", "Génération de texte", "Analyse de données"],
-    ratings: [
-        {
-            name: "Sami El Idrissi",
-            stars: 5,
-            comment: "Super utile pour la productivite et la redaction. Reponses claires et rapides.",
-            date: "2025-06-03",
-            hour: "14:32"
-        },
-        {
-            name: "Lina Boussouf",
-            stars: 4,
-            comment: "Tres pratique pour resumer des articles et preparer des presentations.",
-            date: "2025-06-01",
-            hour: "09:18"
-        },
-        {
-            name: "Yassine El Amrani",
-            stars: 5,
-            comment: "Reponses rapides et bien structurees. Ideal pour le support technique.",
-            date: "2025-05-28",
-            hour: "21:05"
-        }
-    ]
-};
+const ToolDetailsPage = () => {
+    const { name } = useParams();
+    const tool = TOOLS_DATA.find((t) => t.name === name);
 
-export default function ToolDetailsPage() {
+    if (!tool) {
+        return <div>Tool not found</div>;
+    }
+
     const renderValue = (value) => {
         if (value === null || value === undefined || value === "") {
             return "-";
@@ -51,69 +21,83 @@ export default function ToolDetailsPage() {
         return value;
     };
 
-    const renderStars = (count) => {
-        return Array.from({ length: 5 }, (_, index) => (
-            <span key={index} className={index < count ? styles.starFilled : styles.starEmpty}>
-                ★
-            </span>
-        ));
+    const renderStarsText = (count) => {
+        const filled = '★'.repeat(count);
+        const empty = '☆'.repeat(5 - count);
+        return filled + empty;
     };
 
     return (
         <div className={styles.pageContainer}>
             <div className={styles.contentWrapper}>
-                <ToolDetailsHeader Tool={TOOL_DATA}/>
-                <div className={styles.mainContainer}>
-                    <ToolDetailsMain Tool={TOOL_DATA}/>
-                    <ToolDetailsSide Tool={TOOL_DATA}/>
-                </div>
+                <a href="#" className={styles.backLink}>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path d="M19 12H5M12 5l-7 7 7 7"/>
+                    </svg>
+                    Retour
+                </a>
 
-                <section className={styles.metaContainer}>
-                    <h2 className={styles.metaTitle}>Metadonnées</h2>
-                    <div className={styles.metaGrid}>
-                        <div className={styles.metaItem}>
-                            <span className={styles.metaLabel}>Created By</span>
-                            <span className={styles.metaValue}>{renderValue(TOOL_DATA.created_by)}</span>
-                        </div>
-                        <div className={styles.metaItem}>
-                            <span className={styles.metaLabel}>Validated By</span>
-                            <span className={styles.metaValue}>{renderValue(TOOL_DATA.validated_by)}</span>
-                        </div>
-                        <div className={styles.metaItem}>
-                            <span className={styles.metaLabel}>Created At</span>
-                            <span className={styles.metaValue}>{renderValue(TOOL_DATA.created_at)}</span>
-                        </div>
-                        <div className={styles.metaItem}>
-                            <span className={styles.metaLabel}>Updated At</span>
-                            <span className={styles.metaValue}>{renderValue(TOOL_DATA.updated_at)}</span>
+                <ToolDetailsHeader Tool={tool}/>
+                
+                <div className={styles.contentGrid}>
+                    <ToolDetailsMain Tool={tool}/>
+                    <ToolDetailsSide Tool={tool}/>
+
+                    <div className={styles.metaSection}>
+                        <h2>Metadonnées</h2>
+                        <div className={styles.metaGrid}>
+                            <div className={styles.metaItem}>
+                                <div className={styles.metaItemLabel}>Created By</div>
+                                <div className={styles.metaItemValue}>{renderValue(tool.created_by)}</div>
+                            </div>
+                            <div className={styles.metaItem}>
+                                <div className={styles.metaItemLabel}>Validated By</div>
+                                <div className={styles.metaItemValue}>{renderValue(tool.validated_by)}</div>
+                            </div>
+                            <div className={styles.metaItem}>
+                                <div className={styles.metaItemLabel}>Created At</div>
+                                <div className={styles.metaItemValue}>{renderValue(tool.created_at)}</div>
+                            </div>
+                            <div className={styles.metaItem}>
+                                <div className={styles.metaItemLabel}>Updated At</div>
+                                <div className={styles.metaItemValue}>{renderValue(tool.updated_at)}</div>
+                            </div>
                         </div>
                     </div>
-                </section>
 
-                {TOOL_DATA.ratings && TOOL_DATA.ratings.length > 0 && (
-                    <section className={styles.reviewsContainer}>
-                        <h2 className={styles.reviewsTitle}>Avis</h2>
-                        <div className={styles.ratingsGrid}>
-                            {TOOL_DATA.ratings.map((rating, index) => (
-                                <div key={`${rating.name}-${index}`} className={styles.ratingCard}>
-                                    <div className={styles.ratingHeader}>
-                                        <div>
-                                            <p className={styles.ratingName}>{rating.name}</p>
-                                            <p className={styles.ratingMeta}>
-                                                {rating.date} {rating.hour}
-                                            </p>
+                    {tool.ratings_full && tool.ratings_full.length > 0 && (
+                        <section className={styles.reviewsSection}>
+                            <div className={styles.reviewsHeader}>
+                                <h2>Avis</h2>
+                                <button className={styles.btnReview}>
+                                    <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                                    Écrire un avis
+                                </button>
+                            </div>
+                            <div className={styles.reviewsGrid}>
+                                {tool.ratings_full.map((rating, index) => (
+                                    <div key={index} className={styles.reviewCard}>
+                                        <div className={styles.reviewHeader}>
+                                            <div>
+                                                <div className={styles.reviewerName}>{rating.name}</div>
+                                                <div className={styles.reviewDate}>{rating.date} {rating.hour}</div>
+                                            </div>
+                                            <div className={styles.reviewStars}>
+                                                {renderStarsText(rating.stars)}
+                                            </div>
                                         </div>
-                                        <div className={styles.ratingStars}>
-                                            {renderStars(rating.stars)}
-                                        </div>
+                                        <p className={styles.reviewText}>{rating.comment}</p>
                                     </div>
-                                    <p className={styles.ratingComment}>{rating.comment}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
+                                ))}
+                            </div>
+                        </section>
+                    )}
+                    
+                    <SimilarTools tools={tool.similar_tools} />
+                </div>
             </div>
         </div>
     );
-}
+};
+
+export default ToolDetailsPage;

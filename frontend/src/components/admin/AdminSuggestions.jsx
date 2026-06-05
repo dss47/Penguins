@@ -95,13 +95,11 @@ export default function AdminSuggestions() {
 
   return (
     <div>
-      {/* ── En-tête ── */}
       <div className={styles.header}>
         <h1 className={styles.title}>Suggestions</h1>
         <p className={styles.subtitle}>Gestion des outils proposés par la communauté</p>
       </div>
 
-      {/* ── Onglets ── */}
       <div className={styles.tabs}>
         <button
           className={`${styles.tab} ${activeTab === "pending" ? styles.tabActive : ""}`}

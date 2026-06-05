@@ -1,12 +1,99 @@
-.toolHeader {
+.hero {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    width: 100%;
-    /* Remove card styling so it sits cleanly in the page background */
-    padding: 0 0 1rem 0;
-    margin-bottom: 1rem;
+    align-items: flex-start;
+    gap: 28px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.5s ease both;
 }
+
+.heroIcon {
+    width: 88px; height: 88px;
+    border-radius: 20px;
+    background: rgba(168, 85, 247, 0.12);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.initials {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--nv);
+    line-height: 1;
+}
+
+.heroInfo { flex: 1; }
+
+.heroTitle {
+    font-family: 'Syne', sans-serif;
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #f0eff5 0%, #a998ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+:global(:root[data-theme="light"]) .heroTitle,
+:global(.light) .heroTitle {
+  background: linear-gradient(135deg, #1a1a2e 0%, #7c5cfc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .heroTitle {
+    background: linear-gradient(135deg, #1a1a2e 0%, #7c5cfc 100%);
+  }
+}
+
+.heroBy {
+    color: var(--text-muted);
+    font-size: 13.5px;
+    margin-bottom: 16px;
+}
+
+.heroBy span { color: var(--text-secondary); }
+
+.heroActions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.ratingBadge {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+.ratingBadge .star { color: var(--yellow); font-size: 15px; }
+.ratingBadge strong { color: var(--text-primary); font-weight: 600; }
+
+.actionIconBtn {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.actionIconBtn:hover { border-color: var(--accent); color: var(--accent); background: rgba(124,92,252,0.08); }
+
+@media (max-width: 600px) {
+    .heroTitle { font-size: 32px; }
+}
+
 
 .backBtn {
     display: inline-flex;
@@ -108,6 +195,41 @@
     font-family: 'Syne', sans-serif;
     margin-left: 0.2rem;
 }
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.libraryActions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-left: 1px solid var(--bd);
+    padding-left: 1.5rem;
+}
+
+.iconBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-surface);
+    color: var(--ts);
+    border: 1px solid var(--bd);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.iconBtn:hover {
+    background-color: var(--bg-card-h);
+    color: var(--tp);
+    border-color: var(--nv);
+}
+
 
 .starWrapper {
     display: flex;

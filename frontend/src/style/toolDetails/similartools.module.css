@@ -1,0 +1,80 @@
+.similarContainer {
+    grid-column: 1 / -1;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+}
+
+.similarTitle {
+    font-family: 'Syne', sans-serif;
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+    letter-spacing: -0.4px;
+}
+
+.similarGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.miniCard {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--surface);
+    padding: 1rem;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s, transform 0.2s;
+}
+.miniCard:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+
+.miniCardLogo {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    background-color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+.miniCardLogo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.miniCardName {
+    flex: 1;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 13.5px;
+}
+
+.miniCardBtn {
+    background-color: var(--surface2);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.miniCardBtn:hover {
+    background-color: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+@media (max-width: 900px) {
+    .similarGrid { grid-template-columns: 1fr; }
+}

@@ -77,7 +77,7 @@ const Menu = ({ scrollToSection, refs }) => {
                                 <li><Link className={style.Link} to="/tools">Explorer</Link></li>
                                 <li><Link className={style.Link} to="/Library">Bibliothèque</Link></li>
                                 <li><Link className={style.Link} to="/ProposerOutils">Proposer un outil</Link></li>
-                                <li><Link className={style.Link} to="/ToolDetailsPage">Profil</Link></li>
+                                <li><Link className={style.Link} to="/Profile">Profil</Link></li>
                             </ul>
                         </div>
 

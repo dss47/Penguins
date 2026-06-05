@@ -7,35 +7,44 @@ export default function ToolDetailsSide({ Tool }) {
     };
 
     return (
-        <div className={styles.sideContainer}>
-            <h1 className={styles.sectionTitle}>Informations</h1>
-            <div className={styles.infoList}>
-                <div className={styles.infoLine}>
-                    <h3>Statut</h3>
-                    <span className={styles.statusActive}>{Tool.status}</span>
+        <div className={styles.infoCard}>
+            <h2>Informations</h2>
+            <div className={styles.infoRows}>
+                <div className={styles.infoRow}>
+                    <span className={styles.infoLabel}>Statut</span>
+                    <span className={styles.badgeActive}>Active</span>
                 </div>
-                <div className={styles.infoLine}>
-                    <h3>Catégorie</h3>
-                    <p>{Tool.category}</p>
+                <div className={styles.infoRow}>
+                    <span className={styles.infoLabel}>Catégorie</span>
+                    <span className={styles.infoCategory}>{Tool.category}</span>
                 </div>
-                <div className={styles.infoLine}>
-                    <h3>Date de sortie</h3>
-                    <p>{Tool.release_date}</p>
+                {Tool.pricing && (
+                    <div className={styles.infoRow}>
+                        <span className={styles.infoLabel}>Pricing</span>
+                        <span className={styles.badgeFreemium}>{Tool.pricing}</span>
+                    </div>
+                )}
+                <div className={styles.infoRow}>
+                    <span className={styles.infoLabel}>Date de sortie</span>
+                    <span className={styles.infoValue}>{Tool.release_date}</span>
                 </div>
-                <div className={styles.infoLine}>
-                    <h3>Note globale</h3>
-                    <p>{Tool.global_rating}</p>
+                <div className={styles.infoRow}>
+                    <span className={styles.infoLabel}>Note globale</span>
+                    <span className={styles.infoValue} style={{color:"var(--yellow)"}}>★★★★★</span>
                 </div>
             </div>
-            <div className={styles.websiteBtns}>
-                <a href={Tool.website_url} target="_blank" rel="noopener noreferrer" className={styles.primaryBtn}>
-                    Visiter le site <ExternalLink size={18} />
-                </a>
-                <span className={styles.orDivider}>ou</span>
-                <button onClick={handleCopy} className={styles.secondaryBtn}>
-                    Copier le lien <Copy size={18} />
-                </button>
-            </div>
+
+            <a href={Tool.website_url} target="_blank" rel="noopener noreferrer" className={styles.btnPrimary}>
+                Visiter le site
+                <ExternalLink size={14} />
+            </a>
+
+            <div className={styles.dividerOr}>ou</div>
+
+            <button className={styles.btnSecondary} onClick={handleCopy}>
+                <Copy size={14} />
+                Copier le lien
+            </button>
         </div>
     );
 }

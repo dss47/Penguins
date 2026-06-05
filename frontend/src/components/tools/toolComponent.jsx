@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styles from "../../style/tools/toolcomponent.module.css"
 import { Star, Heart, Bookmark, ArrowRight } from "lucide-react"
 
@@ -33,10 +34,10 @@ const ToolCard = ({ icon, name, rating, features, provider }) => {
                 <button className={styles.secondaryBtn} aria-label="Sauvegarder dans la bibliothèque">
                     <Bookmark size={20} />
                 </button>
-                <button className={styles.actionBtn}>
+                <Link to={`/tool/${name}`} className={styles.actionBtn}>
                     Détails
                     <ArrowRight size={18} />
-                </button>
+                </Link>
             </div>
         </div>
     );

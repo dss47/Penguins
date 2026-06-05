@@ -1,6 +1,7 @@
 import styles from "../style/Pages/toolpage.module.css"
 import ToolComponent from "../components/tools/toolComponent"
 import { useState, useRef, useEffect } from "react";
+import { TOOLS_DATA } from "../data/tools.js";
 import { Search, ChevronDown, ListOrdered } from "lucide-react";
 
 export default function ToolPage() {
@@ -11,104 +12,6 @@ export default function ToolPage() {
     const dropdownRef = useRef(null);
 
     const query = searchQuery.toLowerCase();
-    const TOOLS_DATA = [
-      {
-        name: "ChatGPT",
-        provider: "OpenAI",
-        category: "Chatbot",
-        rating: 4.0,
-        icon: "https://openai.com/favicon.ico",
-        features: ["Conversation", "IA de référence", "OpenAI"]
-      },
-      {
-        name: "Grok",
-        provider: "xAI",
-        category: "Chatbot",
-        rating: 4.9,
-        icon: "https://x.ai/favicon.ico",
-        features: ["Intégration X", "Temps réel", "xAI"]
-      },
-      {
-        name: "Cheggmate",
-        provider: "Chegg",
-        category: "Education",
-        rating: 4.9,
-        icon: "https://chegg.com/favicon.ico",
-        features: ["Assistant d'étude", "GPT-4", "Apprentissage"]
-      },
-      {
-        name: "Consensus",
-        provider: "Consensus",
-        category: "Research",
-        rating: 4.9,
-        icon: "https://consensus.app/favicon.ico",
-        features: ["Recherche scientifique", "Extraction de données", "Preuves"]
-      },
-      {
-        name: "Elicit",
-        provider: "Elicit",
-        category: "Research",
-        rating: 4.8,
-        icon: "https://elicit.org/favicon.ico",
-        features: ["Revue de littérature", "Automatisation", "Analyse"]
-      },
-      {
-        name: "Scite.ai",
-        provider: "Scite",
-        category: "Research",
-        rating: 4.7,
-        icon: "https://scite.ai/favicon.ico",
-        features: ["Vérification d'affirmations", "Citations", "Analyse scientifique"]
-      },
-      {
-        name: "Duolingo Max",
-        provider: "Duolingo",
-        category: "Language",
-        rating: 4.8,
-        icon: "https://duolingo.com/favicon.ico",
-        features: ["Apprentissage", "Explication de fautes", "GPT-4"]
-      },
-      {
-        name: "Speak",
-        provider: "Speak",
-        category: "Language",
-        rating: 4.9,
-        icon: "https://speak.com/favicon.ico",
-        features: ["Coach d'anglais", "Conversation", "Réalisme"]
-      },
-      {
-        name: "Khanmigo",
-        provider: "Khan Academy",
-        category: "Education",
-        rating: 4.8,
-        icon: "https://khanacademy.org/favicon.ico",
-        features: ["Tuteur personnel", "Maths", "Sciences"]
-      },
-      {
-        name: "WolframAlpha",
-        provider: "Wolfram",
-        category: "Knowledge",
-        rating: 4.9,
-        icon: "https://wolframalpha.com/favicon.ico",
-        features: ["Calculs complexes", "Moteur computationnel", "Données"]
-      },
-      {
-        name: "Photomath",
-        provider: "Google",
-        category: "Education",
-        rating: 4.7,
-        icon: "https://photomath.com/favicon.ico",
-        features: ["Résolution d'équations", "Appareil photo", "Explications"]
-      },
-      {
-        name: "Socratic by Google",
-        provider: "Google",
-        category: "Education",
-        rating: 4.6,
-        icon: "https://google.com/favicon.ico",
-        features: ["Aide aux devoirs", "Visuel", "Concepts"]
-      }
-    ];
 
     let searchResults = TOOLS_DATA
         .filter(tool =>

@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChatGPT — Penguin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d0f;
+      --surface: #141417;
+      --surface2: #1c1c21;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.14);
+      --text-primary: #f0eff5;
+      --text-secondary: #8b8a99;
+      --text-muted: #55546a;
+      --accent: #7c5cfc;
+      --accent-glow: rgba(124,92,252,0.25);
+      --accent-light: #a98fff;
+      --green: #22c55e;
+      --green-bg: rgba(34,197,94,0.1);
+      --yellow: #eab308;
+      --tag-bg: rgba(124,92,252,0.1);
+      --tag-border: rgba(124,92,252,0.25);
+      --freemium-bg: rgba(124,92,252,0.12);
+      --freemium-border: rgba(124,92,252,0.3);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 64px;
+      background: rgba(13,13,15,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: -0.3px;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .nav-logo-dot {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #b06aff);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 400;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text-primary); background: var(--surface2); }
+
+    .nav-app-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent);
+      color: #fff !important;
+      padding: 7px 16px !important;
+      border-radius: 8px !important;
+      font-weight: 500 !important;
+      box-shadow: 0 0 20px var(--accent-glow);
+      transition: opacity 0.2s, box-shadow 0.2s !important;
+    }
+
+    .nav-app-btn:hover { opacity: 0.9; background: var(--accent) !important; box-shadow: 0 0 32px var(--accent-glow) !important; }
+
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+
+    .nav-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border-hover);
+      background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .nav-avatar:hover { border-color: var(--accent); }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 48px 24px 96px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Back link ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13.5px;
+      margin-bottom: 36px;
+      transition: color 0.2s;
+      padding: 6px 0;
+    }
+    .back-link:hover { color: var(--text-primary); }
+    .back-link svg { transition: transform 0.2s; }
+    .back-link:hover svg { transform: translateX(-3px); }
+
+    /* ── Hero ── */
+    .hero {
+      display: flex;
+      align-items: flex-start;
+      gap: 28px;
+      margin-bottom: 48px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .hero-icon {
+      width: 88px; height: 88px;
+      border-radius: 20px;
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+
+    .hero-icon img {
+      width: 56px; height: 56px;
+      object-fit: contain;
+    }
+
+    /* ChatGPT SVG placeholder */
+    .hero-icon .chatgpt-logo {
+      width: 52px; height: 52px;
+    }
+
+    .hero-info { flex: 1; }
+
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.05;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #f0eff5 0%, #a998ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-by {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      margin-bottom: 16px;
+    }
+
+    .hero-by span { color: var(--text-secondary); }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .rating-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .rating-badge .star { color: var(--yellow); font-size: 15px; }
+    .rating-badge strong { color: var(--text-primary); font-weight: 600; }
+
+    .action-icon-btn {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .action-icon-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(124,92,252,0.08); }
+
+    /* ── Grid ── */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── Card base ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+      transition: border-color 0.3s;
+      animation: fadeUp 0.5s ease both;
+    }
+    .card:hover { border-color: var(--border-hover); }
+
+    .card h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -0.3px;
+    }
+
+    /* ── About card ── */
+    .about-card { animation-delay: 0.05s; }
+
+    .about-card p {
+      color: var(--text-secondary);
+      line-height: 1.75;
+      font-size: 14.5px;
+    }
+
+    /* ── Features card ── */
+    .features-card { animation-delay: 0.1s; }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--tag-bg);
+      border: 1px solid var(--tag-border);
+      border-radius: 8px;
+      padding: 5px 13px;
+      font-size: 13px;
+      color: var(--accent-light);
+      font-weight: 500;
+      transition: background 0.2s, border-color 0.2s;
+      cursor: default;
+    }
+    .tag:hover { background: rgba(124,92,252,0.18); }
+
+    /* ── Models card ── */
+    .models-card { animation-delay: 0.15s; }
+
+    .model-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .model-tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-family: 'DM Sans', monospace;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .model-tag:hover { border-color: var(--accent); color: var(--accent-light); }
+
+    /* ── Sidebar: Info card ── */
+    .info-card { animation-delay: 0.08s; }
+
+    .info-rows { display: flex; flex-direction: column; gap: 0; }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .info-row:last-child { border-bottom: none; }
+
+    .info-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .info-value {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .badge-active {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--green-bg);
+      border: 1px solid rgba(34,197,94,0.2);
+      color: var(--green);
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+    .badge-active::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    .badge-freemium {
+      display: inline-flex;
+      align-items: center;
+      background: var(--freemium-bg);
+      border: 1px solid var(--freemium-border);
+      color: var(--accent-light);
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .info-category {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    /* ── CTA buttons ── */
+    .btn-primary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 20px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 20px;
+      box-shadow: 0 4px 24px var(--accent-glow);
+      transition: opacity 0.2s, box-shadow 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.9; box-shadow: 0 6px 32px var(--accent-glow); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .divider-or {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      margin: 12px 0;
+      position: relative;
+    }
+    .divider-or::before, .divider-or::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: var(--border);
+    }
+    .divider-or::before { left: 0; }
+    .divider-or::after { right: 0; }
+
+    .btn-secondary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 20px;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--border-hover); color: var(--text-primary); background: var(--surface2); }
+
+    /* ── Metadata section ── */
+    .meta-section {
+      grid-column: 1 / -1;
+      animation-delay: 0.2s;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .meta-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      transition: border-color 0.3s;
+    }
+    .meta-item:hover { border-color: var(--border-hover); }
+
+    .meta-item-label {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+
+    .meta-item-value {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.2px;
+    }
+
+    /* ── Reviews section ── */
+    .reviews-section {
+      grid-column: 1 / -1;
+      animation-delay: 0.25s;
+    }
+
+    .reviews-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .reviews-header h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .review-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .review-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+
+    .review-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .reviewer-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+
+    .review-date {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .review-stars { color: var(--yellow); font-size: 13px; letter-spacing: 1px; }
+
+    .review-text {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* ── Write review btn ── */
+    .btn-review {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: transparent;
+      color: var(--accent-light);
+      border: 1px solid var(--tag-border);
+      border-radius: 9px;
+      padding: 8px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-review:hover { background: var(--tag-bg); border-color: var(--accent); }
+
+    /* ── Glow decoration ── */
+    .glow-orb {
+      position: fixed;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,92,252,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      top: -100px; right: -100px;
+      z-index: 0;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .content-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, 1fr); }
+      .reviews-grid { grid-template-columns: 1fr; }
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero-title { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="glow-orb"></div>
+
+<!-- ── Navigation ── -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-dot">🐧</div>
+    penguin
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="#">Caractéristiques</a></li>
+    <li><a href="#">Comment ça marche</a></li>
+    <li><a href="#">Pourquoi Penguin</a></li>
+    <li><a href="#">Découvrir</a></li>
+    <li><a href="#">Meilleures IA</a></li>
+    <li><a href="#">Communauté</a></li>
+    <li><a href="#">contact</a></li>
+    <li><a href="#" class="nav-app-btn">App →</a></li>
+  </ul>
+
+  <div class="nav-right">
+    <div class="nav-avatar">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Main ── -->
+<main>
+
+  <!-- Back -->
+  <a class="back-link" href="#">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M19 12H5M12 5l-7 7 7 7"/>
+    </svg>
+    Retour
+  </a>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-icon">
+      <!-- ChatGPT logo as inline SVG -->
+      <svg class="chatgpt-logo" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M37.532 16.87a9.963 9.963 0 0 0-.856-8.184 10.078 10.078 0 0 0-10.855-4.835 9.964 9.964 0 0 0-6.205-3.244 10.079 10.079 0 0 0-10.69 4.692 9.963 9.963 0 0 0-6.675 4.81 10.079 10.079 0 0 0 1.24 11.817 9.965 9.965 0 0 0 .856 8.185 10.079 10.079 0 0 0 10.855 4.835 9.965 9.965 0 0 0 6.205 3.243 10.079 10.079 0 0 0 10.69-4.692 9.965 9.965 0 0 0 6.675-4.81 10.079 10.079 0 0 0-1.24-11.816ZM22.498 37.886a7.474 7.474 0 0 1-4.799-1.735c.061-.033.168-.091.237-.134l7.964-4.6a1.294 1.294 0 0 0 .655-1.134V19.054l3.366 1.944a.12.12 0 0 1 .066.092v9.299a7.505 7.505 0 0 1-7.49 7.496ZM6.392 31.006a7.471 7.471 0 0 1-.894-5.023c.06.036.162.099.237.141l7.964 4.6a1.297 1.297 0 0 0 1.308 0l9.724-5.614v3.888a.12.12 0 0 1-.048.103l-8.051 4.649a7.504 7.504 0 0 1-10.24-2.744ZM4.297 13.62A7.469 7.469 0 0 1 8.2 10.333c0 .068-.004.19-.004.274v9.201a1.294 1.294 0 0 0 .654 1.132l9.723 5.614-3.366 1.944a.12.12 0 0 1-.114.012L7.044 23.86a7.504 7.504 0 0 1-2.747-10.24Zm27.658 6.437-9.724-5.615 3.367-1.943a.121.121 0 0 1 .114-.012l8.048 4.648a7.498 7.498 0 0 1-1.158 13.528v-9.476a1.293 1.293 0 0 0-.647-1.13Zm3.35-5.043c-.059-.037-.162-.099-.236-.141l-7.965-4.6a1.298 1.298 0 0 0-1.308 0l-9.723 5.614v-3.888a.12.12 0 0 1 .048-.103l8.05-4.645a7.497 7.497 0 0 1 11.135 7.763Zm-21.063 6.929-3.367-1.944a.12.12 0 0 1-.065-.092v-9.299a7.497 7.497 0 0 1 12.293-5.756 6.94 6.94 0 0 0-.236.134l-7.965 4.6a1.294 1.294 0 0 0-.654 1.132l-.006 11.225Zm1.829-3.943 4.33-2.501 4.332 2.497v4.996l-4.331 2.5-4.331-2.5V18Z" fill="currentColor"/>
+      </svg>
+    </div>
+
+    <div class="hero-info">
+      <h1 class="hero-title">ChatGPT</h1>
+      <p class="hero-by">par <span>OpenAI</span></p>
+      <div class="hero-actions">
+        <div class="rating-badge">
+          <span class="star">★</span>
+          <strong>4.8</strong>
+          <span>/ 5</span>
+        </div>
+        <button class="action-icon-btn" title="Ajouter aux favoris">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        <button class="action-icon-btn" title="Partager">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Grid -->
+  <div class="content-grid">
+
+    <!-- Left column -->
+    <div style="display:flex; flex-direction:column; gap:20px;">
+
+      <!-- About -->
+      <div class="card about-card">
+        <h2>À propos</h2>
+        <p>ChatGPT est une intelligence artificielle conversationnelle et un grand modèle de langage qui utilise le traitement du langage naturel pour comprendre des instructions complexes et générer du texte, de l'audio et des images de manière très naturelle. L'acronyme 'GPT' signifie 'Generative Pre-trained Transformer', décrivant une architecture d'IA qui est entraînée sur de vastes quantités de données internet. Au lieu de penser comme un humain, il fonctionne comme un moteur avancé de reconnaissance de modèles qui prédit la suite de mots la plus probable pour aider les utilisateurs à trouver des idées, rédiger des textes, résoudre des bugs de programmation et analyser divers contenus. Accessible directement via un navigateur web, il s'améliore continuellement grâce aux retours pour fournir une assistance à des centaines de millions d'utilisateurs à travers le monde, agissant comme un assistant numérique extrêmement polyvalent.</p>
+      </div>
+
+      <!-- Features -->
+      <div class="card features-card">
+        <h2>Fonctionnalités</h2>
+        <div class="tags">
+          <span class="tag">💬 Conversation</span>
+          <span class="tag">🤖 IA de référence</span>
+          <span class="tag">⚡ OpenAI</span>
+        </div>
+      </div>
+
+      <!-- Models -->
+      <div class="card models-card">
+        <h2>Modèles supportés</h2>
+        <div class="model-tags">
+          <span class="model-tag">GPT-3.5</span>
+          <span class="model-tag">GPT-4o</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right: Info sidebar -->
+    <div class="card info-card">
+      <h2>Informations</h2>
+      <div class="info-rows">
+        <div class="info-row">
+          <span class="info-label">Statut</span>
+          <span class="badge-active">Active</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Catégorie</span>
+          <span class="info-category">Chatbot</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Pricing</span>
+          <span class="badge-freemium">Freemium</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Date de sortie</span>
+          <span class="info-value">2024-01-15</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Note globale</span>
+          <span class="info-value" style="color:var(--yellow);">★★★★★</span>
+        </div>
+      </div>
+
+      <a href="https://chat.openai.com" target="_blank" class="btn-primary">
+        Visiter le site
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+
+      <div class="divider-or">ou</div>
+
+      <button class="btn-secondary" onclick="navigator.clipboard.writeText(window.location.href)">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copier le lien
+      </button>
+    </div>
+
+    <!-- Metadata -->
+    <div class="card meta-section">
+      <h2>Metadonnées</h2>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <div class="meta-item-label">Created By</div>
+          <div class="meta-item-value">Salma Sabiri</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-item-label">Validated By</div>
+          <div class="meta-item-value">Ahmed Lagmili</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-item-label">Created At</div>
+          <div class="meta-item-value">2024-01-10 14:22:11</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-item-label">Updated At</div>
+          <div class="meta-item-value">2024-05-03 09:15:42</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews -->
+    <div class="reviews-section">
+      <div class="reviews-header">
+        <h2>Avis</h2>
+        <button class="btn-review">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Écrire un avis
+        </button>
+      </div>
+
+      <div class="reviews-grid">
+        <!-- Review 1 -->
+        <div class="review-card">
+          <div class="review-header">
+            <div>
+              <div class="reviewer-name">Sami El Idrissi</div>
+              <div class="review-date">2025-06-03 14:32</div>
+            </div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">Super utile pour la productivite et la redaction. Reponses claires et rapides.</p>
+        </div>
+
+        <!-- Review 2 -->
+        <div class="review-card">
+          <div class="review-header">
+            <div>
+              <div class="reviewer-name">Lina Boussouf</div>
+              <div class="review-date">2025-06-01 09:18</div>
+            </div>
+            <div class="review-stars">★★★★<span style="color:var(--text-muted)">★</span></div>
+          </div>
+          <p class="review-text">Tres pratique pour resumer des articles et preparer des presentations.</p>
+        </div>
+
+        <!-- Review 3 -->
+        <div class="review-card">
+          <div class="review-header">
+            <div>
+              <div class="reviewer-name">Yassine El Amrani</div>
+              <div class="review-date">2025-05-28 21:05</div>
+            </div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">Reponses rapides et bien structurees. Ideal pour le support technique.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  // Copy link feedback
+  document.querySelector('.btn-secondary').addEventListener('click', function() {
+    this.textContent = '✓  Lien copié !';
+    this.style.color = 'var(--green)';
+    this.style.borderColor = 'var(--green)';
+    setTimeout(() => {
+      this.innerHTML = `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copier le lien`;
+      this.style.color = '';
+      this.style.borderColor = '';
+    }, 2000);
+  });
+</script>
+</body>
+</html>
