@@ -55,7 +55,7 @@
     height: 64px;
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(139, 92, 246, 0.14));
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.22), rgba(6, 182, 212, 0.14));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -161,7 +161,7 @@
     }
 
     :root:not([data-theme="dark"]) .emptyBack:hover {
-        background: rgba(79, 70, 229, 0.08);
+        background: rgba(6, 182, 212, 0.08);
     }
 }
 
@@ -187,5 +187,5 @@
 
 :root[data-theme="light"] .emptyBack:hover,
 .light .emptyBack:hover {
-    background: rgba(79, 70, 229, 0.08);
+    background: rgba(6, 182, 212, 0.08);
 }

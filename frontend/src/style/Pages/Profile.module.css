@@ -1,21 +1,21 @@
 :root {
-    --bg-void:   #04010e;
-    --bg-deep:   #0a0520;
-    --bg-surface:#110830;
-    --bg-card:   #160d38;
-    --bg-card-h: #1e1250;
-    --nv: #a855f7;
-    --nb: #3b82f6;
+    --bg-void:   #080c16;
+    --bg-deep:   #080c16;
+    --bg-surface:#112330;
+    --bg-card:   #112330;
+    --bg-card-h: #163544;
+    --nv: #06b6d4;
+    --nb: #06b6d4;
     --np: #ec4899;
     --nc: #06b6d4;
-    --ng: #22c55e;
-    --ag: #7c3aed;
-    --tp: #f0eaff;
-    --ts: #9d8abf;
-    --tm: #5a4d72;
-    --bd: rgba(168,85,247,0.12);
-    --bm: rgba(168,85,247,0.25);
-    --bg2: rgba(168,85,247,0.5);
+    --ng: #10b981;
+    --ag: #06b6d4;
+    --tp: #ffffff;
+    --ts: #9ca3af;
+    --tm: #6b7280;
+    --bd: rgba(6,182,212,0.12);
+    --bm: rgba(6,182,212,0.25);
+    --bg2: rgba(6,182,212,0.5);
 
     /* semantic aliases mapped to the new palette */
     --bg:         var(--bg-void);

@@ -18,7 +18,7 @@
     top: 0; right: 0;
     width: 340px;
     height: 100%;
-    background: linear-gradient(135deg, transparent 55%, rgba(168,85,247,.08) 100%);
+    background: linear-gradient(135deg, transparent 55%, rgba(6,182,212,.08) 100%);
     pointer-events: none;
   }
   .avatar_wrap { position: relative; }
@@ -32,7 +32,7 @@
     font-weight: 700;
     color: var(--bg-void);
     flex-shrink: 0;
-    box-shadow: 0 0 30px rgba(168,85,247,0.4);
+    box-shadow: 0 0 30px rgba(6,182,212,0.4);
   }
   .avatar_status {
     position: absolute;
@@ -64,7 +64,7 @@
     background: var(--pill-bg);
     border: 1px solid var(--bd);
   }
-  .tag.role  { border-color: rgba(168,85,247,.4); color: var(--nv); }
+  .tag.role  { border-color: rgba(6,182,212,.4); color: var(--nv); }
   .tag.status{ border-color: rgba(6,182,212,.4); color: var(--nc); }
   .tag.prof  { border-color: var(--bm); color: var(--muted); }
   .tag .dot  { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }

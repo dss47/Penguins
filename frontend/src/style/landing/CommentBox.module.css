@@ -28,8 +28,8 @@
     font-weight: 700;
     flex-shrink: 0;
     border: 2px solid;
-    background: rgba(168, 85, 247, .18);
-    border-color: rgba(168, 85, 247, .35);
+    background: rgba(6, 182, 212, .18);
+    border-color: rgba(6, 182, 212, .35);
     color: var(--nv);
 }
 
@@ -64,7 +64,7 @@
     border: 1px solid var(--bd);
     font-size: .72rem;
     color: var(--ts);
-    background: rgba(168,85,247,.05);
+    background: rgba(6,182,212,.05);
     margin-bottom: .875rem;
 }
 
@@ -91,15 +91,15 @@
 /* ── Hover (dark mode) ────────────────────────────────────── */
 .CommentBox:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 20px rgba(168, 85, 247, 0.15);
-  border-color: rgba(168, 85, 247, 0.35);
+  box-shadow: 0 10px 20px rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.35);
 }
 
 /* ── Light Mode Overrides ───────────────────────────────────── */
 @media (prefers-color-scheme: light) {
   .logo {
     background: var(--nv-soft);
-    border-color: rgba(79, 70, 229, 0.25);
+    border-color: rgba(6, 182, 212, 0.25);
   }
   .iaName {
     background: var(--nv-soft);
@@ -115,7 +115,7 @@
 :root[data-theme="light"] .logo,
 .light .logo {
     background: var(--nv-soft);
-    border-color: rgba(79, 70, 229, 0.25);
+    border-color: rgba(6, 182, 212, 0.25);
 }
 :root[data-theme="light"] .iaName,
 .light .iaName {

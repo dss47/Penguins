@@ -25,8 +25,8 @@
 
 .shelfCard:hover {
     transform: translateY(-5px);
-    border-color: rgba(99, 102, 241, 0.5);
-    box-shadow: 0 0 26px 4px rgba(99, 102, 241, 0.18), 0 10px 40px rgba(0, 0, 0, 0.5);
+    border-color: rgba(6, 182, 212, 0.5);
+    box-shadow: 0 0 26px 4px rgba(6, 182, 212, 0.18), 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
 /* Per-shelf gradient accent ::before */
@@ -38,9 +38,9 @@
     border-radius: var(--radius-card);
 }
 
-.shelfCard[data-shelf="1"]::before { background: radial-gradient(ellipse at top left, rgba(139, 92, 246, 0.08), transparent 55%); }
-.shelfCard[data-shelf="2"]::before { background: radial-gradient(ellipse at top left, rgba(244, 63, 94, 0.07), transparent 55%); }
-.shelfCard[data-shelf="3"]::before { background: radial-gradient(ellipse at top left, rgba(20, 184, 166, 0.07), transparent 55%); }
+.shelfCard[data-shelf="1"]::before { background: radial-gradient(ellipse at top left, rgba(6, 182, 212, 0.08), transparent 55%); }
+.shelfCard[data-shelf="2"]::before { background: radial-gradient(ellipse at top left, rgba(16, 185, 129, 0.07), transparent 55%); }
+.shelfCard[data-shelf="3"]::before { background: radial-gradient(ellipse at top left, rgba(14, 165, 233, 0.07), transparent 55%); }
 .shelfCard[data-shelf="4"]::before { background: radial-gradient(ellipse at top left, rgba(245, 158, 11, 0.07), transparent 55%); }
 .shelfCard[data-shelf="5"]::before { background: radial-gradient(ellipse at top left, rgba(59, 130, 246, 0.07), transparent 55%); }
 
@@ -65,11 +65,11 @@
     font-size: 1.3rem;
 }
 
-.shelfCard[data-shelf="1"] .shelfIcon { background: linear-gradient(135deg, rgba(139, 92, 246, 0.28), rgba(99, 102, 241, 0.14)); }
-.shelfCard[data-shelf="2"] .shelfIcon { background: linear-gradient(135deg, rgba(244, 63, 94, 0.28), rgba(249, 115, 22, 0.14)); }
-.shelfCard[data-shelf="3"] .shelfIcon { background: linear-gradient(135deg, rgba(20, 184, 166, 0.28), rgba(6, 182, 212, 0.14)); }
+.shelfCard[data-shelf="1"] .shelfIcon { background: linear-gradient(135deg, rgba(6, 182, 212, 0.28), rgba(6, 182, 212, 0.14)); }
+.shelfCard[data-shelf="2"] .shelfIcon { background: linear-gradient(135deg, rgba(16, 185, 129, 0.28), rgba(16, 185, 129, 0.14)); }
+.shelfCard[data-shelf="3"] .shelfIcon { background: linear-gradient(135deg, rgba(14, 165, 233, 0.28), rgba(14, 165, 233, 0.14)); }
 .shelfCard[data-shelf="4"] .shelfIcon { background: linear-gradient(135deg, rgba(245, 158, 11, 0.28), rgba(234, 179, 8, 0.14)); }
-.shelfCard[data-shelf="5"] .shelfIcon { background: linear-gradient(135deg, rgba(59, 130, 246, 0.28), rgba(99, 102, 241, 0.14)); }
+.shelfCard[data-shelf="5"] .shelfIcon { background: linear-gradient(135deg, rgba(59, 130, 246, 0.28), rgba(59, 130, 246, 0.14)); }
 
 .dotsBtn {
     background: none;
@@ -133,9 +133,9 @@
     animation: badgePop 0.4s cubic-bezier(.34, 1.56, .64, 1) 0.2s both;
 }
 
-.shelfCard[data-shelf="1"] .toolCountBadge { background: rgba(139, 92, 246, 0.18); color: #c4b5fd; }
-.shelfCard[data-shelf="2"] .toolCountBadge { background: rgba(244, 63, 94, 0.16); color: #fda4af; }
-.shelfCard[data-shelf="3"] .toolCountBadge { background: rgba(20, 184, 166, 0.16); color: #5eead4; }
+.shelfCard[data-shelf="1"] .toolCountBadge { background: rgba(6, 182, 212, 0.18); color: #06b6d4; }
+.shelfCard[data-shelf="2"] .toolCountBadge { background: rgba(16, 185, 129, 0.16); color: #10b981; }
+.shelfCard[data-shelf="3"] .toolCountBadge { background: rgba(14, 165, 233, 0.16); color: #0ea5e9; }
 .shelfCard[data-shelf="4"] .toolCountBadge { background: rgba(245, 158, 11, 0.16); color: #fcd34d; }
 .shelfCard[data-shelf="5"] .toolCountBadge { background: rgba(59, 130, 246, 0.16); color: #93c5fd; }
 
@@ -166,8 +166,8 @@
     }
 
     :root:not([data-theme="dark"]) .shelfCard:hover {
-        border-color: rgba(99, 102, 241, 0.4);
-        box-shadow: 0 0 20px 4px rgba(99, 102, 241, 0.12), 0 4px 20px rgba(0, 0, 0, 0.08);
+        border-color: rgba(6, 182, 212, 0.4);
+    box-shadow: 0 0 20px 4px rgba(6, 182, 212, 0.12), 0 4px 20px rgba(0, 0, 0, 0.08);
     }
 
     :root:not([data-theme="dark"]) .shelfIcon {
@@ -195,9 +195,9 @@
         border-color: rgba(0, 0, 0, 0.06);
     }
 
-    :root:not([data-theme="dark"]) .shelfCard[data-shelf="1"] .toolCountBadge { background: rgba(139, 92, 246, 0.12); color: #7c3aed; }
-    :root:not([data-theme="dark"]) .shelfCard[data-shelf="2"] .toolCountBadge { background: rgba(244, 63, 94, 0.10); color: #e11d48; }
-    :root:not([data-theme="dark"]) .shelfCard[data-shelf="3"] .toolCountBadge { background: rgba(20, 184, 166, 0.10); color: #0d9488; }
+    :root:not([data-theme="dark"]) .shelfCard[data-shelf="1"] .toolCountBadge { background: rgba(6, 182, 212, 0.12); color: #06b6d4; }
+    :root:not([data-theme="dark"]) .shelfCard[data-shelf="2"] .toolCountBadge { background: rgba(16, 185, 129, 0.10); color: #10b981; }
+    :root:not([data-theme="dark"]) .shelfCard[data-shelf="3"] .toolCountBadge { background: rgba(14, 165, 233, 0.10); color: #0ea5e9; }
     :root:not([data-theme="dark"]) .shelfCard[data-shelf="4"] .toolCountBadge { background: rgba(245, 158, 11, 0.10); color: #d97706; }
     :root:not([data-theme="dark"]) .shelfCard[data-shelf="5"] .toolCountBadge { background: rgba(59, 130, 246, 0.10); color: #2563eb; }
 
@@ -215,8 +215,8 @@
 
 :root[data-theme="light"] .shelfCard:hover,
 .light .shelfCard:hover {
-    border-color: rgba(99, 102, 241, 0.4);
-    box-shadow: 0 0 20px 4px rgba(99, 102, 241, 0.12), 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-color: rgba(6, 182, 212, 0.4);
+    box-shadow: 0 0 20px 4px rgba(6, 182, 212, 0.12), 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 :root[data-theme="light"] .shelfIcon,
@@ -251,11 +251,11 @@
 }
 
 :root[data-theme="light"] .shelfCard[data-shelf="1"] .toolCountBadge,
-.light .shelfCard[data-shelf="1"] .toolCountBadge { background: rgba(139, 92, 246, 0.12); color: #7c3aed; }
+.light .shelfCard[data-shelf="1"] .toolCountBadge { background: rgba(6, 182, 212, 0.12); color: #06b6d4; }
 :root[data-theme="light"] .shelfCard[data-shelf="2"] .toolCountBadge,
-.light .shelfCard[data-shelf="2"] .toolCountBadge { background: rgba(244, 63, 94, 0.10); color: #e11d48; }
+.light .shelfCard[data-shelf="2"] .toolCountBadge { background: rgba(16, 185, 129, 0.10); color: #10b981; }
 :root[data-theme="light"] .shelfCard[data-shelf="3"] .toolCountBadge,
-.light .shelfCard[data-shelf="3"] .toolCountBadge { background: rgba(20, 184, 166, 0.10); color: #0d9488; }
+.light .shelfCard[data-shelf="3"] .toolCountBadge { background: rgba(14, 165, 233, 0.10); color: #0ea5e9; }
 :root[data-theme="light"] .shelfCard[data-shelf="4"] .toolCountBadge,
 .light .shelfCard[data-shelf="4"] .toolCountBadge { background: rgba(245, 158, 11, 0.10); color: #d97706; }
 :root[data-theme="light"] .shelfCard[data-shelf="5"] .toolCountBadge,

@@ -16,7 +16,7 @@
     transition: border-color .2s, transform .2s, box-shadow .2s;
     cursor: default;
   }
-  .stat_card:hover { border-color: var(--nv); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(168,85,247,0.18); }
+  .stat_card:hover { border-color: var(--nv); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(6,182,212,0.18); }
   .stat_card .icon {
     font-size: 1.2rem;
     margin-bottom: 4px;
