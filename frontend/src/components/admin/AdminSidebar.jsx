@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import styles from "../../style/admin/adminSidebar.module.css";
+import { useAuth } from "../../context/AuthContext";
 
 // ── Icônes SVG inline (pas de dépendance Lucide dans la sidebar) ──
 const icons = {
@@ -61,9 +62,15 @@ const icons = {
 };
 
 // ── Navigation items ──────────────────────────────────────────────
-const NAV_ITEMS = [
+const ADMIN_NAV_ITEMS = [
   { id: "dashboard",   label: "Tableau de bord", icon: "dashboard" },
-  { id: "users",       label: "Utilisateurs",    icon: "users",       badge: null },
+  { id: "users",       label: "Utilisateurs",    icon: "users" },
+  { id: "suggestions", label: "Validations",     icon: "suggestions", badge: 5, badgeVariant: "warning" },
+  { id: "moderation",  label: "Modération",      icon: "moderation",  badge: 3, badgeVariant: "danger" },
+];
+
+const MANAGER_NAV_ITEMS = [
+  { id: "users",       label: "Utilisateurs",    icon: "users" },
   { id: "suggestions", label: "Validations",     icon: "suggestions", badge: 5, badgeVariant: "warning" },
   { id: "moderation",  label: "Modération",      icon: "moderation",  badge: 3, badgeVariant: "danger" },
 ];
@@ -72,8 +79,10 @@ const NAV_ITEMS = [
  * AdminSidebar
  */
 export default function AdminSidebar() {
+  const { isAdmin, logout } = useAuth();
+  const navItems = isAdmin ? ADMIN_NAV_ITEMS : MANAGER_NAV_ITEMS;
   const [theme, setTheme] = useState(
-      localStorage.getItem('theme') || 
+      localStorage.getItem('theme') ||
       (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
   );
 
@@ -107,7 +116,7 @@ export default function AdminSidebar() {
       <nav className={styles.nav}>
         <span className={styles.navSection}>Navigation</span>
 
-        {NAV_ITEMS.map((item) => (
+        {navItems.map((item) => (
           <NavLink
             key={item.id}
             to={`/admin/${item.id}`}
@@ -136,18 +145,18 @@ export default function AdminSidebar() {
 
       {/* ── Theme Toggle ── */}
       <div style={{ padding: "0 24px", marginTop: "auto", marginBottom: "16px" }}>
-        <button 
+        <button
           onClick={toggleTheme}
           style={{
-            display: "flex", 
-            alignItems: "center", 
-            gap: "12px", 
-            background: "transparent", 
-            border: "1px solid var(--border)", 
-            color: "var(--text-muted)", 
-            padding: "8px 16px", 
-            borderRadius: "8px", 
-            cursor: "pointer", 
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            background: "transparent",
+            border: "1px solid var(--border)",
+            color: "var(--text-muted)",
+            padding: "8px 16px",
+            borderRadius: "8px",
+            cursor: "pointer",
             width: "100%",
             transition: "all 0.2s"
           }}
@@ -164,8 +173,15 @@ export default function AdminSidebar() {
         <div className={styles.avatar}>A</div>
         <div className={styles.footerInfo}>
           <div className={styles.footerName}>Administrateur</div>
-          <div className={styles.footerRole}>Super Admin</div>
+          <div className={styles.footerRole}>{isAdmin ? "Super Admin" : "Manager"}</div>
         </div>
+        <button className={styles.logoutBtn} onClick={logout} aria-label="Se déconnecter">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </button>
       </div>
     </aside>
   );

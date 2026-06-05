@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "../../style/admin/adminUsers.module.css";
 import BanConfirmForm from "../forms/BanConfirmForm";
 import PromoteConfirmForm from "../forms/PromoteConfirmForm";
+import { useAuth } from "../../context/AuthContext";
 
 // TODO: API → GET /api/admin/users
 const MOCK_USERS = [
@@ -38,10 +39,11 @@ function getInitials(name) {
 }
 
 export default function AdminUsers() {
+  const { isAdmin } = useAuth();
   const [search, setSearch]       = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
-  const [confirmBan, setConfirmBan]         = useState(null); // userId
-  const [confirmPromote, setConfirmPromote] = useState(null); // userId
+  const [confirmBan, setConfirmBan]         = useState(null);
+  const [confirmPromote, setConfirmPromote] = useState(null);
   const [users, setUsers] = useState(MOCK_USERS);
 
   const filtered = users.filter((u) => {
@@ -152,7 +154,7 @@ export default function AdminUsers() {
                     {/* Actions */}
                     <td>
                       <div className={styles.actions}>
-                        {user.role === "user" && user.status === "active" && (
+                        {isAdmin && user.role === "user" && user.status === "active" && (
                           <button
                             className={`${styles.btnAction} ${styles.btnPromote}`}
                             onClick={() => {
@@ -211,8 +213,8 @@ export default function AdminUsers() {
 
         {totalPages > 1 && filtered.length > 0 && (
           <div className={styles.paginationContainer}>
-            <button 
-              className={styles.pageBtn} 
+            <button
+              className={styles.pageBtn}
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
@@ -221,8 +223,8 @@ export default function AdminUsers() {
             <span className={styles.pageInfo}>
               Page {currentPage} sur {totalPages}
             </span>
-            <button 
-              className={styles.pageBtn} 
+            <button
+              className={styles.pageBtn}
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
             >

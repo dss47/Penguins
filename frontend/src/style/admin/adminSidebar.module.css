@@ -193,3 +193,23 @@
   font-size: 11px;
   color: var(--text-muted);
 }
+
+.logoutBtn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.logoutBtn:hover {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+}

@@ -1,26 +1,37 @@
 import styles from "../../style/form/forms.module.css";
-import { ArrowLeft, Eye, EyeOff, Calendar } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import api from "../../services/api";
 
 export default function SignupForm({ onSwitch }) {
 	const [isVisiblePass, setIsVisiblePass] = useState(false);
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
 	const [email, setEmail] = useState("");
-	const [dob, setDob] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
-	const [dateInputType, setDateInputType] = useState("text");
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setError("");
 
 		if (password !== confirmPassword) {
-			alert("Les mots de passe ne correspondent pas !");
+			setError("Les mots de passe ne correspondent pas !");
 			return;
 		}
 
-		console.log("Inscription soumise :", { firstName, lastName, email, dob, password });
+		setLoading(true);
+		try {
+			await api.post("/auth/register", { firstName, lastName, email, password });
+			alert("Inscription réussie ! Connectez-vous.");
+			onSwitch();
+		} catch (err) {
+			setError(err.message || "Erreur lors de l'inscription");
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -52,24 +63,9 @@ export default function SignupForm({ onSwitch }) {
 						</div>
 					</div>
 
-
-					<div className={styles.inputGroup}>
-						<input
-							type={dateInputType}
-							value={dob}
-							className={`${styles.input} ${styles.dateInput}`}
-							onFocus={() => setDateInputType("date")}
-							onBlur={() => !dob && setDateInputType("text")}
-							onChange={(e) => setDob(e.target.value)}
-							placeholder="Date de Naissance"
-							required
-						/>
-						<Calendar size={20} className={styles.dateIcon} />
-					</div>
 					<div className={styles.inputGroup}>
 						<input type="email" value={email} className={styles.input} onChange={(e) => setEmail(e.target.value)} placeholder="Adresse E-mail" required />
 					</div>
-
 
 					<div className={styles.rowGroup}>
 						<div className={styles.inputGroup}>
@@ -102,7 +98,11 @@ export default function SignupForm({ onSwitch }) {
 						</div>
 					</div>
 
-					<button type="submit" className={styles.submitBtn}>S'inscrire</button>
+					{error && <p className={styles.error}>{error}</p>}
+
+					<button type="submit" className={styles.submitBtn} disabled={loading}>
+						{loading ? "Inscription..." : "S'inscrire"}
+					</button>
 					<div className={styles.switchContainer}>
 						<p>Vous avez déjà un compte ?</p>
 						<button type="button" onClick={onSwitch} className={`${styles.inlineSwitchBtn} ${styles.btnToLogin}`}>

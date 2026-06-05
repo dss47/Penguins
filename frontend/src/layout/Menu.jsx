@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faArrowLeftLong, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 import style from "../style/layout/Menu.module.css";
+import { useAuth } from "../context/AuthContext";
 
 const Menu = ({ scrollToSection, refs }) => {
+    const { isAuthenticated, logout } = useAuth();
     const [activated, setActivated] = useState('landing');
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [theme, setTheme] = useState(
         localStorage.getItem('theme') || 
@@ -30,10 +31,6 @@ const Menu = ({ scrollToSection, refs }) => {
 
     const onMainActivated = () => setActivated('main');
     const onLandingActivated = () => setActivated('landing');
-    
-    const logOut = () => {
-        setIsLoggedIn(false);
-    };
 
     return (
         <nav className={style.navbar}>
@@ -80,7 +77,7 @@ const Menu = ({ scrollToSection, refs }) => {
                                 <li><Link className={style.Link} to="/tools">Explorer</Link></li>
                                 <li><Link className={style.Link} to="/Library">Bibliothèque</Link></li>
                                 <li><Link className={style.Link} to="/ProposerOutils">Proposer un outil</Link></li>
-                                <li><Link className={style.Link} to="/Profile">Profil</Link></li>
+                                <li><Link className={style.Link} to="/ToolDetailsPage">Profil</Link></li>
                             </ul>
                         </div>
 
@@ -100,8 +97,8 @@ const Menu = ({ scrollToSection, refs }) => {
                                     <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
                                     <span>Mode {theme === 'light' ? 'sombre' : 'clair'}</span>
                                 </button>
-                                {isLoggedIn ? (
-                                    <button onClick={logOut} className={style.dropdownItem}>
+                                {isAuthenticated ? (
+                                    <button onClick={logout} className={style.dropdownItem}>
                                         Se déconnecter
                                     </button>
                                 ) : (

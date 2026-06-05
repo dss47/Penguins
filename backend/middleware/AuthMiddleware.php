@@ -4,8 +4,20 @@ declare(strict_types=1);
 
 final class AuthMiddleware
 {
-    public function authenticate(): ?array
-    {
-        return null;
-    }
+	public function __construct(private readonly JwtService $jwtService = new JwtService())
+	{
+	}
+
+	public function authenticate(): ?array
+	{
+		$authHeader = $_SERVER['HTTP_AUTHORIZATION']
+			?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
+			?? '';
+
+		if (!preg_match('/^Bearer\s+(.+)$/i', $authHeader, $matches)) {
+			return null;
+		}
+
+		return $this->jwtService->decode($matches[1]);
+	}
 }

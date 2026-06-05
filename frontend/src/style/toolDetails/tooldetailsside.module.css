@@ -1,0 +1,125 @@
+.sideContainer {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--bd);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    min-width: 300px;
+    height: 100%;
+}
+
+.sectionTitle {
+    font-family: 'Syne', sans-serif;
+    color: var(--tp);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--bd);
+}
+
+.infoList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.infoLine {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.infoLine h3 {
+    color: var(--ts);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.infoLine p {
+    color: var(--tp);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.statusActive {
+    color: var(--success-text);
+    background: var(--success-bg);
+    padding: 0.2rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.websiteBtns {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.primaryBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--nv);
+    color: white;
+    padding: 0.8rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.primaryBtn:hover {
+    background: var(--ag);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+}
+
+.secondaryBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: var(--ts);
+    padding: 0.8rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: 1px solid var(--bd);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.secondaryBtn:hover {
+    color: var(--tp);
+    border-color: var(--nv);
+    background: rgba(168, 85, 247, 0.05);
+}
+
+.orDivider {
+    text-align: center;
+    color: var(--tm);
+    font-size: 0.9rem;
+    position: relative;
+}
+
+@media (max-width: 900px) {
+    .sideContainer {
+        height: auto;
+    }
+}
