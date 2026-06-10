@@ -11,6 +11,14 @@ final class ToolModel extends BaseModel
         
         return $stmt->execute([$toolId, $modelId]);
     }
+
+    public function unlinkModelFromTool(int $toolId, int $modelId): bool
+    {
+        $sql = 'DELETE FROM tool_models WHERE tool_id = ? AND model_id = ?';
+        $stmt = $this->db->prepare($sql);
+        
+        return $stmt->execute([$toolId, $modelId]);
+    }
     
     public function findModelsByToolId(int $toolId): array
     {

@@ -28,6 +28,18 @@ final class Provider extends BaseModel
 
         return (int) $this->db->lastInsertId();
     }
+
+    public function update(int $id, array $data): bool
+    {
+        $sql = 'UPDATE providers SET name = :name, website_url = :website_url, description = :description WHERE id = :id';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':name'        => $data['name'],
+            ':website_url' => $data['website_url'] ?? null,
+            ':description' => $data['description'] ?? null,
+            ':id'          => $id,
+        ]);
+    }
     public function findById(int $id): ?array
     {
         $sql = 'SELECT * FROM providers WHERE id = ? LIMIT 1';

@@ -23,17 +23,41 @@ final class User extends BaseModel
 public function create(array $data): int
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO users (profession_id, name, email, password_hash, role, status, created_at, updated_at)
-             VALUES (:profession_id, :name, :email, :password_hash, :role, :status, NOW(), NOW())'
+            'INSERT INTO users (profession_id, name, email, password_hash, profile_url, role, status, created_at, updated_at)
+             VALUES (:profession_id, :name, :email, :password_hash, :profile_url, :role, :status, NOW(), NOW())'
         );
         $stmt->execute([
             ':profession_id' => $data['profession_id'] ?? null,
             ':name'          => $data['name'],
             ':email'         => $data['email'],
             ':password_hash' => $data['password_hash'],
+            ':profile_url'   => $data['profile_url'] ?? null,
             ':role'          => $data['role'] ?? 'user',
             ':status'        => $data['status'] ?? 'active',
         ]);
         return (int) $this->db->lastInsertId();
+    }
+
+    public function update(int $id, array $data): bool
+    {
+        $sql = 'UPDATE users SET 
+                    profession_id = :profession_id,
+                    name = :name,
+                    email = :email,
+                    profile_url = :profile_url,
+                    role = :role,
+                    status = :status,
+                    updated_at = NOW()
+                WHERE id = :id';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':profession_id' => $data['profession_id'] ?? null,
+            ':name'          => $data['name'],
+            ':email'         => $data['email'],
+            ':profile_url'   => $data['profile_url'] ?? null,
+            ':role'          => $data['role'] ?? 'user',
+            ':status'        => $data['status'] ?? 'active',
+            ':id'            => $id,
+        ]);
     }
 }

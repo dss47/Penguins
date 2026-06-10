@@ -60,16 +60,16 @@ final class AiTool extends BaseModel
         $stmt->execute([
                     ':category_id'   => $data['category_id'],
                     ':provider_id'   => $data['provider_id'],
-                    ':created_by'    => $data['created_by'],
-                    ':validated_by'  => $data['validated_by'],
+                    ':created_by'    => $data['created_by'] ?? null,
+                    ':validated_by'  => $data['validated_by'] ?? null,
                     ':name'          => $data['name'],
-                    ':description'   => $data['description'],
-                    ':logo_url'      => $data['logo_url'],
+                    ':description'   => $data['description'] ?? null,
+                    ':logo_url'      => $data['logo_url'] ?? null,
                     ':website_url'   => $data['website_url'],
-                    ':global_rating' => $data['global_rating'],
-                    ':website_rating' => $data['website_rating'],
-                    ':release_date'  => $data['release_date'],
-                    ':status'        => $data['status'],
+                    ':global_rating' => $data['global_rating'] ?? null,
+                    ':website_rating' => $data['website_rating'] ?? null,
+                    ':release_date'  => $data['release_date'] ?? null,
+                    ':status'        => $data['status'] ?? 'pending',
         ]);
     return (int) $this->db->lastInsertId();
     }

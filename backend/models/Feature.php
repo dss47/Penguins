@@ -29,6 +29,18 @@ final class Feature extends BaseModel
 
         return (int) $this->db->lastInsertId();
     }
+
+    public function update(int $id, array $data): bool
+    {
+        $sql = 'UPDATE features SET name = :name, description = :description, type = :type WHERE id = :id';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':name'        => $data['name'],
+            ':description' => $data['description'] ?? null,
+            ':type'        => $data['type'] ?? null,
+            ':id'          => $id,
+        ]);
+    }
     public function findById(int $id): ?array
     {
         $sql = 'SELECT * FROM features WHERE id = ? LIMIT 1';

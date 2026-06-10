@@ -45,5 +45,13 @@ final class ShelfItem extends BaseModel
         return (int) $this->db->lastInsertId();
     }
 
+    public function removeFromShelf(int $shelfId, int $toolId): bool
+    {
+        $sql = 'DELETE FROM shelf_items WHERE shelf_id = ? AND tool_id = ?';
+        $stmt = $this->db->prepare($sql);
+        
+        return $stmt->execute([$shelfId, $toolId]);
+    }
+
 
 }

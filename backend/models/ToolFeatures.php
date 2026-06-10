@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-final class ToolFeature extends BaseModel
+final class ToolFeatures extends BaseModel
 {
     public function linkFeatureToTool(int $toolId, int $featureId): bool
     {

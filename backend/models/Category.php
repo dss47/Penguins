@@ -27,6 +27,18 @@ final class Category extends BaseModel
         return (int) $this->db->lastInsertId();
     }
 
+    public function update(int $id, array $data): bool
+    {
+        $sql = 'UPDATE categories SET name = :name, icon = :icon, description = :description WHERE id = :id';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':name'        => $data['name'],
+            ':icon'        => $data['icon'] ?? null,
+            ':description' => $data['description'] ?? null,
+            ':id'          => $id,
+        ]);
+    }
+
     public function findById(int $id): ?array
     {
         $sql = 'SELECT * FROM categories WHERE id = ? LIMIT 1';
