@@ -7,9 +7,8 @@ final class Tool extends BaseModel
     public function all(): array
     {
         $sql = 'SELECT * FROM ai_tools ORDER BY created_at DESC';
-        $stmt = this->db->prepare($sql);
+        $stmt = $this->db->prepare($sql);
         $stmt->execute();
-
         return $stmt->fetchAll() ?: null ;
     }
 
@@ -73,5 +72,48 @@ final class Tool extends BaseModel
                     ':status'        => $data['status'],
         ]);
     return (int) $this->db->lastInsertId();
+    }
+    public function updateStatus(int $toolId, string $newStatus): bool
+    {
+        $sql = 'UPDATE ai_tools SET status = :status WHERE id = :id';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':status' => $newStatus,
+            ':id'     => $toolId
+        ]);
+    }
+    public function update(int $toolId, array $data): bool
+    {
+        $sql = 'UPDATE ai_tools SET 
+                    category_id = :category_id,
+                    provider_id = :provider_id,
+                    name = :name,
+                    description = :description,
+                    logo_url = :logo_url,
+                    website_url = :website_url,
+                    global_rating = :global_rating,
+                    website_rating = :website_rating,
+                    release_date = :release_date
+                WHERE id = :id';
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':category_id'    => $data['category_id'],
+            ':provider_id'    => $data['provider_id'],
+            ':name'           => $data['name'],
+            ':description'    => $data['description'] ?? null,
+            ':logo_url'       => $data['logo_url'] ?? null,
+            ':website_url'    => $data['website_url'],
+            ':global_rating'  => $data['global_rating'] ?? null,
+            ':website_rating' => $data['website_rating'] ?? null,
+            ':release_date'   => $data['release_date'] ?? null,
+            ':id'             => $toolId,
+        ]);
+    }
+    public function delete(int $toolId): bool
+    {
+        $sql = 'DELETE FROM ai_tools WHERE id = ?';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$toolId]);
     }
 }
