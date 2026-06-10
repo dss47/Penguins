@@ -4,8 +4,53 @@ declare(strict_types=1);
 
 final class Category extends BaseModel
 {
+
+    public function create(array $data): int
+    {
+        $sql = 'INSERT INTO categories (
+                    name, 
+                    icon, 
+                    description
+                ) VALUES (
+                    :name, 
+                    :icon, 
+                    :description
+                )';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':name'        => $data['name'],
+            ':icon'        => $data['icon'] ?? null, // Stores raw emoji or CSS icon class string
+            ':description' => $data['description'] ?? null,
+        ]);
+
+        return (int) $this->db->lastInsertId();
+    }
+
+    public function findById(int $id): ?array
+    {
+        $sql = 'SELECT * FROM categories WHERE id = ? LIMIT 1';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id]);
+        $category = $stmt->fetch();
+
+        return $category ?: null;
+    }
+
     public function all(): array
     {
-        return [];
+        $sql = 'SELECT id, name, icon, description FROM categories ORDER BY name ASC';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    public function delete(int $id): bool
+    {
+        $sql = 'DELETE FROM categories WHERE id = ?';
+        $stmt = $this->db->prepare($sql);
+        
+        return $stmt->execute([$id]);
     }
 }
