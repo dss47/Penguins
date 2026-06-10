@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-final class Tool extends BaseModel
+final class AiTool extends BaseModel
 {
     public function all(): array
     {
@@ -110,10 +110,5 @@ final class Tool extends BaseModel
             ':id'             => $toolId,
         ]);
     }
-    public function delete(int $toolId): bool
-    {
-        $sql = 'DELETE FROM ai_tools WHERE id = ?';
-        $stmt = $this->db->prepare($sql);
-        return $stmt->execute([$toolId]);
-    }
+    
 }

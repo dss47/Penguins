@@ -20,19 +20,20 @@ final class User extends BaseModel
 		return $user ?: null;
 	}
 
-	public function create(array $data): int
-	{
-		$stmt = $this->db->prepare(
-			'INSERT INTO users (name, email, password_hash, role, status, created_at, updated_at)
-			 VALUES (:name, :email, :password_hash, :role, :status, NOW(), NOW())'
-		);
-		$stmt->execute([
-			':name' => $data['name'],
-			':email' => $data['email'],
-			':password_hash' => $data['password_hash'],
-			':role' => $data['role'] ?? 'user',
-			':status' => $data['status'] ?? 'active',
-		]);
-		return (int) $this->db->lastInsertId();
-	}
+public function create(array $data): int
+    {
+        $stmt = $this->db->prepare(
+            'INSERT INTO users (profession_id, name, email, password_hash, role, status, created_at, updated_at)
+             VALUES (:profession_id, :name, :email, :password_hash, :role, :status, NOW(), NOW())'
+        );
+        $stmt->execute([
+            ':profession_id' => $data['profession_id'] ?? null,
+            ':name'          => $data['name'],
+            ':email'         => $data['email'],
+            ':password_hash' => $data['password_hash'],
+            ':role'          => $data['role'] ?? 'user',
+            ':status'        => $data['status'] ?? 'active',
+        ]);
+        return (int) $this->db->lastInsertId();
+    }
 }
