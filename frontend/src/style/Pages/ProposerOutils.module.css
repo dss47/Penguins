@@ -2,3 +2,237 @@
     background: var(--bg-void);
     min-height: 100vh;
 }
+
+.proposerLayout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ─── Sidebar ─────────────────────────────────────────────────── */
+
+.sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    transition: width 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebarHidden {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+    border: none;
+    opacity: 0;
+}
+
+.sidebarToggleBar {
+    position: fixed;
+    top: calc(1.5rem + 80px);
+    left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.toggleBtn {
+    width: 40px;
+    height: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-head);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.toggleBtn:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent-1);
+}
+
+.floatingNewSearch {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+    transition: opacity 0.2s, box-shadow 0.2s;
+}
+
+.floatingNewSearch:hover {
+    opacity: 0.92;
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+}
+
+.sidebarHeader {
+    margin-bottom: 1.5rem;
+}
+
+.closeRow {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.5rem;
+}
+
+.closeSidebarBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-body);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.closeSidebarBtn:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent-1);
+    color: var(--text-head);
+}
+
+.newSearchBtn {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #ffffff;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+    transition: opacity 0.2s, box-shadow 0.2s;
+}
+
+.newSearchBtn:hover {
+    opacity: 0.92;
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+}
+
+.historyLabel {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.historyList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.historyList::-webkit-scrollbar {
+    width: 4px;
+}
+
+.historyList::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+}
+
+.historyList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.historyItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--text-body);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.historyItem:hover {
+    background: var(--accent-soft);
+    color: var(--text-head);
+    transform: translateX(4px);
+}
+
+.historyItemActive {
+    background: var(--accent-soft);
+    color: var(--text-head);
+    border-left: 3px solid var(--accent-1);
+}
+
+.historyIcon {
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.historyItemContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.historyItemTitle {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.historyItemStatus {
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.statusAccepted {
+    color: var(--green, #22c55e);
+}
+
+.statusRejected {
+    color: var(--red, #ef4444);
+}
+
+.statusPending {
+    color: var(--accent-1);
+}
+
+.mainContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 2.5rem;
+}

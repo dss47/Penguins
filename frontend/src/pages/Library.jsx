@@ -7,9 +7,9 @@ import LoginPrompt from "../components/LoginPrompt";
 
 const Library = () => {
     const { isAuthenticated } = useAuth();
-    if (!isAuthenticated) return <LoginPrompt />;
-
     const [activeTab, setActiveTab] = useState("shelves");
+
+    if (!isAuthenticated) return <LoginPrompt />;
 
     const stats = {
         favorites: 6,
