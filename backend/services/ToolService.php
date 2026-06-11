@@ -31,8 +31,13 @@ final class ToolService
             $errors['website_url'] = 'Une URL du site web valide est requise.';
         }
 
-        if (!empty($payload['logo_url']) && !filter_var($payload['logo_url'], FILTER_VALIDATE_URL)) {
-            $errors['logo_url'] = 'Une URL du logo valide est requise.';
+        if (!empty($payload['logo_url'])) {
+            $isUrl = filter_var($payload['logo_url'], FILTER_VALIDATE_URL);
+            $isLocalPath = str_starts_with($payload['logo_url'], '/uploads/');
+            
+            if (!$isUrl && !$isLocalPath) {
+                $errors['logo_url'] = 'Une URL du logo valide ou un chemin local est requis.';
+            }
         }
 
         if (isset($payload['website_rating']) && $payload['website_rating'] !== '' && !is_numeric($payload['website_rating'])) {

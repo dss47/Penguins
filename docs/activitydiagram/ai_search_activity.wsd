@@ -1,0 +1,219 @@
+@startuml ai_search_activity
+skinparam activityBackgroundColor #E8F5E9
+skinparam activityBorderColor #2E7D32
+skinparam decisionBackgroundColor #FFF3E0
+skinparam decisionBorderColor #F57C00
+skinparam startColor #4CAF50
+skinparam endColor #F44336
+skinparam swimlaneTitleBackgroundColor #BBDEFB
+
+|#LightBlue| Utilisateur |
+|#LightGreen| React UI |
+|#LightYellow| Backend (API) |
+|#LightCoral| Service IA |
+
+start
+
+|Utilisateur|
+:Ouvre l'application;
+
+|React UI|
+:Affiche la barre de recherche
+et l'historique (sidebar);
+
+|Utilisateur|
+:Tape un prompt
+(ex: "I need to make a podcast");
+
+|Utilisateur|
+:Clique sur "Rechercher"
+ou appuie sur Entrée;
+
+|React UI|
+:Affiche un indicateur
+de chargement (spinner);
+
+|React UI|
+:Envoie requête POST
+à /api/search/ai
+avec {prompt: "..."};
+
+|Backend (API)|
+:SearchController
+reçoit la requête;
+
+|Backend (API)|
+:Valide le prompt
+(required, max:500 caractères);
+
+if (Validation réussie?) then (oui)
+  
+  |Backend (API)|
+  :Appelle SearchService
+  → processAiSearch(prompt, user_id);
+  
+  |Service IA|
+  :Envoie le prompt à l'IA
+  (OpenAI/Claude)
+  avec instruction:
+  "Give a short title and
+  category names";
+  
+  |Service IA|
+  :Reçoit la réponse JSON:
+  {
+    title: "Podcast Creation",
+    categories: [
+      "Audio Editing",
+      "Text-to-Speech"
+    ]
+  };
+  
+  |Backend (API)|
+  :Recherche les IDs
+  des catégories en BDD
+  (Model Category);
+  
+  note right
+    SELECT id FROM categories
+    WHERE name IN
+    ('Audio Editing', 'Text-to-Speech')
+    → Retourne [3, 9]
+  end note
+  
+  |Backend (API)|
+  :Sauvegarde dans l'historique
+  (Model SearchHistory);
+  
+  note right
+    INSERT INTO search_histories
+    (prompt, title, user_id)
+    → Obtient ID: 55
+    
+    INSERT INTO search_history_categories
+    (search_id, category_id)
+    VALUES (55,3), (55,9)
+  end note
+  
+  |Backend (API)|
+  :Récupère les outils actifs
+  des catégories [3, 9]
+  (Model AiTool);
+  
+  note right
+    SELECT * FROM ai_tools
+    WHERE category_id IN (3,9)
+    AND status = 'active'
+  end note
+  
+  |Backend (API)|
+  :Formate la réponse JSON
+  (Response.php)
+  {
+    success: true,
+    data: {
+      history_item: {...},
+      tools: [...]
+    }
+  };
+  
+  |Backend (API)|
+  :Retourne HTTP 200 OK;
+  
+else (non)
+  |Backend (API)|
+  :Retourne erreur 422
+  avec messages de validation;
+  
+  |React UI|
+  :Affiche les erreurs
+  de validation;
+  
+  stop
+endif
+
+|React UI|
+:Reçoit la réponse JSON;
+
+|React UI|
+if (Requête initiale
+ou historique?) then (Requête initiale)
+  
+  |React UI|
+  :Met à jour le state local
+  (useState / Redux);
+  
+  |React UI|
+  partition "Mise à jour de l'interface" {
+    :Ajoute "Podcast Creation"
+    dans la sidebar (historique);
+    
+    :Affiche la grille d'outils
+    dans la vue principale;
+  }
+  
+else (Depuis historique)
+  
+  |React UI|
+  :Affiche uniquement
+  la grille d'outils
+  (sidebar déjà à jour);
+  
+endif
+
+|Utilisateur|
+:Voit les outils
+correspondant à sa recherche;
+
+|Utilisateur|
+if (Veut voir une
+recherche précédente?) then (oui)
+  
+  |Utilisateur|
+  :Clique sur un élément
+  de l'historique dans la sidebar
+  (ex: "Podcast Creation");
+  
+  |React UI|
+  :Envoie requête GET
+  à /api/search/history/55/results;
+  
+  |Backend (API)|
+  :SearchController
+  → fetchHistoryResults(55);
+  
+  |Backend (API)|
+  :SearchService
+  → fetchToolsByHistoryId(55);
+  
+  note right
+    Une seule requête SQL avec JOIN:
+    
+    SELECT t.* FROM ai_tools t
+    JOIN search_history_categories shc
+    ON t.category_id = shc.category_id
+    WHERE shc.search_id = 55
+    AND t.status = 'active'
+    
+    ⚡ Pas d'appel à l'IA !
+  end note
+  
+  |Backend (API)|
+  :Retourne les outils
+  en JSON;
+  
+  |React UI|
+  :Affiche les outils
+  instantanément;
+  
+else (non)
+  
+  |Utilisateur|
+  :Continue à naviguer
+  ou fait une nouvelle recherche;
+  
+endif
+
+stop
+
+@enduml

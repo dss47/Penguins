@@ -52,18 +52,6 @@ CREATE TABLE `ai_tools` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ai_tools`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `ai_tools` WRITE;
-/*!40000 ALTER TABLE `ai_tools` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ai_tools` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
-
---
 -- Table structure for table `categories`
 --
 
@@ -79,20 +67,8 @@ CREATE TABLE `categories` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `categories`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `categories` WRITE;
-/*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-/*!40000 ALTER TABLE `categories` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 
 --
 -- Table structure for table `favorite_items`
@@ -115,18 +91,6 @@ CREATE TABLE `favorite_items` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `favorite_items`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `favorite_items` WRITE;
-/*!40000 ALTER TABLE `favorite_items` DISABLE KEYS */;
-/*!40000 ALTER TABLE `favorite_items` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
-
---
 -- Table structure for table `features`
 --
 
@@ -143,20 +107,8 @@ CREATE TABLE `features` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `features`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `features` WRITE;
-/*!40000 ALTER TABLE `features` DISABLE KEYS */;
-/*!40000 ALTER TABLE `features` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 
 --
 -- Table structure for table `models`
@@ -176,20 +128,8 @@ CREATE TABLE `models` (
   PRIMARY KEY (`id`),
   KEY `fk_models_provider_id_providers` (`provider_id`),
   CONSTRAINT `fk_models_provider_id_providers` FOREIGN KEY (`provider_id`) REFERENCES `providers` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `models`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `models` WRITE;
-/*!40000 ALTER TABLE `models` DISABLE KEYS */;
-/*!40000 ALTER TABLE `models` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 
 --
 -- Table structure for table `professions`
@@ -204,20 +144,8 @@ CREATE TABLE `professions` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `professions`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `professions` WRITE;
-/*!40000 ALTER TABLE `professions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `professions` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 
 --
 -- Table structure for table `providers`
@@ -236,20 +164,8 @@ CREATE TABLE `providers` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `providers`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `providers` WRITE;
-/*!40000 ALTER TABLE `providers` DISABLE KEYS */;
-/*!40000 ALTER TABLE `providers` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 
 --
 -- Table structure for table `reviews`
@@ -277,18 +193,6 @@ CREATE TABLE `reviews` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `reviews`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `reviews` WRITE;
-/*!40000 ALTER TABLE `reviews` DISABLE KEYS */;
-/*!40000 ALTER TABLE `reviews` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
-
---
 -- Table structure for table `search_histories`
 --
 
@@ -310,18 +214,6 @@ CREATE TABLE `search_histories` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `search_histories`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `search_histories` WRITE;
-/*!40000 ALTER TABLE `search_histories` DISABLE KEYS */;
-/*!40000 ALTER TABLE `search_histories` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
-
---
 -- Table structure for table `search_history_tools`
 --
 
@@ -339,18 +231,6 @@ CREATE TABLE `search_history_tools` (
   CONSTRAINT `fk_sht_tool` FOREIGN KEY (`tool_id`) REFERENCES `ai_tools` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `search_history_tools`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `search_history_tools` WRITE;
-/*!40000 ALTER TABLE `search_history_tools` DISABLE KEYS */;
-/*!40000 ALTER TABLE `search_history_tools` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 
 --
 -- Table structure for table `shelf_items`
@@ -373,18 +253,6 @@ CREATE TABLE `shelf_items` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `shelf_items`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `shelf_items` WRITE;
-/*!40000 ALTER TABLE `shelf_items` DISABLE KEYS */;
-/*!40000 ALTER TABLE `shelf_items` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
-
---
 -- Table structure for table `shelves`
 --
 
@@ -405,18 +273,6 @@ CREATE TABLE `shelves` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `shelves`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `shelves` WRITE;
-/*!40000 ALTER TABLE `shelves` DISABLE KEYS */;
-/*!40000 ALTER TABLE `shelves` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
-
---
 -- Table structure for table `suggestions`
 --
 
@@ -430,6 +286,7 @@ CREATE TABLE `suggestions` (
   `provider_id` int(11) DEFAULT NULL,
   `model_id` int(11) DEFAULT NULL,
   `name` varchar(255) NOT NULL,
+  `logo_url` varchar(2083) DEFAULT NULL,
   `website_url` varchar(2083) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `proposed_provider_name` varchar(255) DEFAULT NULL,
@@ -440,6 +297,7 @@ CREATE TABLE `suggestions` (
   `why_this_tool` text DEFAULT NULL,
   `status` enum('pending_ai','rejected_ai','pending_manager','rejected_manager','approved') NOT NULL DEFAULT 'pending_ai',
   `rejection_reason` text DEFAULT NULL,
+  `ai_moderation_notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
@@ -453,18 +311,6 @@ CREATE TABLE `suggestions` (
   CONSTRAINT `fk_suggestions_user_id_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `suggestions`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `suggestions` WRITE;
-/*!40000 ALTER TABLE `suggestions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `suggestions` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 
 --
 -- Table structure for table `tool_features`
@@ -487,18 +333,6 @@ CREATE TABLE `tool_features` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `tool_features`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `tool_features` WRITE;
-/*!40000 ALTER TABLE `tool_features` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tool_features` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
-
---
 -- Table structure for table `tool_models`
 --
 
@@ -516,18 +350,6 @@ CREATE TABLE `tool_models` (
   CONSTRAINT `fk_tm_tool` FOREIGN KEY (`tool_id`) REFERENCES `ai_tools` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tool_models`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `tool_models` WRITE;
-/*!40000 ALTER TABLE `tool_models` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tool_models` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 
 --
 -- Table structure for table `users`
@@ -553,21 +375,6 @@ CREATE TABLE `users` (
   CONSTRAINT `fk_users_profession_id_professions` FOREIGN KEY (`profession_id`) REFERENCES `professions` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `users`
---
-
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES
-(1,NULL,'admin@penguin.com','$2y$12$owcK32Vld90iHTHTFJrkXuuAyM2g21YgotnzjyoOo4el8pVij50Ue','Super Admin',NULL,'admin','active','2026-06-04 22:35:41','2026-06-04 22:35:41'),
-(2,NULL,'yelmaoui@gmail.com','$2y$12$DZL468JvEv.9ARyJ1voHoe2YMxWm7SBNieNEvsrfNEw8eeu1E600W','Yahya Elmaoui',NULL,'user','active','2026-06-04 23:08:53','2026-06-04 23:08:53');
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
-COMMIT;
-SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -578,4 +385,4 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-06-10 19:09:48
+-- Dump completed on 2026-06-11 19:39:19

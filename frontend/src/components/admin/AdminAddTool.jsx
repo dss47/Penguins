@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Menu, ArrowLeft, Clock, Plus, AlertTriangle, CheckCircle } from "lucide-react";
+import { Menu, ArrowLeft, Clock, Plus, AlertTriangle, CheckCircle, Info } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
 import CreatableSelect from "react-select/creatable";
@@ -20,9 +20,9 @@ const MOCK_HISTORY = [
 ];
 
 const MOCK_HISTORY_DATA = {
-    1: { id: 1, name: "Chatbot Ninja", logo_url: "https://api.dicebear.com/7.x/bottts/svg?seed=Chatbot%20Ninja", website_url: "https://chatbotninja.io", status: "rejected_ai", rejection_reason: "The provided URL returned a 404 server error. Please ensure the link is fully public and active before resubmitting.", created_at: "2026-06-11 12:00:00" },
-    2: { id: 2, name: "DesignEngine AI", logo_url: "https://api.dicebear.com/7.x/bottts/svg?seed=DesignEngine%20AI", website_url: "https://designengine.ai", status: "approved", rejection_reason: null, created_at: "2026-06-11 12:05:00" },
-    3: { id: 3, name: "Claude AI", logo_url: "https://api.dicebear.com/7.x/bottts/svg?seed=Claude%20AI", website_url: "https://claude.ai", status: "pending", rejection_reason: null, created_at: "2026-06-11 12:10:00" },
+    1: { id: 1, name: "Chatbot Ninja", logo_url: "https://api.dicebear.com/7.x/bottts/svg?seed=Chatbot%20Ninja", website_url: "https://chatbotninja.io", status: "rejected_ai", rejection_reason: "The provided URL returned a 404 server error. Please ensure the link is fully public and active before resubmitting.", ai_moderation_notes: null, fixed_category_id: null, created_at: "2026-06-11 12:00:00" },
+    2: { id: 2, name: "DesignEngine AI", logo_url: "https://api.dicebear.com/7.x/bottts/svg?seed=DesignEngine%20AI", website_url: "https://designengine.ai", status: "approved", rejection_reason: null, ai_moderation_notes: "J'ai corrigé la catégorie de 'Design' à 'Génération d'images' pour être plus précis selon votre taxonomie.", fixed_category_id: 2, created_at: "2026-06-11 12:05:00" },
+    3: { id: 3, name: "Claude AI", logo_url: "https://api.dicebear.com/7.x/bottts/svg?seed=Claude%20AI", website_url: "https://claude.ai", status: "pending", rejection_reason: null, ai_moderation_notes: null, fixed_category_id: null, created_at: "2026-06-11 12:10:00" },
 };
 
 export default function AdminAddTool() {
@@ -78,6 +78,13 @@ export default function AdminAddTool() {
     const handleSubmit = (e) => {
         e.preventDefault();
         setStep(2);
+    };
+
+    const handleFinalizeAdd = () => {
+        // Here we will trigger the API call to move the tool from `suggestions` to `ai_tools`.
+        alert("Outil ajouté définitivement au catalogue !");
+        // Reset the flow after success
+        resetSelection();
     };
 
     const resetForm = () => {
@@ -293,6 +300,15 @@ export default function AdminAddTool() {
                                                     </div>
                                                 </div>
                                             )}
+                                            {historyItem.ai_moderation_notes && (
+                                                <div className={formStyles["info-box"]}>
+                                                    <Info size={20} className={formStyles["alert-icon"]} color="#0ea5e9" />
+                                                    <div className={formStyles["alert-content"]}>
+                                                        <span className={formStyles["history-detail-label"]}>NOTES DE MODÉRATION IA</span>
+                                                        <p className={formStyles["alert-text"]}>{historyItem.ai_moderation_notes}</p>
+                                                    </div>
+                                                </div>
+                                            )}
                                             <div className={formStyles["history-bottom-grid"]}>
                                                 <div className={formStyles["history-detail-field"]}>
                                                     <span className={formStyles["history-detail-label"]}>SITE WEB</span>
@@ -303,6 +319,11 @@ export default function AdminAddTool() {
                                                     <span className={formStyles["detail-date"]}>{historyItem.created_at}</span>
                                                 </div>
                                             </div>
+                                            {historyItem.status === "approved" && (
+                                                <button type="button" className={formStyles["btn-finalize"]} onClick={handleFinalizeAdd}>
+                                                    Ajouter aux outils
+                                                </button>
+                                            )}
                                         </div>
                                     ) : (
                                         <div className={formStyles["success-container"]}>

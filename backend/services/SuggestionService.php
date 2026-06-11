@@ -14,12 +14,27 @@ final class SuggestionService
         private readonly Category $categoryModel = new Category(),
         private readonly Provider $providerModel = new Provider(),
         private readonly AiModel $modelModel = new AiModel(),
-        private readonly Feature $featureModel = new Feature()
+        private readonly Feature $featureModel = new Feature(),
+        private readonly ToolService $toolService = new ToolService(),
+        private readonly UploadService $uploadService = new UploadService()
     ) {
     }
 
-    public function createSuggestion(array $payload): array
+    public function createSuggestion(array $payload, ?array $file = null): array
     {
+        // 0. Handle logo upload if present
+        if ($file && $file['error'] !== UPLOAD_ERR_NO_FILE) {
+            $uploadResult = $this->uploadService->handleUpload($file, 'uploads/tools');
+            if (!$uploadResult['success']) {
+                return [
+                    'success' => false,
+                    'message' => $uploadResult['error'],
+                    'data'    => null
+                ];
+            }
+            $payload['logo_url'] = $uploadResult['path'];
+        }
+
         // 1. Sauvegarde initiale
         $suggestionId = $this->suggestionModel->create($payload);
 
@@ -66,6 +81,39 @@ final class SuggestionService
             $this->suggestionModel->allByStatus('approved'), // IA a dit oui, attend l'admin
             $this->suggestionModel->allByStatus('pending_manager') // Mode Fallback
         );
+    }
+
+    /**
+     * Promeut une suggestion approuvée vers la table ai_tools principale.
+     */
+    public function promoteToTool(int $suggestionId, int $adminId): array
+    {
+        $suggestion = $this->suggestionModel->findById($suggestionId);
+        if (!$suggestion) {
+            return ['success' => false, 'message' => 'Suggestion introuvable'];
+        }
+
+        // On utilise les ID corrigés par l'IA s'ils existent, sinon ceux suggérés
+        $toolPayload = [
+            'name' => $suggestion['name'],
+            'category_id' => $suggestion['ai_category_id'] ?? $suggestion['category_id'],
+            'provider_id' => $suggestion['ai_provider_id'] ?? $suggestion['provider_id'],
+            'website_url' => $suggestion['website_url'],
+            'logo_url' => $suggestion['logo_url'] ?? null,
+            'description' => $suggestion['description'] ?? null,
+            'status' => 'active'
+        ];
+
+        $result = $this->toolService->createTool($toolPayload, $adminId);
+
+        if ($result['success']) {
+            $this->suggestionModel->updateStatus($suggestionId, 'completed', 'Ajouté aux outils avec succès.');
+            // Option C: Update suggestion with the new tool_id if the column exists
+            // e.g., $this->suggestionModel->updateToolId($suggestionId, $result['id']);
+            return ['success' => true, 'tool_id' => $result['id']];
+        }
+
+        return ['success' => false, 'errors' => $result['errors'] ?? ['Erreur lors de la création de l\'outil']];
     }
 
     /**
