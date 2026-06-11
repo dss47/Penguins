@@ -13,6 +13,7 @@ import Profile from "../pages/Profile"
 import AdminDashboard from "../components/admin/AdminDashboard";
 import AdminUsers from "../components/admin/AdminUsers";
 import AdminModeration from "../components/admin/AdminModeration";
+import AdminAddTool from "../components/admin/AdminAddTool";
 
 export const publicRoutes = [
     { path: '/', element: <LandingPage/>, name: 'Landing Page' },
@@ -33,4 +34,5 @@ export const adminRoutes = [
     { path: 'users', element: <AdminUsers/>, name: 'Users' },
     { path: 'suggestions', element: <Validations/>, name: 'Validations' },
     { path: 'moderation', element: <AdminModeration/>, name: 'Moderation' },
+    { path: 'add', element: <AdminAddTool/>, name: 'Add Tool' },
 ]
