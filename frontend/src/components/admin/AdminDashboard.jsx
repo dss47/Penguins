@@ -1,30 +1,25 @@
 import styles from "../../style/admin/adminDashboard.module.css";
 
-// TODO: API → GET /api/admin/stats
-const MOCK_STATS = [
-  { id: 1, label: "Utilisateurs",   value: "1 284", delta: "+12 ce mois", deltaType: "up",   iconVariant: "accent" },
-  { id: 2, label: "Outils publiés", value: "342",   delta: "+8 cette semaine", deltaType: "up",   iconVariant: "success" },
-  { id: 3, label: "En attente",     value: "5",     delta: "suggestions",      deltaType: "neutral", iconVariant: "warning" },
-  { id: 4, label: "Signalements",   value: "3",     delta: "à traiter",        deltaType: "neutral", iconVariant: "danger" },
-];
+import React, { useState, useEffect } from "react";
+import api from "../../services/api";
 
-// TODO: API → GET /api/admin/activity
-const MOCK_ACTIVITY = [
-  { id: 1, text: "Nouvelle suggestion soumise par @marie_d",   time: "Il y a 5 min",  dot: "dotAccent" },
-  { id: 2, text: "Commentaire signalé sur « ChatGPT »",        time: "Il y a 18 min", dot: "dotDanger" },
-  { id: 3, text: "Outil « Midjourney » approuvé par Manager",  time: "Il y a 1 h",    dot: "dotSuccess" },
-  { id: 4, text: "Utilisateur @john_b promu Manager",          time: "Il y a 2 h",    dot: "dotWarning" },
-  { id: 5, text: "Suggestion « Perplexity AI » rejetée",       time: "Il y a 3 h",    dot: "dotDanger" },
-];
-
-// TODO: API → GET /api/admin/categories/stats
-const MOCK_CATEGORIES = [
-  { id: 1, name: "Génération de texte", count: 98,  max: 120 },
-  { id: 2, name: "Image & Design",      count: 74,  max: 120 },
-  { id: 3, name: "Productivité",        count: 63,  max: 120 },
-  { id: 4, name: "Code & Dev",          count: 57,  max: 120 },
-  { id: 5, name: "Vidéo & Audio",       count: 31,  max: 120 },
-];
+const timeAgo = (dateStr) => {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const seconds = Math.floor((now - date) / 1000);
+  
+  let interval = seconds / 31536000;
+  if (interval > 1) return `Il y a ${Math.floor(interval)} an${Math.floor(interval) > 1 ? 's' : ''}`;
+  interval = seconds / 2592000;
+  if (interval > 1) return `Il y a ${Math.floor(interval)} mois`;
+  interval = seconds / 86400;
+  if (interval > 1) return `Il y a ${Math.floor(interval)} jour${Math.floor(interval) > 1 ? 's' : ''}`;
+  interval = seconds / 3600;
+  if (interval > 1) return `Il y a ${Math.floor(interval)} h`;
+  interval = seconds / 60;
+  if (interval > 1) return `Il y a ${Math.floor(interval)} min`;
+  return `À l'instant`;
+};
 
 // ── Icônes SVG inline ─────────────────────────────────────────────
 const StatIcon = ({ variant }) => {
@@ -74,6 +69,54 @@ const categoryIcon = (
 );
 
 export default function AdminDashboard() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get("/admin/dashboard")
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching dashboard data:", err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <div style={{ color: "var(--tp)", padding: "2rem" }}>Chargement du tableau de bord...</div>;
+  }
+
+  if (!data) {
+    return <div style={{ color: "var(--danger)", padding: "2rem" }}>Erreur lors du chargement des données.</div>;
+  }
+
+  const statsList = [
+    { id: 1, label: "Utilisateurs",   value: data.stats.users, delta: "", deltaType: "neutral",   iconVariant: "accent" },
+    { id: 2, label: "Outils actifs", value: data.stats.active_ai_tools,   delta: "", deltaType: "neutral",   iconVariant: "success" },
+    { id: 3, label: "En attente",     value: data.stats.pending_manager_suggestions,     delta: "suggestions",      deltaType: "neutral", iconVariant: "warning" },
+    { id: 4, label: "Signalements",   value: data.stats.flagged_reviews,     delta: "à traiter",        deltaType: "neutral", iconVariant: "danger" },
+  ];
+
+  const activityList = data.activity.map((item, index) => ({
+    id: index,
+    text: item.type === "suggestion" 
+      ? `Suggestion d'outil avec statut: ${item.status}` 
+      : `Signalement avec statut: ${item.status}`,
+    time: timeAgo(item.created_at),
+    dot: item.type === "suggestion" ? "dotWarning" : "dotDanger"
+  }));
+
+  const maxCount = Math.max(...data.categories.map(c => c.tool_count), 1);
+  const categoryList = data.categories.map((cat, index) => ({
+    id: index,
+    name: cat.name,
+    count: cat.tool_count,
+    max: maxCount
+  })).sort((a, b) => b.count - a.count);
+
   return (
     <div>
       {/* ── En-tête ── */}
@@ -84,7 +127,7 @@ export default function AdminDashboard() {
 
       {/* ── Stat Cards ── */}
       <div className={styles.statsGrid}>
-        {MOCK_STATS.map((stat) => (
+        {statsList.map((stat) => (
           <div key={stat.id} className={styles.statCard}>
             <div className={styles.statCardTop}>
               <span className={styles.statLabel}>{stat.label}</span>
@@ -111,15 +154,19 @@ export default function AdminDashboard() {
             Activité récente
           </div>
           <div className={styles.activityList}>
-            {MOCK_ACTIVITY.map((item) => (
-              <div key={item.id} className={styles.activityItem}>
-                <div className={`${styles.activityDot} ${styles[item.dot]}`} />
-                <div>
-                  <div className={styles.activityText}>{item.text}</div>
-                  <div className={styles.activityTime}>{item.time}</div>
+            {activityList.length === 0 ? (
+              <div style={{ color: "var(--ts)", fontSize: "0.9rem" }}>Aucune activité récente.</div>
+            ) : (
+              activityList.map((item) => (
+                <div key={item.id} className={styles.activityItem}>
+                  <div className={`${styles.activityDot} ${styles[item.dot]}`} />
+                  <div>
+                    <div className={styles.activityText}>{item.text}</div>
+                    <div className={styles.activityTime}>{item.time}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
@@ -130,20 +177,24 @@ export default function AdminDashboard() {
             Outils par catégorie
           </div>
           <div className={styles.categoryList}>
-            {MOCK_CATEGORIES.map((cat) => (
-              <div key={cat.id} className={styles.categoryRow}>
-                <div className={styles.categoryMeta}>
-                  <span className={styles.categoryName}>{cat.name}</span>
-                  <span className={styles.categoryCount}>{cat.count} outils</span>
+            {categoryList.length === 0 ? (
+              <div style={{ color: "var(--ts)", fontSize: "0.9rem" }}>Aucune catégorie.</div>
+            ) : (
+              categoryList.map((cat) => (
+                <div key={cat.id} className={styles.categoryRow}>
+                  <div className={styles.categoryMeta}>
+                    <span className={styles.categoryName}>{cat.name}</span>
+                    <span className={styles.categoryCount}>{cat.count} outils</span>
+                  </div>
+                  <div className={styles.barTrack}>
+                    <div
+                      className={styles.barFill}
+                      style={{ width: `${Math.round((cat.count / cat.max) * 100)}%` }}
+                    />
+                  </div>
                 </div>
-                <div className={styles.barTrack}>
-                  <div
-                    className={styles.barFill}
-                    style={{ width: `${Math.round((cat.count / cat.max) * 100)}%` }}
-                  />
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

@@ -10,6 +10,6 @@ final class AdminController
 
     public function dashboard(): array
     {
-        return Response::success($this->adminService->dashboard());
+        return Response::success($this->adminService->getDashboardData());
     }
 }

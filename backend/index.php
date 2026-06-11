@@ -48,11 +48,13 @@ function json_response(array $data): void
 
 $authController = new AuthController();
 $userController = new UserController();
+$adminController = new AdminController();
 
 $routes = [
 	'POST /auth/register' => static fn() => json_response($authController->register($body)),
 	'POST /auth/login'    => static fn() => json_response($authController->login($body)),
 	'GET /user/profile'   => static fn() => json_response($userController->profile()),
+	'GET /admin/dashboard' => static fn() => json_response($adminController->dashboard()),
 ];
 
 if (isset($routes["$method $uri"])) {
