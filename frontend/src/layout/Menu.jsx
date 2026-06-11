@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faArrowLeftLong, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 import style from "../style/layout/Menu.module.css";
@@ -7,7 +7,15 @@ import { useAuth } from "../context/AuthContext";
 
 const Menu = ({ scrollToSection, refs }) => {
     const { isAuthenticated, logout } = useAuth();
-    const [activated, setActivated] = useState('landing');
+    const location = useLocation();
+    const navigate = useNavigate();
+    const isAuthPage = location.pathname === "/Auth";
+    const [activated, setActivated] = useState(location.pathname === "/" ? 'landing' : 'main');
+
+    useEffect(() => {
+        setActivated(location.pathname === "/" ? 'landing' : 'main');
+    }, [location.pathname]);
+
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [theme, setTheme] = useState(
         localStorage.getItem('theme') || 
@@ -33,7 +41,7 @@ const Menu = ({ scrollToSection, refs }) => {
     const onLandingActivated = () => setActivated('landing');
 
     return (
-        <nav className={style.navbar}>
+        <nav className={`${style.navbar} ${location.pathname === "/" ? style.fixed : ""}`}>
             <div className={style.navContainer}>
                 {activated === "landing" ? 
                 <div className={style.logoSection} onClick={() => scrollToSection(refs.landingHomeRef)} style={{cursor: 'pointer'}}>
@@ -53,12 +61,36 @@ const Menu = ({ scrollToSection, refs }) => {
                     <div className={`${style.sliderTrack} ${activated === 'main' ? style.slideMain : style.slideLanding}`}>
                         <div className={style.menuHalf}>
                             <ul className={style.navLinks}>
-                                <li onClick={() => scrollToSection(refs.featuresRef)}>Caractéristiques</li>
+                                <li onClick={() => {
+                                    if (location.pathname === "/") {
+                                        scrollToSection(refs.featuresRef);
+                                    } else {
+                                        navigate("/", { state: { scrollTo: "features" } });
+                                    }
+                                }}>Caractéristiques</li>
                                 <li>Comment ça marche</li>
-                                <li onClick={() => scrollToSection(refs.whyPenguinRef)}>Pourquoi Penguin</li>
+                                <li onClick={() => {
+                                    if (location.pathname === "/") {
+                                        scrollToSection(refs.whyPenguinRef);
+                                    } else {
+                                        navigate("/", { state: { scrollTo: "whyPenguin" } });
+                                    }
+                                }}>Pourquoi Penguin</li>
                                 <li>Découvrir</li>
-                                <li onClick={() => scrollToSection(refs.topAiRef)}>Meilleures IA</li>
-                                <li onClick={() => scrollToSection(refs.communityVoicesRef)}>Communauté</li>
+                                <li onClick={() => {
+                                    if (location.pathname === "/") {
+                                        scrollToSection(refs.topAiRef);
+                                    } else {
+                                        navigate("/", { state: { scrollTo: "topAi" } });
+                                    }
+                                }}>Meilleures IA</li>
+                                <li onClick={() => {
+                                    if (location.pathname === "/") {
+                                        scrollToSection(refs.communityVoicesRef);
+                                    } else {
+                                        navigate("/", { state: { scrollTo: "community" } });
+                                    }
+                                }}>Communauté</li>
                                 <li>contact</li>
                             </ul>
                             
@@ -93,19 +125,21 @@ const Menu = ({ scrollToSection, refs }) => {
                         </button>
                         {isDropdownOpen && (
                             <div className={style.dropdownMenu}>
-                                <button onClick={toggleTheme} className={style.dropdownItem}>
+                                <button onClick={() => { toggleTheme(); setIsDropdownOpen(false); }} className={style.dropdownItem}>
                                     <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
                                     <span>Mode {theme === 'light' ? 'sombre' : 'clair'}</span>
                                 </button>
-                                {isAuthenticated ? (
-                                    <button onClick={logout} className={style.dropdownItem}>
-                                        Se déconnecter
-                                    </button>
-                                ) : (
-                                    <>
-                                        <Link to="/Auth" className={style.dropdownItem}>Se connecter</Link>
-                                        <Link to="/Auth" className={style.dropdownItem}>Commencez gratuitement</Link>
-                                    </>
+                                {!isAuthPage && (
+                                    isAuthenticated ? (
+                                        <button onClick={() => { logout(); setIsDropdownOpen(false); }} className={style.dropdownItem}>
+                                            Se déconnecter
+                                        </button>
+                                    ) : (
+                                        <>
+                                            <Link to="/Auth" onClick={() => setIsDropdownOpen(false)} className={style.dropdownItem}>Se connecter</Link>
+                                            <Link to="/Auth?mode=signup" onClick={() => setIsDropdownOpen(false)} className={style.dropdownItem}>Commencez gratuitement</Link>
+                                        </>
+                                    )
                                 )}
                             </div>
                         )}

@@ -7,7 +7,7 @@ participant "AuthController" as auth_controller
 participant "AuthService" as auth_service
 participant "User (Model)" as model
 participant "Response.php (Util)" as res
-database "MySQL (users)" as db
+database "MySQL (d)" as db
 
 user -> log_in: Types email & mot de passe, clicks "Login"
 activate log_in
@@ -19,7 +19,7 @@ activate log_in
     activate auth_service
       auth_service -> model : findByEmail(email)
       activate model
-        model -> db : SELECT * FROM users\nWHERE email = ?
+        model -> db : SELECT * FROM d\nWHERE email = ?
         activate db 
           db --> model : Returns row (password_hash, role)
         deactivate db

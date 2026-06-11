@@ -4,7 +4,7 @@
     height: 100%;
     transition: all 0.6s ease-in-out;
     width: 50%;
-    padding: 4rem;
+    padding: 2.5rem 3rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -25,17 +25,17 @@
 }
 
 .formContainer h2 {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
     font-family: sans-serif;
     font-weight: 700;
-    margin-bottom: 0.2rem;
+    margin: 0;
     color: var(--tp);
 }
 
 .formContainer>p {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     margin: 0;
-    padding-bottom: 1.5rem;
+    padding-bottom: 0.8rem;
     font-family: sans-serif;
     color: var(--ts);
     max-width: 350px;
@@ -46,7 +46,7 @@
     flex-direction: column;
     gap: 1.2rem;
     width: 100%;
-    max-width: 420px;
+    max-width: 520px;
 }
 
 .inputGroup {
@@ -57,14 +57,14 @@
 .input,
 .passwordInput {
     width: 100%;
-    height: 3.8rem;
+    height: 3.4rem;
     background: var(--bg-card);
     border: 1px solid var(--bd);
     border-radius: 15px;
     padding: 0 1.5rem;
     margin: 0;
     color: var(--tp);
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     outline: none;
     box-sizing: border-box;
@@ -84,6 +84,85 @@
 .passwordInput:focus {
     background: var(--bg-card-h);
     border-color: var(--nv);
+}
+
+.customDropdown {
+    position: relative;
+    width: 100%;
+    user-select: none;
+}
+
+.dropdownHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    height: 3.4rem;
+    padding: 0 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--bd);
+    border-radius: 15px;
+    color: var(--tp);
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+    box-sizing: border-box;
+}
+
+.dropdownHeader:hover {
+    border-color: var(--nv);
+}
+
+.chevron {
+    margin-left: auto;
+    color: var(--tm);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--bd);
+    border-radius: 15px;
+    box-shadow: var(--shadow-lg, 0 8px 30px rgba(0,0,0,0.35));
+    z-index: 100;
+    overflow: hidden;
+    padding: 0.5rem 0;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdownItem {
+    padding: 12px 16px;
+    color: var(--ts);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: left;
+}
+
+.dropdownItem:hover {
+    background: var(--bg-card-h);
+    color: var(--tp);
+    padding-left: 20px;
+}
+
+.dropdownItemActive {
+    background: rgba(6, 182, 212, 0.12);
+    color: var(--nv);
+    font-weight: 600;
 }
 
 .passwordToggle {
@@ -106,13 +185,13 @@
 
 .submitBtn {
     width: 100%;
-    height: 3.8rem;
+    height: 3.4rem;
     background-color: var(--nv);
     color: white;
     border: none;
     border-radius: 15px;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     cursor: pointer;
     box-shadow: 0 10px 20px rgba(99, 86, 223, 0.2);
     transition: 0.3s ease;
@@ -159,10 +238,11 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    white-space: nowrap;
 }
 
 .switchContainer p {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 500;
     color: var(--tm);
     font-family: sans-serif;
@@ -173,7 +253,7 @@
     display: flex;
     flex-direction: row;
     border: none;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     background: none;
     font-family: sans-serif;

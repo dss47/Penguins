@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Search, Loader2, Plus, Star, Sparkles } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Search, Loader2, Plus, Star, Sparkles, Menu, ArrowLeft, Clock } from "lucide-react";
 import styles from "../style/Pages/HomeSearch.module.css";
+import { useAuth } from "../context/AuthContext";
 
 const MOCK_HISTORY = [
     { id: 1, title: "Video editors" },
@@ -97,7 +99,10 @@ const ToolCard = ({ tool }) => (
 );
 
 export default function HomeSearch() {
+    const { isAuthenticated } = useAuth();
+    const location = useLocation();
     const [view, setView] = useState("search");
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [history, setHistory] = useState(MOCK_HISTORY);
@@ -133,8 +138,13 @@ export default function HomeSearch() {
 
     return (
         <div className={styles.homeSearchWrapper}>
-            <aside className={styles.sidebar}>
+            <aside className={`${styles.sidebar} ${!sidebarOpen ? styles.sidebarHidden : ""}`}>
                 <div className={styles.sidebarHeader}>
+                    <div className={styles.closeRow}>
+                        <button className={styles.closeSidebarBtn} onClick={() => setSidebarOpen(false)}>
+                            <ArrowLeft size={20} />
+                        </button>
+                    </div>
                     <button className={styles.newSearchBtn} onClick={resetToSearch}>
                         <Plus size={18} style={{ marginRight: 6, verticalAlign: "middle" }} />
                         Nouvelle recherche
@@ -142,17 +152,35 @@ export default function HomeSearch() {
                 </div>
                 <div className={styles.historyLabel}>Historique</div>
                 <div className={styles.historyList}>
-                    {history.map((item) => (
-                        <button
-                            key={item.id}
-                            className={styles.historyItem}
-                            onClick={() => handleSubmit(item.title)}
-                        >
-                            {item.title}
-                        </button>
-                    ))}
+                    {isAuthenticated ? (
+                        history.map((item) => (
+                            <button
+                                key={item.id}
+                                className={styles.historyItem}
+                                onClick={() => handleSubmit(item.title)}
+                            >
+                                <Clock size={14} className={styles.historyIcon} />
+                                {item.title}
+                            </button>
+                        ))
+                    ) : (
+                        <Link to={`/Auth?redirect=${encodeURIComponent(location.pathname)}`} className={styles.loginHistoryBtn}>
+                            Connectez-vous pour voir votre historique
+                        </Link>
+                    )}
                 </div>
             </aside>
+
+            {!sidebarOpen && (
+                <div className={styles.sidebarToggleBar}>
+                    <button className={styles.toggleBtn} onClick={() => setSidebarOpen(true)}>
+                        <Menu size={20} />
+                    </button>
+                    <button className={styles.floatingNewSearch} onClick={resetToSearch}>
+                        <Plus size={20} />
+                    </button>
+                </div>
+            )}
 
             <main className={styles.mainContent}>
                 {view === "search" && (
@@ -161,7 +189,7 @@ export default function HomeSearch() {
                             What do you want to build today?
                         </h1>
                         <div className={styles.searchInputWrapper}>
-                            <Search size={22} className={styles.searchInputIcon} />
+                            <Search size={20} className={styles.searchInputIcon} />
                             <input
                                 ref={inputRef}
                                 type="text"
@@ -171,6 +199,9 @@ export default function HomeSearch() {
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                             />
+                            <button className={styles.searchBtn} onClick={() => handleSubmit()}>
+                                Search
+                            </button>
                         </div>
                     </div>
                 )}

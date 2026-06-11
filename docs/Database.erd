@@ -4,8 +4,8 @@
   "settings": {
     "width": 4000,
     "height": 4000,
-    "scrollTop": -1636.1635,
-    "scrollLeft": -1031.8103,
+    "scrollTop": -1157.3871,
+    "scrollLeft": -1730.2479,
     "zoomLevel": 0.76,
     "show": 292,
     "database": 1,
@@ -358,7 +358,7 @@
       },
       "0HYZaiCeCUxNyWsKeS-4F": {
         "id": "0HYZaiCeCUxNyWsKeS-4F",
-        "name": "Shelves",
+        "name": "shelves",
         "comment": "",
         "columnIds": [
           "9e5gze_aI6IVJ1LggpnVU",
@@ -521,7 +521,7 @@
       },
       "qWm0ErEqOSMPemfDvSoRg": {
         "id": "qWm0ErEqOSMPemfDvSoRg",
-        "name": "model_features",
+        "name": "tool_models",
         "comment": "",
         "columnIds": [
           "jD1ztTdMqnYwLD_udPdTC",
@@ -539,7 +539,7 @@
           "x": 822.3782211981403,
           "y": 1501.3565912588685,
           "zIndex": 688,
-          "widthName": 87,
+          "widthName": 69,
           "widthComment": 60,
           "color": ""
         },
@@ -550,7 +550,7 @@
       },
       "eKqtxZTg7XtlIwExjWzJ1": {
         "id": "eKqtxZTg7XtlIwExjWzJ1",
-        "name": "search_history_categories",
+        "name": "search_history_tools",
         "comment": "",
         "columnIds": [
           "Hdl0Zv7x3h__Rag1A_C3e",
@@ -567,7 +567,7 @@
           "x": 2700.7581033924107,
           "y": 1351.6498618677617,
           "zIndex": 900,
-          "widthName": 145,
+          "widthName": 115,
           "widthComment": 60,
           "color": ""
         },
@@ -2667,14 +2667,14 @@
       "iYn4tvl411OrtXwN71i9v": {
         "id": "iYn4tvl411OrtXwN71i9v",
         "tableId": "eKqtxZTg7XtlIwExjWzJ1",
-        "name": "category_id",
+        "name": "tool_id",
         "comment": "",
         "dataType": "INT",
         "default": "",
         "options": 8,
         "ui": {
           "keys": 2,
-          "widthName": 66,
+          "widthName": 60,
           "widthComment": 60,
           "widthDataType": 60,
           "widthDefault": 60
@@ -2807,7 +2807,7 @@
       "38e-4ynTF5TXX77TZDchm": {
         "id": "38e-4ynTF5TXX77TZDchm",
         "tableId": "qWm0ErEqOSMPemfDvSoRg",
-        "name": "feature_id",
+        "name": "tool_id",
         "comment": "",
         "dataType": "INT",
         "default": "",

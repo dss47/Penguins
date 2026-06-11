@@ -2,12 +2,14 @@ import LoginForm from "../components/forms/loginForm";
 import SignupForm from "../components/forms/signupForm";
 import styles from "../style/Pages/authpage.module.css"
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 // import signupRobot from "../assets/signuprobot.webp"
 // import loginRobot from "../assets/loginrobot.webp"
 
 
 const AuthPage = () => {
-    const [isLogin, setIsLogin] = useState(true);
+    const [searchParams] = useSearchParams();
+    const [isLogin, setIsLogin] = useState(searchParams.get("mode") !== "signup");
 
     const toggleAuth = () => {
         setIsLogin(!isLogin);

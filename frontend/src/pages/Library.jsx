@@ -2,8 +2,13 @@ import styles from "../style/Pages/Library.module.css"
 import { useState } from "react";
 import Shelves from '../components/library/Shelves'
 import Favorites from '../components/library/Favorites'
+import { useAuth } from "../context/AuthContext";
+import LoginPrompt from "../components/LoginPrompt";
 
 const Library = () => {
+    const { isAuthenticated } = useAuth();
+    if (!isAuthenticated) return <LoginPrompt />;
+
     const [activeTab, setActiveTab] = useState("shelves");
 
     const stats = {

@@ -9,7 +9,7 @@
 /* ─── Sidebar ─────────────────────────────────────────────────── */
 
 .sidebar {
-    width: 250px;
+    width: 320px;
     flex-shrink: 0;
     background: var(--surface);
     border-right: 1px solid var(--border);
@@ -21,10 +21,93 @@
     height: 100vh;
     position: sticky;
     top: 0;
+    transition: width 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebarHidden {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+    border: none;
+    opacity: 0;
+}
+
+.sidebarToggleBar {
+    position: fixed;
+    top: calc(1.5rem + 80px);
+    left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.toggleBtn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px;
+    color: var(--text-head);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.toggleBtn:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent-1);
+}
+
+.floatingNewSearch {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+    transition: opacity 0.2s, box-shadow 0.2s;
+}
+
+.floatingNewSearch:hover {
+    opacity: 0.92;
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
 }
 
 .sidebarHeader {
     margin-bottom: 1.5rem;
+}
+
+.closeRow {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.5rem;
+}
+
+.closeSidebarBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-body);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.closeSidebarBtn:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent-1);
+    color: var(--text-head);
 }
 
 .newSearchBtn {
@@ -59,7 +142,7 @@
 .historyList {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 8px;
     overflow-y: auto;
     flex: 1;
 }
@@ -78,22 +161,52 @@
 }
 
 .historyItem {
-    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     width: 100%;
     padding: 10px 12px;
     border-radius: 10px;
     color: var(--text-body);
-    background: none;
+    background: transparent;
     border: none;
     cursor: pointer;
     font-family: var(--font-display);
     font-size: 0.82rem;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
 }
 
 .historyItem:hover {
     background: var(--accent-soft);
     color: var(--text-head);
+    transform: translateX(4px);
+}
+
+.historyIcon {
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.loginHistoryBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+    transition: opacity 0.2s;
+    box-sizing: border-box;
+}
+
+.loginHistoryBtn:hover {
+    opacity: 0.9;
 }
 
 /* ─── Main Content ────────────────────────────────────────────── */
@@ -137,26 +250,27 @@
 
 .searchInputIcon {
     position: absolute;
-    left: 1.25rem;
+    left: 1.1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--text-muted);
+    color: var(--tm);
     pointer-events: none;
+    z-index: 1;
 }
 
 .searchInput {
     width: 100%;
-    padding: 1.2rem 1.25rem 1.2rem 3.5rem;
-    background: var(--surface);
+    padding: .95rem 7.5rem .95rem 3.4rem;
+    background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: var(--radius-card);
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
     color: var(--text-head);
-    font-family: var(--font-display);
-    font-size: 1.05rem;
-    backdrop-filter: var(--blur);
-    -webkit-backdrop-filter: var(--blur);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
     outline: none;
-    transition: all 0.3s ease;
+    transition: all 0.3s;
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
     box-sizing: border-box;
 }
 
@@ -167,6 +281,28 @@
 .searchInput:focus {
     border-color: var(--accent-1);
     box-shadow: 0 0 30px rgba(6, 182, 212, 0.2), inset 0 0 0 1px rgba(6, 182, 212, 0.15);
+}
+
+.searchBtn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: .5rem 1.25rem;
+    border-radius: 9px;
+    border: none;
+    background: linear-gradient(135deg, var(--ag), var(--nb));
+    color: var(--tp);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .85rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(6, 182, 212, .4);
+    transition: all .2s;
+}
+
+.searchBtn:hover {
+    opacity: 0.9;
 }
 
 /* ─── Loading View ────────────────────────────────────────────── */

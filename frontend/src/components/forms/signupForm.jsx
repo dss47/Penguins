@@ -1,17 +1,42 @@
 import styles from "../../style/form/forms.module.css";
-import { ArrowLeft, Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, Eye, EyeOff, ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import api from "../../services/api";
+
+const PROFESSION_OPTIONS = [
+	{ value: 1, label: "Développeur" },
+	{ value: 2, label: "Designer" },
+	{ value: 3, label: "Enseignant" },
+	{ value: 4, label: "Étudiant" },
+	{ value: 5, label: "Marketing" },
+	{ value: 6, label: "Chef de projet" },
+	{ value: 7, label: "Data Scientist" },
+	{ value: 8, label: "Freelance" },
+	{ value: 9, label: "Autre" },
+];
 
 export default function SignupForm({ onSwitch }) {
 	const [isVisiblePass, setIsVisiblePass] = useState(false);
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
 	const [email, setEmail] = useState("");
+	const [selectedProfession, setSelectedProfession] = useState(null);
+	const [isProfessionOpen, setIsProfessionOpen] = useState(false);
+	const professionRef = useRef(null);
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (professionRef.current && !professionRef.current.contains(event.target)) {
+				setIsProfessionOpen(false);
+			}
+		};
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, []);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -24,7 +49,13 @@ export default function SignupForm({ onSwitch }) {
 
 		setLoading(true);
 		try {
-			await api.post("/auth/register", { firstName, lastName, email, password });
+			await api.post("/auth/register", {
+				firstName,
+				lastName,
+				email,
+				password,
+				profession_id: selectedProfession ? selectedProfession.value : null,
+			});
 			alert("Inscription réussie ! Connectez-vous.");
 			onSwitch();
 		} catch (err) {
@@ -60,6 +91,37 @@ export default function SignupForm({ onSwitch }) {
 								placeholder="Nom"
 								required
 							/>
+						</div>
+					</div>
+
+					<div className={styles.inputGroup}>
+						<div className={styles.customDropdown} ref={professionRef}>
+							<div
+								className={styles.dropdownHeader}
+								onClick={() => setIsProfessionOpen(!isProfessionOpen)}
+							>
+								<span>{selectedProfession ? selectedProfession.label : "Profession"}</span>
+								<ChevronDown
+									size={18}
+									className={`${styles.chevron} ${isProfessionOpen ? styles.chevronOpen : ""}`}
+								/>
+							</div>
+							{isProfessionOpen && (
+								<div className={styles.dropdownMenu}>
+									{PROFESSION_OPTIONS.map((p) => (
+										<div
+											key={p.value}
+											className={`${styles.dropdownItem} ${selectedProfession?.value === p.value ? styles.dropdownItemActive : ""}`}
+											onClick={() => {
+												setSelectedProfession(p);
+												setIsProfessionOpen(false);
+											}}
+										>
+											{p.label}
+										</div>
+									))}
+								</div>
+							)}
 						</div>
 					</div>
 

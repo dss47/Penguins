@@ -7,8 +7,13 @@ import Reviews from "../components/profile/Reviews"
 import SearchHistory from "../components/profile/SearchHistory"
 import Shelves from "../components/profile/Shelves"
 import Suggestions from "../components/profile/Suggestions"
+import { useAuth } from "../context/AuthContext";
+import LoginPrompt from "../components/LoginPrompt";
 
 const Profile = () =>{
+    const { isAuthenticated } = useAuth();
+    if (!isAuthenticated) return <LoginPrompt />;
+
     const userId = "123"; // Hardcoded userId
     return(
         <div className={style.shell}>

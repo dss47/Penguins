@@ -1,6 +1,7 @@
 import styles from "../../style/form/forms.module.css";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 
@@ -11,6 +12,8 @@ export default function LoginForm({ onSwitch }) {
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 	const { login } = useAuth();
+	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -20,6 +23,8 @@ export default function LoginForm({ onSwitch }) {
 		try {
 			const res = await api.post("/auth/login", { email, password });
 			login(res.data);
+			const redirect = searchParams.get("redirect");
+			navigate(redirect || "/HomeSearch", { replace: true });
 		} catch (err) {
 			setError(err.message || "Identifiants incorrects");
 		} finally {
