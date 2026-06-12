@@ -2,10 +2,15 @@ import styles from "../style/Pages/toolpage.module.css"
 import ToolComponent from "../components/tools/toolComponent"
 import ShelfPicker from "../components/library/ShelfPicker"
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Search, ChevronDown, ListOrdered, Loader2 } from "lucide-react";
 import api, { API_BASE } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 export default function ToolPage() {
+    const { isAuthenticated } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
     const [tools, setTools] = useState([]);
     const [loading, setLoading] = useState(true);
     const [favoriteIds, setFavoriteIds] = useState(new Set());
@@ -33,15 +38,35 @@ export default function ToolPage() {
     }, []);
 
     useEffect(() => {
+        let cancelled = false;
+
+        if (!isAuthenticated) {
+            Promise.resolve().then(() => {
+                if (!cancelled) setFavoriteIds(new Set());
+            });
+            return () => {
+                cancelled = true;
+            };
+        }
+
         api.get("/favorites")
             .then((res) => {
+                if (cancelled) return;
                 const favs = res?.data || [];
                 setFavoriteIds(new Set(favs.map(f => Number(f.id))));
             })
             .catch(() => {});
-    }, []);
+        return () => {
+            cancelled = true;
+        };
+    }, [isAuthenticated]);
 
     const handleToggleFavorite = useCallback((toolId, next) => {
+        if (!isAuthenticated) {
+            navigate(`/Auth?redirect=${encodeURIComponent(location.pathname)}`);
+            return;
+        }
+
         api.post("/favorites/toggle", { tool_id: toolId }).catch(() => {});
         setFavoriteIds(prev => {
             const nextSet = new Set(prev);
@@ -49,7 +74,16 @@ export default function ToolPage() {
             else nextSet.delete(Number(toolId));
             return nextSet;
         });
-    }, []);
+    }, [isAuthenticated, location.pathname, navigate]);
+
+    const handleOpenShelfPicker = useCallback((id) => {
+        if (!isAuthenticated) {
+            navigate(`/Auth?redirect=${encodeURIComponent(location.pathname)}`);
+            return;
+        }
+
+        setPickerToolId(id);
+    }, [isAuthenticated, location.pathname, navigate]);
 
     const query = searchQuery.toLowerCase();
 
@@ -207,7 +241,7 @@ export default function ToolPage() {
                             tools={searchResults}
                             favoriteIds={favoriteIds}
                             onToggleFavorite={handleToggleFavorite}
-                            onOpenShelfPicker={(id) => setPickerToolId(id)}
+                            onOpenShelfPicker={handleOpenShelfPicker}
                         />
                     </div>
                 </div>
