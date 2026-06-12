@@ -90,6 +90,28 @@
 }
 .actionIconBtn:hover { border-color: var(--accent); color: var(--accent); background: rgba(124,92,252,0.08); }
 
+.heartActive {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    border: 1px solid #ec4899;
+    background: rgba(236, 72, 153, 0.12);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: #ec4899;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.heartActive:hover {
+    background: rgba(236, 72, 153, 0.22);
+}
+
+.heroImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
 @media (max-width: 600px) {
     .heroTitle { font-size: 32px; }
 }

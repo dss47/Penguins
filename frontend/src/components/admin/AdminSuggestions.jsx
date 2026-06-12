@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "../../style/admin/adminSuggestions.module.css";
 import RejectForm from "../forms/RejectForm";
+import api from "../../services/api";
 
 // TODO: API → GET /api/admin/suggestions
 const MOCK_SUGGESTIONS = [
@@ -69,28 +70,65 @@ const xIcon = (
   </svg>
 );
 
-const BADGE_CLASS = { pending: styles.badgePending, approved: styles.badgeApproved, rejected: styles.badgeRejected };
-const BADGE_LABEL = { pending: "En attente", approved: "Approuvé", rejected: "Rejeté" };
+const BADGE_CLASS = { 
+  waiting_ai_analysis: styles.badgePending, 
+  ai_approved_pending_review: styles.badgePending, 
+  waiting_manual_validation: styles.badgePending, 
+  published_to_catalog: styles.badgeApproved, 
+  ai_rejected: styles.badgeRejected,
+  rejected_by_admin: styles.badgeRejected 
+};
+const BADGE_LABEL = { 
+  waiting_ai_analysis: "En attente IA", 
+  ai_approved_pending_review: "En attente Validation", 
+  waiting_manual_validation: "En attente Admin", 
+  published_to_catalog: "Publié", 
+  ai_rejected: "Rejeté (IA)",
+  rejected_by_admin: "Rejeté" 
+};
 
 export default function AdminSuggestions() {
   const [activeTab, setActiveTab]   = useState("pending");
-  const [suggestions, setSuggestions] = useState(MOCK_SUGGESTIONS);
+  const [suggestions, setSuggestions] = useState([]);
   const [rejectOpen, setRejectOpen] = useState(null); // id de la suggestion
+  const [loading, setLoading] = useState(true);
 
-  const displayed = suggestions.filter((s) =>
-    activeTab === "pending" ? s.status === "pending" : s.status !== "pending"
-  );
+  const fetchSuggestions = () => {
+    setLoading(true);
+    api.get("/admin/suggestions")
+      .then(res => {
+        setSuggestions(res.data || []);
+      })
+      .catch(err => console.error(err))
+      .finally(() => setLoading(false));
+  };
 
-  const pendingCount = suggestions.filter((s) => s.status === "pending").length;
+  useEffect(() => {
+    fetchSuggestions();
+  }, []);
+
+  const displayed = suggestions.filter((s) => {
+    const isPending = s.status === 'waiting_ai_analysis' || s.status === 'ai_approved_pending_review' || s.status === 'waiting_manual_validation';
+    return activeTab === "pending" ? isPending : !isPending;
+  });
+
+  const pendingCount = suggestions.filter((s) => s.status === 'waiting_ai_analysis' || s.status === 'ai_approved_pending_review' || s.status === 'waiting_manual_validation').length;
 
   const handleApprove = (id) => {
-    setSuggestions((prev) => prev.map((s) => s.id === id ? { ...s, status: "approved" } : s));
+    api.post("/admin/suggestions/approve", { id })
+      .then(res => {
+        setSuggestions((prev) => prev.map((s) => s.id === id ? { ...s, status: "published_to_catalog" } : s));
+      })
+      .catch(err => alert(err.message || "Erreur"));
   };
 
   const handleReject = (id, reason) => {
-    // TODO: API → POST /api/admin/suggestions/:id/reject { reason }
-    setSuggestions((prev) => prev.map((s) => s.id === id ? { ...s, status: "rejected" } : s));
-    setRejectOpen(null);
+    api.post("/admin/suggestions/reject", { id, reason })
+      .then(res => {
+        setSuggestions((prev) => prev.map((s) => s.id === id ? { ...s, status: "rejected_by_admin" } : s));
+        setRejectOpen(null);
+      })
+      .catch(err => alert(err.message || "Erreur"));
   };
 
   return (

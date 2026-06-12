@@ -30,29 +30,42 @@ final class ReviewService
         }
 
         // 2. 🚨 THE AI / MODERATION CHECK 🚨
+        $status = 'approved';
+        $aiFlagReason = null;
+
         if (!empty($comment)) {
             $moderationResult = $this->moderationService->moderate($comment);
 
             if ($moderationResult['flagged']) {
-                // The AI or the bad-word list caught something! We block the submission.
-                return [
-                    'success' => false,
-                    'message' => 'Your review contains inappropriate language or spam and cannot be published.'
-                ];
+                // The AI or the bad-word list caught something!
+                // We still save the review but flag it for admin review.
+                $status = 'flagged';
+                $aiFlagReason = json_encode([
+                    'reason'           => $moderationResult['reason'],
+                    'confidence_score' => $moderationResult['confidence_score'],
+                ], JSON_THROW_ON_ERROR);
             }
         }
 
-        // 3. If it passed moderation (or if they just left a star rating with no text), save it!
+        // 3. Save the review (approved or flagged)
         $reviewId = $this->reviewModel->create([
             'user_id' => $userId,
             'tool_id' => $toolId,
             'rating'  => $rating,
-            'comment' => $comment
+            'comment' => $comment,
+            'status'  => $status,
         ]);
+
+        // If flagged, store the AI reason
+        if ($status === 'flagged') {
+            $this->reviewModel->updateModeration($reviewId, $status, $aiFlagReason);
+        }
 
         return [
             'success' => true,
-            'message' => 'Review published successfully!',
+            'message' => $status === 'approved'
+                ? 'Review published successfully!'
+                : 'Your review has been submitted for moderation.',
             'data'    => $this->reviewModel->findById($reviewId) // Return the saved review to React
         ];
     }

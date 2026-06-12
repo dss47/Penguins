@@ -20,15 +20,19 @@ final class AuthController
 
 	public function login(array $payload): array
 	{
-		$result = $this->authService->verifyCredentials(
-			$payload['email'] ?? '',
-			$payload['password'] ?? ''
-		);
+		try {
+			$result = $this->authService->verifyCredentials(
+				$payload['email'] ?? '',
+				$payload['password'] ?? ''
+			);
 
-		if ($result === false) {
-			return Response::error('Identifiants incorrects', 401);
+			if ($result === false) {
+				return Response::error('Identifiants incorrects', 401);
+			}
+
+			return Response::success($result);
+		} catch (Exception $e) {
+			return Response::error($e->getMessage(), 403);
 		}
-
-		return Response::success($result);
 	}
 }

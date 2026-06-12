@@ -1,69 +1,75 @@
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import style from "../../style/library/Favorites.module.css"
+import api, { API_BASE } from "../../services/api";
 import Favorite from "./Favorite"
 
 const Favorites = () => {
-    const aiTools = [
-        {
-            icon: "🔊",
-            name: "ElevenLabs",
-            description: "Ultra-realistic AI voice synthesis and cloning — produce studio-quality voiceovers from text in seconds.",
-            rating: 4.9,
-            category: "Voice Cloning",
-            accent: "violet"
-        },
-        {
-            icon: "🎨",
-            name: "Midjourney",
-            description: "Industry-leading AI image generation with stunning artistic fidelity and stylistic range.",
-            rating: 4.8,
-            category: "Image Gen",
-            accent: "rose"
-        },
-        {
-            icon: "🎬",
-            name: "Runway ML",
-            description: "Next-generation AI video editing suite — remove backgrounds, generate clips, and apply cinematic effects.",
-            rating: 4.7,
-            category: "Video Editing",
-            accent: "teal"
-        },
-        {
-            icon: "🧠",
-            name: "Perplexity AI",
-            description: "AI-powered research assistant delivering cited, real-time answers across any subject with depth.",
-            rating: 4.8,
-            category: "Research",
-            accent: "blue"
-        },
-        {
-            icon: "✂️",
-            name: "Descript",
-            description: "Edit audio and video by editing the transcript — transcription, overdub, and screen recording in one.",
-            rating: 4.6,
-            category: "Podcasting",
-            accent: "purple"
-        },
-        {
-            icon: "🎵",
-            name: "Suno AI",
-            description: "Generate full songs with vocals and instruments from a simple text prompt. Music creation reimagined.",
-            rating: 4.7,
-            category: "Music Gen",
-            accent: "green"
-        }
-    ];
+    const [tools, setTools] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchFavorites = () => {
+        api.get("/favorites")
+            .then((res) => {
+                const data = (res?.data || []).map(t => ({
+                    ...t,
+                    icon: t.logo_url?.startsWith("/") ? API_BASE + t.logo_url : t.logo_url,
+                    category: t.category_name,
+                    rating: t.global_rating,
+                }));
+                setTools(data);
+            })
+            .catch(() => {})
+            .finally(() => setLoading(false));
+    };
+
+    useEffect(() => {
+        fetchFavorites();
+    }, []);
+
+    const handleToggleFavorite = (toolId, next) => {
+        api.post("/favorites/toggle", { tool_id: toolId })
+            .then(() => {
+                if (!next) {
+                    setTools(prev => prev.filter(t => t.id !== toolId));
+                }
+            })
+            .catch(() => {});
+    };
+
+    if (loading) {
+        return (
+            <div className={style.toolsGrid}>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gridColumn: "1 / -1", padding: "3rem 0", color: "var(--text-muted)", gap: 8 }}>
+                    <Loader2 size={20} className="animate-spin" />
+                    <span>Chargement des favoris...</span>
+                </div>
+            </div>
+        );
+    }
+
+    if (tools.length === 0) {
+        return (
+            <div className={style.toolsGrid}>
+                <p style={{ gridColumn: "1 / -1", textAlign: "center", color: "var(--text-muted)", padding: "3rem 0" }}>
+                    Aucun favori pour le moment.
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div className={style.toolsGrid}>
-            {aiTools.map((tool, index) => (
+            {tools.map((tool, index) => (
                 <Favorite
-                    key={index}
+                    key={tool.id}
                     icon={tool.icon}
                     name={tool.name}
                     description={tool.description}
                     rating={tool.rating}
                     category={tool.category}
-                    accent={tool.accent}
+                    isFavorited={true}
+                    onToggleFavorite={(next) => handleToggleFavorite(tool.id, next)}
                 />
             ))}
         </div>

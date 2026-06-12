@@ -50,6 +50,15 @@ final class Feature extends BaseModel
 
         return $feature ?: null;
     }
+    public function all(): array
+    {
+        $sql = 'SELECT * FROM features ORDER BY name ASC';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
     public function allActive(): array
     {
         $sql = 'SELECT * FROM features WHERE status = \'active\' ORDER BY type ASC, name ASC';

@@ -14,6 +14,7 @@ final class ModerationService
 
     /**
      * Analyse un contenu (texte, avis, description) et détermine s'il est sûr.
+     * Retourne un tableau avec: flagged (bool), reason (string), confidence_score (int), categories (array)
      */
     public function moderate(string $content): array
     {
@@ -23,6 +24,8 @@ final class ModerationService
         if (empty($cleanContent)) {
             return [
                 'flagged' => false,
+                'reason' => '',
+                'confidence_score' => 0,
                 'categories' => [],
             ];
         }
@@ -30,7 +33,12 @@ final class ModerationService
         // 2. Vérification locale ultra-rapide (Expressions régulières ou mots-clés)
         $localCheck = $this->localKeywordCheck($cleanContent);
         if ($localCheck['flagged']) {
-            return $localCheck;
+            return [
+                'flagged' => true,
+                'reason' => 'Spam ou langage inapproprié détecté (liste noire locale)',
+                'confidence_score' => 95,
+                'categories' => $localCheck['categories'],
+            ];
         }
 
         // 3. (Optionnel) Vérification avancée via IA (OpenRouter / Llama Guard 3)
@@ -40,6 +48,8 @@ final class ModerationService
         // Si tout va bien, le contenu est approuvé
         return [
             'flagged' => false,
+            'reason' => '',
+            'confidence_score' => 0,
             'categories' => [],
         ];
     }
@@ -67,6 +77,7 @@ final class ModerationService
 
     /**
      * Squelette pour une vérification IA approfondie (ex: Llama Guard 3 via OpenRouter).
+     * Retourne le même format enrichi que moderate().
      */
     private function aiModerationCheck(string $content): array
     {
@@ -79,12 +90,16 @@ final class ModerationService
         if ($aiThinksItsSpam) {
             return [
                 'flagged' => true,
+                'reason' => 'Contenu suspect détecté par l\'IA',
+                'confidence_score' => 85,
                 'categories' => ['spam', 'ai_detected']
             ];
         }
 
         return [
             'flagged' => false,
+            'reason' => '',
+            'confidence_score' => 0,
             'categories' => []
         ];
     }

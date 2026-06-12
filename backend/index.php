@@ -37,7 +37,9 @@ $method = $_SERVER['REQUEST_METHOD'];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = rtrim($uri, '/');
 
-$body = json_decode(file_get_contents('php://input'), true) ?? [];
+$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+$isMultipart = strpos($contentType, 'multipart/form-data') !== false;
+$body = $isMultipart ? $_POST : (json_decode(file_get_contents('php://input'), true) ?? []);
 
 function json_response(array $data): void
 {
@@ -49,12 +51,39 @@ function json_response(array $data): void
 $authController = new AuthController();
 $userController = new UserController();
 $adminController = new AdminController();
+$toolController = new ToolController();
+$favoriteController = new FavoriteController();
+$shelfController = new ShelfController();
 
 $routes = [
 	'POST /auth/register' => static fn() => json_response($authController->register($body)),
 	'POST /auth/login'    => static fn() => json_response($authController->login($body)),
 	'GET /user/profile'   => static fn() => json_response($userController->profile()),
 	'GET /admin/dashboard' => static fn() => json_response($adminController->dashboard()),
+	'GET /admin/users'     => static fn() => json_response($adminController->users()),
+	'POST /admin/users/promote' => static fn() => json_response($adminController->promoteUser($body)),
+	'POST /admin/users/demote'  => static fn() => json_response($adminController->demoteUser($body)),
+	'POST /admin/users/ban'     => static fn() => json_response($adminController->banUser($body)),
+	'POST /admin/users/unban'   => static fn() => json_response($adminController->unbanUser($body)),
+	'GET /admin/suggestions'    => static fn() => json_response($adminController->suggestions()),
+	'POST /admin/suggestions/approve' => static fn() => json_response($adminController->approveSuggestion($body)),
+	'POST /admin/suggestions/create'  => static fn() => json_response($adminController->createSuggestion($body, $_FILES['logo'] ?? null)),
+	'GET /admin/suggestions/history'  => static fn() => json_response($adminController->suggestionHistory()),
+	'POST /admin/suggestions/reject'  => static fn() => json_response($adminController->rejectSuggestion($body)),
+	'POST /admin/suggestions/update'  => static fn() => json_response($adminController->updateSuggestion($body)),
+	'GET /admin/data/lists'                         => static fn() => json_response($adminController->formData()),
+	'GET /admin/moderation/reviews'               => static fn() => json_response($adminController->moderationReviews()),
+	'POST /admin/moderation/reviews/approve'       => static fn() => json_response($adminController->approveModerationReview($body)),
+	'POST /admin/moderation/reviews/delete'        => static fn() => json_response($adminController->deleteModerationReview($body)),
+	'GET /favorites'         => static fn() => json_response($favoriteController->index()),
+	'POST /favorites/toggle' => static fn() => json_response($favoriteController->toggle($body)),
+	'GET /shelves'           => static fn() => json_response($shelfController->list()),
+	'GET /shelves/items'     => static fn() => json_response($shelfController->show($_GET)),
+	'POST /shelves/create'   => static fn() => json_response($shelfController->create($body)),
+	'POST /shelves/update'   => static fn() => json_response($shelfController->update($body)),
+	'POST /shelves/delete'   => static fn() => json_response($shelfController->delete($body)),
+	'POST /shelves/toggle'   => static fn() => json_response($shelfController->toggleItem($body)),
+	'GET /tools' => static fn() => json_response($toolController->index()),
 ];
 
 if (isset($routes["$method $uri"])) {

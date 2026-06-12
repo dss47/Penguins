@@ -188,6 +188,89 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 8px; /* Espace pour la scrollbar */
+}
+
+/* Scrollbar personnalisée pour la liste des catégories */
+.categoryList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.categoryList::-webkit-scrollbar-track {
+  background: var(--bg-hover);
+  border-radius: 10px;
+}
+
+.categoryList::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+
+.categoryList::-webkit-scrollbar-thumb:hover {
+  background: var(--tm);
+}
+
+.categoryControls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.searchContainer {
+  position: relative;
+  flex: 1;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  width: 14px;
+  height: 14px;
+}
+
+.searchInput {
+  width: 100%;
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px 8px 32px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.searchInput:focus {
+  border-color: var(--accent);
+}
+
+.searchInput::placeholder {
+  color: var(--text-muted);
+}
+
+.sortBtn {
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.sortBtn:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
 }
 
 .categoryRow {

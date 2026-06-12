@@ -1,19 +1,24 @@
 .proposerPage {
     background: var(--bg-void);
-    min-height: 100vh;
+    height: 100%;
 }
 
 .proposerLayout {
     display: flex;
-    min-height: 100vh;
+    height: 100%;
+    padding-left: 320px;
+    transition: padding-left 0.3s ease;
+}
+
+.proposerLayout:has(.sidebarCollapsed) {
+    padding-left: 80px;
 }
 
 /* ─── Sidebar ─────────────────────────────────────────────────── */
 
 .sidebar {
     width: 320px;
-    flex-shrink: 0;
-    background: var(--surface);
+    background: var(--sidebar-glass);
     border-right: 1px solid var(--border);
     backdrop-filter: var(--blur);
     -webkit-backdrop-filter: var(--blur);
@@ -21,79 +26,28 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
-    position: sticky;
-    top: 0;
-    transition: width 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
-}
-
-.sidebarHidden {
-    width: 0;
-    padding: 0;
-    overflow: hidden;
-    border: none;
-    opacity: 0;
-}
-
-.sidebarToggleBar {
     position: fixed;
-    top: calc(1.5rem + 80px);
-    left: 1.5rem;
+    top: 0;
+    left: 240px;
+    transition: width 0.3s ease, padding 0.3s ease;
+    overflow: hidden;
+}
+
+.sidebarCollapsed {
+    width: 80px;
+    padding: 1.5rem 0.75rem;
+}
+
+/* ─── Sidebar header with toggle ─── */
+
+.sidebarHeader {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    z-index: 10;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+    flex-shrink: 0;
 }
 
 .toggleBtn {
-    width: 40px;
-    height: 40px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text-head);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-}
-
-.toggleBtn:hover {
-    background: var(--accent-soft);
-    border-color: var(--accent-1);
-}
-
-.floatingNewSearch {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-    color: #ffffff;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
-    transition: opacity 0.2s, box-shadow 0.2s;
-}
-
-.floatingNewSearch:hover {
-    opacity: 0.92;
-    box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
-}
-
-.sidebarHeader {
-    margin-bottom: 1.5rem;
-}
-
-.closeRow {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 0.5rem;
-}
-
-.closeSidebarBtn {
     width: 36px;
     height: 36px;
     border-radius: 10px;
@@ -107,13 +61,19 @@
     transition: all 0.2s;
 }
 
-.closeSidebarBtn:hover {
+.toggleBtn:hover {
     background: var(--accent-soft);
     border-color: var(--accent-1);
     color: var(--text-head);
 }
 
+/* ─── New tool button ─── */
+
 .newSearchBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     width: 100%;
     padding: 12px 16px;
     border-radius: 12px;
@@ -125,7 +85,8 @@
     border: none;
     cursor: pointer;
     box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
-    transition: opacity 0.2s, box-shadow 0.2s;
+    transition: opacity 0.2s, box-shadow 0.2s, padding 0.3s ease;
+    flex-shrink: 0;
 }
 
 .newSearchBtn:hover {
@@ -133,13 +94,18 @@
     box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
 }
 
+/* ─── History ─── */
+
 .historyLabel {
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--text-muted);
+    margin-top: 1.5rem;
     margin-bottom: 0.75rem;
     font-weight: 600;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .historyList {
@@ -183,7 +149,6 @@
 .historyItem:hover {
     background: var(--accent-soft);
     color: var(--text-head);
-    transform: translateX(4px);
 }
 
 .historyItemActive {
@@ -227,6 +192,35 @@
 
 .statusPending {
     color: var(--accent-1);
+}
+
+/* ─── Collapsed overrides ─── */
+
+.sidebarCollapsed .sidebarHeader {
+    justify-content: center;
+}
+
+.sidebarCollapsed .toggleBtn svg {
+    transform: rotate(180deg);
+}
+
+.sidebarCollapsed .newSearchBtnLabel,
+.sidebarCollapsed .historyLabel,
+.sidebarCollapsed .historyItemContent {
+    display: none;
+}
+
+.sidebarCollapsed .newSearchBtn {
+    padding: 10px;
+}
+
+.sidebarCollapsed .historyItem {
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.sidebarCollapsed .historyIcon {
+    margin: 0;
 }
 
 .mainContent {

@@ -53,5 +53,35 @@ final class ShelfItem extends BaseModel
         return $stmt->execute([$shelfId, $toolId]);
     }
 
+    public function exists(int $shelfId, int $toolId): bool
+    {
+        $sql = 'SELECT 1 FROM shelf_items WHERE shelf_id = ? AND tool_id = ? LIMIT 1';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$shelfId, $toolId]);
+        return (bool) $stmt->fetch();
+    }
 
+    public function toggle(int $shelfId, int $toolId): string
+    {
+        if ($this->exists($shelfId, $toolId)) {
+            $this->removeFromShelf($shelfId, $toolId);
+            return 'removed';
+        }
+        $this->addToShelf(['shelf_id' => $shelfId, 'tool_id' => $toolId]);
+        return 'added';
+    }
+
+    public function getToolsByShelfId(int $shelfId): array
+    {
+        $sql = 'SELECT t.*, p.name AS provider_name, c.name AS category_name
+                FROM shelf_items si
+                INNER JOIN ai_tools t ON si.tool_id = t.id
+                LEFT JOIN providers p ON t.provider_id = p.id
+                LEFT JOIN categories c ON t.category_id = c.id
+                WHERE si.shelf_id = ?
+                ORDER BY si.created_at DESC';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$shelfId]);
+        return $stmt->fetchAll();
+    }
 }

@@ -1,8 +1,17 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import styles from "../../style/tools/toolcomponent.module.css"
 import { Star, Heart, Bookmark, ArrowRight } from "lucide-react"
+import styles from "../../style/tools/toolcomponent.module.css"
 
-const ToolCard = ({ icon, name, rating, features, provider }) => {
+const ToolCard = ({ id, icon, name, rating, features, provider, isFavorited, onToggleFavorite, onOpenShelfPicker }) => {
+    const [hearted, setHearted] = useState(isFavorited);
+
+    const handleHeart = () => {
+        const next = !hearted;
+        setHearted(next);
+        onToggleFavorite(id, next);
+    };
+
     return (
         <div className={styles.card}>
             <div className={styles.cardHeader}>
@@ -20,7 +29,7 @@ const ToolCard = ({ icon, name, rating, features, provider }) => {
             </div>
 
             <ul className={styles.featureList}>
-                {features.map((feature, index) => (
+                {features?.map((feature, index) => (
                     <li key={index} className={styles.featureItem}>
                         {feature}
                     </li>
@@ -28,10 +37,18 @@ const ToolCard = ({ icon, name, rating, features, provider }) => {
             </ul>
 
             <div className={styles.cardFooter}>
-                <button className={`${styles.secondaryBtn} ${styles.favorite}`} aria-label="Ajouter aux favoris">
-                    <Heart size={20} />
+                <button
+                    className={`${styles.secondaryBtn} ${hearted ? styles.heartActive : styles.favorite}`}
+                    aria-label="Ajouter aux favoris"
+                    onClick={handleHeart}
+                >
+                    <Heart size={20} fill={hearted ? "#ec4899" : "none"} />
                 </button>
-                <button className={styles.secondaryBtn} aria-label="Sauvegarder dans la bibliothèque">
+                <button
+                    className={styles.secondaryBtn}
+                    aria-label="Sauvegarder dans la bibliothèque"
+                    onClick={() => onOpenShelfPicker(id)}
+                >
                     <Bookmark size={20} />
                 </button>
                 <Link to={`/tool/${name}`} className={styles.actionBtn}>
@@ -43,11 +60,17 @@ const ToolCard = ({ icon, name, rating, features, provider }) => {
     );
 };
 
-export default function ToolComponent({ tools = [] }) {
+export default function ToolComponent({ tools = [], favoriteIds = new Set(), onToggleFavorite, onOpenShelfPicker }) {
     return (
         <>
             {tools.map((tool, index) => (
-                <ToolCard key={index} {...tool} />
+                <ToolCard
+                    key={index}
+                    {...tool}
+                    isFavorited={favoriteIds.has(tool.id)}
+                    onToggleFavorite={onToggleFavorite}
+                    onOpenShelfPicker={onOpenShelfPicker}
+                />
             ))}
         </>
     );

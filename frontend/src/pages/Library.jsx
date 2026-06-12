@@ -1,21 +1,34 @@
 import styles from "../style/Pages/Library.module.css"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Shelves from '../components/library/Shelves'
 import Favorites from '../components/library/Favorites'
 import { useAuth } from "../context/AuthContext";
 import LoginPrompt from "../components/LoginPrompt";
+import api from "../services/api";
 
 const Library = () => {
     const { isAuthenticated } = useAuth();
     const [activeTab, setActiveTab] = useState("shelves");
+    const [stats, setStats] = useState({ favorites: 0, shelves: 0, totalTools: 0 });
+
+    useEffect(() => {
+        if (!isAuthenticated) return;
+        Promise.all([
+            api.get("/favorites").then(r => r?.data || []),
+            api.get("/shelves").then(r => r?.data || []),
+        ])
+            .then(([favs, shelves]) => {
+                const shelfToolCount = shelves.reduce((sum, s) => sum + (s.tool_count || 0), 0);
+                setStats({
+                    favorites: favs.length,
+                    shelves: shelves.length,
+                    totalTools: favs.length + shelfToolCount,
+                });
+            })
+            .catch(() => {});
+    }, [isAuthenticated]);
 
     if (!isAuthenticated) return <LoginPrompt />;
-
-    const stats = {
-        favorites: 6,
-        shelves: 4,
-        totalTools: 31
-    };
 
     return (
         <div className={styles.libraryPageWrapper}>

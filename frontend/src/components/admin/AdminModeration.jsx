@@ -1,31 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "../../style/admin/adminModeration.module.css";
 import BanConfirmForm from "../forms/BanConfirmForm";
-
-// TODO: API → GET /api/admin/moderation/flagged
-const MOCK_FLAGS = [
-  {
-    id: 1, user: "toxic_guy99", date: "30 mai 2026",
-    content: "Cet outil est une arnaque totale, les développeurs sont des incompétents finis !",
-    aiReason: "Discours haineux et attaque personnelle détectés (confiance : 94%)",
-    severity: "danger", tool: "Jasper AI", toolSlug: "jasper-ai",
-  },
-  {
-    id: 2, user: "spam_bot42", date: "29 mai 2026",
-    content: "Achetez nos formations IA à -80% sur formation-ia-pro.com ! Offre limitée !",
-    aiReason: "Spam commercial et lien externe non autorisé détectés (confiance : 99%)",
-    severity: "danger", tool: "Copy.ai", toolSlug: "copy-ai",
-  },
-  {
-    id: 3, user: "grumpy_user", date: "28 mai 2026",
-    content: "Je ne comprends pas pourquoi on paie pour ça, c'est du foutage de gueule.",
-    aiReason: "Langage offensant léger détecté (confiance : 71%)",
-    severity: "warning", tool: "Notion AI", toolSlug: "notion-ai",
-  },
-];
+import api from "../../services/api";
 
 function getInitials(name) {
-  return name.slice(0, 2).toUpperCase();
+  return name ? name.slice(0, 2).toUpperCase() : "??";
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  const months = [
+    "janvier", "février", "mars", "avril", "mai", "juin",
+    "juillet", "août", "septembre", "octobre", "novembre", "décembre",
+  ];
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function mapFlag(row) {
+  let reason = "";
+  let confidence = 0;
+  try {
+    const parsed = JSON.parse(row.ai_flag_reason || "{}");
+    reason = parsed.reason || "";
+    confidence = parsed.confidence_score || 0;
+  } catch {}
+
+  let severity = "minor";
+  if (confidence >= 90) severity = "danger";
+  else if (confidence >= 70) severity = "warning";
+
+  return {
+    id: row.id,
+    userId: row.user_id,
+    user: row.user_name,
+    date: formatDate(row.created_at),
+    content: row.comment || "",
+    aiReason: reason ? `${reason} (confiance : ${confidence}%)` : "",
+    severity,
+    tool: row.tool_name || "",
+  };
 }
 
 const aiIcon = (
@@ -68,25 +82,40 @@ const linkIcon = (
 export default function AdminModeration() {
   const [filter, setFilter]       = useState("all");
   const [confirmBan, setConfirmBan] = useState(null); // id du flag
-  const [flags, setFlags]         = useState(MOCK_FLAGS);
+  const [flags, setFlags]         = useState([]);
+  const [loading, setLoading]     = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    api.get("/admin/moderation/reviews")
+      .then((res) => {
+        setFlags((res.data || []).map(mapFlag));
+      })
+      .catch((err) => console.error("Error fetching flagged reviews:", err))
+      .finally(() => setLoading(false));
+  }, []);
 
   const displayed = flags.filter((f) =>
     filter === "all" ? true : f.severity === filter
   );
 
   const handleIgnore = (id) => {
-    setFlags((prev) => prev.filter((f) => f.id !== id));
+    api.post("/admin/moderation/reviews/approve", { id })
+      .then(() => setFlags((prev) => prev.filter((f) => f.id !== id)))
+      .catch((err) => alert(err.message || "Erreur lors de l'approbation"));
   };
 
   const handleDelete = (id) => {
-    // TODO: API → DELETE /api/admin/comments/:id
-    setFlags((prev) => prev.filter((f) => f.id !== id));
+    api.post("/admin/moderation/reviews/delete", { id })
+      .then(() => setFlags((prev) => prev.filter((f) => f.id !== id)))
+      .catch((err) => alert(err.message || "Erreur lors de la suppression"));
   };
 
-  const handleBan = (id) => {
-    // TODO: API → POST /api/admin/users/ban { userId }
-    setFlags((prev) => prev.filter((f) => f.id !== id));
-    setConfirmBan(null);
+  const handleBan = (flag) => {
+    api.post("/admin/users/ban", { id: flag.userId })
+      .then(() => handleDelete(flag.id))
+      .catch((err) => alert(err.message || "Erreur lors du bannissement"))
+      .finally(() => setConfirmBan(null));
   };
 
   return (
@@ -107,12 +136,15 @@ export default function AdminModeration() {
           <option value="all">Tous les signalements</option>
           <option value="danger">Critique</option>
           <option value="warning">Modéré</option>
+          <option value="minor">Mineur</option>
         </select>
         <span className={styles.filterCount}>{displayed.length} signalement(s)</span>
       </div>
 
       {/* ── Liste ── */}
-      {displayed.length === 0 ? (
+      {loading ? (
+        <div className={styles.empty}>Chargement...</div>
+      ) : displayed.length === 0 ? (
         <div className={styles.empty}>
           <div className={styles.emptyIcon}>{banIcon}</div>
           Aucun contenu signalé. La plateforme est propre !
@@ -131,8 +163,8 @@ export default function AdminModeration() {
                   </div>
                 </div>
                 <div className={styles.badgeGroup}>
-                  <span className={`${styles.badge} ${flag.severity === "danger" ? styles.badgeDanger : styles.badgeWarning}`}>
-                    {flag.severity === "danger" ? "⚠ Critique" : "~ Modéré"}
+                  <span className={`${styles.badge} ${flag.severity === "danger" ? styles.badgeDanger : flag.severity === "warning" ? styles.badgeWarning : styles.badgeMinor}`}>
+                    {flag.severity === "danger" ? "⚠ Critique" : flag.severity === "warning" ? "~ Modéré" : "· Mineur"}
                   </span>
                   <span className={`${styles.badge} ${styles.badgeAI}`}>
                     {aiIcon} IA
@@ -156,7 +188,7 @@ export default function AdminModeration() {
               <div className={styles.context}>
                 {linkIcon}
                 Outil concerné :&nbsp;
-                <a href={`/tools/${flag.toolSlug}`} className={styles.contextLink}>
+                <a href={`/tool/${encodeURIComponent(flag.tool)}`} className={styles.contextLink}>
                   {flag.tool}
                 </a>
               </div>
@@ -172,6 +204,7 @@ export default function AdminModeration() {
                 <button
                   className={styles.btnBan}
                   onClick={() => setConfirmBan(confirmBan === flag.id ? null : flag.id)}
+                  disabled={!flag.userId}
                 >
                   {banIcon} Bannir l'auteur
                 </button>
@@ -181,7 +214,7 @@ export default function AdminModeration() {
               {confirmBan === flag.id && (
                 <BanConfirmForm
                   userName={`@${flag.user}`}
-                  onConfirm={() => handleBan(flag.id)}
+                  onConfirm={() => handleBan(flag)}
                   onCancel={() => setConfirmBan(null)}
                 />
               )}

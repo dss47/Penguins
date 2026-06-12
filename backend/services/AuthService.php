@@ -58,7 +58,8 @@ final class AuthService
 		}
 
 		if (($user['status'] ?? 'active') !== 'active') {
-			return false;
+            $statusMsg = $user['status'] === 'suspended' ? 'Ce compte a été suspendu par un administrateur.' : 'Ce compte n\'est plus actif.';
+            throw new Exception($statusMsg);
 		}
 
 		$token = $this->jwtService->generateToken([

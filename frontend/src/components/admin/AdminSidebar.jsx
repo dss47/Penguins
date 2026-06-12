@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import styles from "../../style/admin/adminSidebar.module.css";
 import { useAuth } from "../../context/AuthContext";
+import api from "../../services/api";
 
 // ── Icônes SVG inline (pas de dépendance Lucide dans la sidebar) ──
 const icons = {
@@ -67,26 +68,36 @@ const icons = {
   )
 };
 
-// ── Navigation items ──────────────────────────────────────────────
-const ADMIN_NAV_ITEMS = [
-  { id: "dashboard",   label: "Tableau de bord", icon: "dashboard" },
-  { id: "users",       label: "Utilisateurs",    icon: "users" },
-  { id: "suggestions", label: "Validations",     icon: "suggestions", badge: 5, badgeVariant: "warning" },
-  { id: "moderation",  label: "Modération",      icon: "moderation",  badge: 3, badgeVariant: "danger" },
-  { id: "add",         label: "Ajouter un outil",icon: "add" },
-];
-
-const MANAGER_NAV_ITEMS = [
-  { id: "users",       label: "Utilisateurs",    icon: "users" },
-  { id: "suggestions", label: "Validations",     icon: "suggestions", badge: 5, badgeVariant: "warning" },
-  { id: "moderation",  label: "Modération",      icon: "moderation",  badge: 3, badgeVariant: "danger" },
-];
-
 /**
  * AdminSidebar
  */
 export default function AdminSidebar() {
   const { isAdmin, logout } = useAuth();
+  const [pendingSuggestions, setPendingSuggestions] = useState(0);
+  const [flaggedReviews, setFlaggedReviews] = useState(0);
+
+  useEffect(() => {
+    api.get("/admin/dashboard").then((res) => {
+      const stats = res?.data?.stats || {};
+      setPendingSuggestions(stats.pending_manager_suggestions || 0);
+      setFlaggedReviews(stats.flagged_reviews || 0);
+    }).catch(() => {});
+  }, []);
+
+  const ADMIN_NAV_ITEMS = [
+    { id: "dashboard",   label: "Tableau de bord", icon: "dashboard" },
+    { id: "users",       label: "Utilisateurs",    icon: "users" },
+    { id: "suggestions", label: "Validations",     icon: "suggestions", badge: pendingSuggestions, badgeVariant: "warning" },
+    { id: "moderation",  label: "Modération",      icon: "moderation",  badge: flaggedReviews, badgeVariant: "danger" },
+    { id: "add",         label: "Ajouter un outil",icon: "add" },
+  ];
+
+  const MANAGER_NAV_ITEMS = [
+    { id: "users",       label: "Utilisateurs",    icon: "users" },
+    { id: "suggestions", label: "Validations",     icon: "suggestions", badge: pendingSuggestions, badgeVariant: "warning" },
+    { id: "moderation",  label: "Modération",      icon: "moderation",  badge: flaggedReviews, badgeVariant: "danger" },
+  ];
+
   const navItems = isAdmin ? ADMIN_NAV_ITEMS : MANAGER_NAV_ITEMS;
   const [theme, setTheme] = useState(
       localStorage.getItem('theme') ||
@@ -133,7 +144,7 @@ export default function AdminSidebar() {
           >
             {icons[item.icon]}
             {item.label}
-            {item.badge && (
+            {item.badge > 0 && (
               <span
                 className={`${styles.badge} ${
                   item.badgeVariant === "danger"

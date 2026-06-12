@@ -1,13 +1,25 @@
+import { useState } from "react";
 import styles from "../../style/toolDetails/tooldetailsheader.module.css"
-import { Star, Heart, Share2 } from "lucide-react";
+import { Star, Heart, Bookmark } from "lucide-react";
 
-export default function ToolDetailsHeader({Tool}) {
+export default function ToolDetailsHeader({ Tool, isFavorited, onToggleFavorite, onOpenShelfPicker }) {
     const getInitials = (name) => name.slice(0, 2).toUpperCase();
+    const [hearted, setHearted] = useState(isFavorited);
+
+    const handleHeart = () => {
+        const next = !hearted;
+        setHearted(next);
+        onToggleFavorite(Tool.id, next);
+    };
 
     return (
         <div className={styles.hero}>
             <div className={styles.heroIcon}>
-                <span className={styles.initials}>{getInitials(Tool.name)}</span>
+                {Tool.icon ? (
+                    <img src={Tool.icon} alt={Tool.name} className={styles.heroImg} />
+                ) : (
+                    <span className={styles.initials}>{getInitials(Tool.name)}</span>
+                )}
             </div>
             <div className={styles.heroInfo}>
                 <h1 className={styles.heroTitle}>{Tool.name}</h1>
@@ -18,11 +30,19 @@ export default function ToolDetailsHeader({Tool}) {
                         <strong>{Tool.global_rating}</strong>
                         <span>/ 5</span>
                     </div>
-                    <button className={styles.actionIconBtn} title="Ajouter aux favoris">
-                        <Heart size={15} />
+                    <button
+                        className={`${styles.actionIconBtn} ${hearted ? styles.heartActive : ""}`}
+                        title="Ajouter aux favoris"
+                        onClick={handleHeart}
+                    >
+                        <Heart size={15} fill={hearted ? "#ec4899" : "none"} />
                     </button>
-                    <button className={styles.actionIconBtn} title="Partager">
-                        <Share2 size={15} />
+                    <button
+                        className={styles.actionIconBtn}
+                        title="Ajouter à une collection"
+                        onClick={() => onOpenShelfPicker(Tool.id)}
+                    >
+                        <Bookmark size={15} />
                     </button>
                 </div>
             </div>

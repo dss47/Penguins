@@ -37,6 +37,16 @@ final class Model extends BaseModel
 
         return $model ?: null;
     }
+
+    public function all(): array
+    {
+        $sql = 'SELECT * FROM models ORDER BY name ASC';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
     public function allByProviderId(int $providerId): array
     {
         $sql = 'SELECT * FROM models WHERE provider_id = ? AND status = \'active\' ORDER BY name ASC';

@@ -24,6 +24,11 @@ final class Shelf extends BaseModel
         return $shelf ?: null;
     }
 
+    public function findByUserId(int $userId): array
+    {
+        return $this->allByUserId($userId);
+    }
+
     public function create(array $data): int
     {
         $sql = 'INSERT INTO shelves (
@@ -44,5 +49,25 @@ final class Shelf extends BaseModel
         ]);
 
         return (int) $this->db->lastInsertId();
+    }
+
+    public function update(int $id, array $data): bool
+    {
+        $sql = 'UPDATE shelves SET name = :name, description = :description WHERE id = :id';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':name'        => $data['name'],
+            ':description' => $data['description'] ?? null,
+            ':id'          => $id,
+        ]);
+    }
+
+    public function delete(int $id): bool
+    {
+        $stmt = $this->db->prepare('DELETE FROM shelf_items WHERE shelf_id = ?');
+        $stmt->execute([$id]);
+
+        $stmt = $this->db->prepare('DELETE FROM shelves WHERE id = ?');
+        return $stmt->execute([$id]);
     }
 }

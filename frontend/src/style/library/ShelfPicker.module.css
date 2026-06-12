@@ -1,0 +1,169 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+}
+
+.dialog {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    width: 100%;
+    max-width: 440px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: scaleIn 0.25s cubic-bezier(.22, 1, .36, 1);
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 24px 0;
+}
+
+.header h3 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-head);
+    margin: 0;
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    display: flex;
+    transition: color 0.2s;
+}
+
+.closeBtn:hover {
+    color: var(--text-head);
+}
+
+.list {
+    padding: 12px 24px 24px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border-radius: 10px;
+    transition: background 0.15s;
+}
+
+.item:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.itemInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.itemIcon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.itemName {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-head);
+    margin: 0 0 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.itemCount {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.toggleBtn {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--accent-1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.toggleBtn:hover {
+    background: rgba(6, 182, 212, 0.1);
+    border-color: var(--accent-1);
+}
+
+.toggleActive {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.toggleActive:hover {
+    background: rgba(239, 68, 68, 0.18);
+    border-color: #ef4444;
+}
+
+.empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 2rem 0;
+    font-size: 0.88rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ─── Light Mode ──────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .dialog {
+        background: #ffffff;
+    }
+    :root:not([data-theme="dark"]) .item:hover {
+        background: #f4f4f5;
+    }
+}
+
+:root[data-theme="light"] .dialog,
+.light .dialog {
+    background: #ffffff;
+}
+
+:root[data-theme="light"] .item:hover,
+.light .item:hover {
+    background: #f4f4f5;
+}

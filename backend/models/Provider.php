@@ -68,6 +68,15 @@ final class Provider extends BaseModel
             ':id'     => $id
         ]);
     }
+    public function all(): array
+    {
+        $sql = 'SELECT * FROM providers ORDER BY name ASC';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
     public function allActive(): array
     {
         $sql = 'SELECT id, name, website_url FROM providers WHERE status = \'active\' ORDER BY name ASC';

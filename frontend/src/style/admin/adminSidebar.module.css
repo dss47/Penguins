@@ -5,17 +5,14 @@
 
 /* ── Sidebar conteneur ───────────────────────────────────── */
 .sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: var(--sidebar-width);
-  height: 100vh;
+  min-height: 100vh;
   background-color: var(--bg-card);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  z-index: 100;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 /* ── Logo / En-tête ──────────────────────────────────────── */

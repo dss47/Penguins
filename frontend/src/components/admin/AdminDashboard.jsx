@@ -71,6 +71,8 @@ const categoryIcon = (
 export default function AdminDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [categorySearch, setCategorySearch] = useState("");
+  const [categorySort, setCategorySort] = useState("desc");
 
   useEffect(() => {
     api.get("/admin/dashboard")
@@ -110,12 +112,15 @@ export default function AdminDashboard() {
   }));
 
   const maxCount = Math.max(...data.categories.map(c => c.tool_count), 1);
-  const categoryList = data.categories.map((cat, index) => ({
-    id: index,
-    name: cat.name,
-    count: cat.tool_count,
-    max: maxCount
-  })).sort((a, b) => b.count - a.count);
+  const categoryList = data.categories
+    .filter(cat => cat.name.toLowerCase().includes(categorySearch.toLowerCase()))
+    .map((cat, index) => ({
+      id: index,
+      name: cat.name,
+      count: cat.tool_count,
+      max: maxCount
+    }))
+    .sort((a, b) => categorySort === "desc" ? b.count - a.count : a.count - b.count);
 
   return (
     <div>
@@ -176,9 +181,36 @@ export default function AdminDashboard() {
             {categoryIcon}
             Outils par catégorie
           </div>
+          
+          <div className={styles.categoryControls}>
+            <div className={styles.searchContainer}>
+              <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input 
+                type="text" 
+                className={styles.searchInput} 
+                placeholder="Rechercher une catégorie..." 
+                value={categorySearch}
+                onChange={(e) => setCategorySearch(e.target.value)}
+              />
+            </div>
+            <button 
+              className={styles.sortBtn} 
+              onClick={() => setCategorySort(categorySort === "desc" ? "asc" : "desc")}
+              title="Trier par nombre d'outils"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 14, height: 14 }}>
+                <path d="M7 15l5 5 5-5" />
+                <path d="M7 9l5-5 5 5" />
+              </svg>
+            </button>
+          </div>
+
           <div className={styles.categoryList}>
             {categoryList.length === 0 ? (
-              <div style={{ color: "var(--ts)", fontSize: "0.9rem" }}>Aucune catégorie.</div>
+              <div style={{ color: "var(--ts)", fontSize: "0.9rem", padding: "1rem 0" }}>Aucune catégorie trouvée.</div>
             ) : (
               categoryList.map((cat) => (
                 <div key={cat.id} className={styles.categoryRow}>

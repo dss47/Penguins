@@ -26,14 +26,12 @@ final class Suggestion extends BaseModel
     public function create(array $data): int
     {
         $sql = 'INSERT INTO suggestions (
-                    user_id, category_id, provider_id, model_id, name, logo_url, website_url, 
-                    description, proposed_provider_name, proposed_model_name, 
-                    proposed_new_features, existing_feature_ids, release_date, 
+                    user_id, category_id, provider_id, model_id, model_ids, name, logo_url, website_url, 
+                    description, existing_feature_ids, release_date, 
                     why_this_tool, status, rejection_reason, ai_moderation_notes
                 ) VALUES (
-                    :user_id, :category_id, :provider_id, :model_id, :name, :logo_url, :website_url, 
-                    :description, :proposed_provider_name, :proposed_model_name, 
-                    :proposed_new_features, :existing_feature_ids, :release_date, 
+                    :user_id, :category_id, :provider_id, :model_id, :model_ids, :name, :logo_url, :website_url, 
+                    :description, :existing_feature_ids, :release_date, 
                     :why_this_tool, :status, :rejection_reason, :ai_moderation_notes
                 )';
 
@@ -43,17 +41,15 @@ final class Suggestion extends BaseModel
             ':category_id'             => (int) $data['category_id'],
             ':provider_id'             => $data['provider_id'] ?? null,
             ':model_id'                => $data['model_id'] ?? null,
+            ':model_ids'               => $data['model_ids'] ?? null,
             ':name'                    => $data['name'],
             ':logo_url'                => $data['logo_url'] ?? null,
             ':website_url'             => $data['website_url'] ?? null,
             ':description'             => $data['description'] ?? null,
-            ':proposed_provider_name'  => $data['proposed_provider_name'] ?? null,
-            ':proposed_model_name'     => $data['proposed_model_name'] ?? null,
-            ':proposed_new_features'   => $data['proposed_new_features'] ?? null,
             ':existing_feature_ids'    => $data['existing_feature_ids'] ?? null,
             ':release_date'            => $data['release_date'] ?? null,
             ':why_this_tool'           => $data['why_this_tool'] ?? null,
-            ':status'                  => $data['status'] ?? 'pending_ai',
+            ':status'                  => $data['status'] ?? 'waiting_ai_analysis',
             ':rejection_reason'        => $data['rejection_reason'] ?? null,
             ':ai_moderation_notes'     => $data['ai_moderation_notes'] ?? null,
         ]);
@@ -61,14 +57,15 @@ final class Suggestion extends BaseModel
         return (int) $this->db->lastInsertId();
     }
 
-    public function updateStatus(int $id, string $status, ?string $rejectionReason = null): bool
+    public function updateStatus(int $id, string $status, ?string $rejectionReason = null, ?int $toolId = null): bool
     {
-        $sql = 'UPDATE suggestions SET status = :status, rejection_reason = :rejection_reason WHERE id = :id';
+        $sql = 'UPDATE suggestions SET status = :status, rejection_reason = :rejection_reason, tool_id = :tool_id WHERE id = :id';
         $stmt = $this->db->prepare($sql);
         
         return $stmt->execute([
             ':status'           => $status,
             ':rejection_reason' => $rejectionReason,
+            ':tool_id'          => $toolId,
             ':id'               => $id
         ]);
     }
@@ -79,10 +76,15 @@ final class Suggestion extends BaseModel
                     status = :status, 
                     rejection_reason = :rejection_reason,
                     ai_moderation_notes = :ai_moderation_notes,
-                    category_id = :category_id,
-                    provider_id = :provider_id,
-                    model_id = :model_id,
-                    existing_feature_ids = :existing_feature_ids
+                    fixed_name = :fixed_name,
+                    fixed_url = :fixed_url,
+                    fixed_category_id = :fixed_category_id,
+                    fixed_provider_id = :fixed_provider_id,
+                    fixed_model_id = :fixed_model_id,
+                    fixed_model_ids = :fixed_model_ids,
+                    fixed_feature_ids = :fixed_feature_ids,
+                    fixed_release_date = :fixed_release_date,
+                    ai_global_rating = :ai_global_rating
                 WHERE id = :id';
                 
         $stmt = $this->db->prepare($sql);
@@ -91,14 +93,19 @@ final class Suggestion extends BaseModel
             ':status'               => $aiData['status'],
             ':rejection_reason'     => $aiData['rejection_reason'] ?? null,
             ':ai_moderation_notes'  => $aiData['ai_moderation_notes'] ?? null,
-            ':category_id'          => $aiData['fixed_category_id'] ?? null,
-            ':provider_id'          => $aiData['fixed_provider_id'] ?? null,
-            ':model_id'             => $aiData['fixed_model_id'] ?? null,
-            // Convert the array of feature IDs [1, 5, 8] into a string "1,5,8" to save in the DB
-            ':existing_feature_ids' => isset($aiData['fixed_feature_ids']) ? implode(',', $aiData['fixed_feature_ids']) : null,
+            ':fixed_name'           => $aiData['fixed_name'] ?? null,
+            ':fixed_url'            => $aiData['fixed_url'] ?? null,
+            ':fixed_category_id'    => $aiData['fixed_category_id'] ?? null,
+            ':fixed_provider_id'    => $aiData['fixed_provider_id'] ?? null,
+            ':fixed_model_id'       => $aiData['fixed_model_id'] ?? null,
+            ':fixed_model_ids'      => isset($aiData['fixed_model_ids']) ? (is_array($aiData['fixed_model_ids']) ? json_encode($aiData['fixed_model_ids']) : $aiData['fixed_model_ids']) : null,
+            ':fixed_feature_ids'    => isset($aiData['fixed_feature_ids']) ? (is_array($aiData['fixed_feature_ids']) ? implode(',', $aiData['fixed_feature_ids']) : $aiData['fixed_feature_ids']) : null,
+            ':fixed_release_date'   => $aiData['fixed_release_date'] ?? null,
+            ':ai_global_rating'     => $aiData['global_rating'] ?? null,
             ':id'                   => $id
         ]);
     }
+
     public function getAdminHistory(int $adminUserId): array
     {
         $sql = 'SELECT * FROM suggestions 
@@ -109,5 +116,25 @@ final class Suggestion extends BaseModel
         $stmt->execute([':admin_id' => $adminUserId]);
         
         return $stmt->fetchAll();
+    }
+
+    public function update(int $id, array $data): bool
+    {
+        $allowedFields = ['name', 'website_url', 'description', 'category_id', 'provider_id',
+                          'model_ids', 'existing_feature_ids', 'release_date',
+                          'fixed_name', 'fixed_url', 'fixed_description', 'fixed_category_id', 'fixed_provider_id',
+                          'fixed_model_ids', 'fixed_feature_ids', 'fixed_release_date'];
+        $sets = [];
+        $params = [':id' => $id];
+        foreach ($data as $field => $value) {
+            if (in_array($field, $allowedFields, true)) {
+                $sets[] = "`{$field}` = :{$field}";
+                $params[":{$field}"] = $value;
+            }
+        }
+        if (empty($sets)) return false;
+        $sql = 'UPDATE suggestions SET ' . implode(', ', $sets) . ' WHERE id = :id';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
     }
 }

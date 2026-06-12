@@ -9,7 +9,7 @@ final class AiTool extends BaseModel
         $sql = 'SELECT * FROM ai_tools ORDER BY created_at DESC';
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll() ?: null ;
+        return $stmt->fetchAll() ?: [];
     }
 
     public function findById(int $toolId): ?array

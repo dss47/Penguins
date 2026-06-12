@@ -4,11 +4,83 @@ declare(strict_types=1);
 
 final class ToolService
 {
-    public function __construct(private readonly AiTool $toolModel = new AiTool()) {}
+    public function __construct(
+        private readonly AiTool $toolModel = new AiTool(),
+        private readonly ToolFeatures $toolFeatures = new ToolFeatures()
+    ) {}
 
     public function listTools(): array
     {
         return $this->toolModel->all() ?? [];
+    }
+
+    public function listPublicTools(): array
+    {
+        $db = db_connection();
+        $sql = "SELECT t.*,
+                       c.name AS category_name,
+                       p.name AS provider_name
+                FROM ai_tools t
+                LEFT JOIN categories c ON t.category_id = c.id
+                LEFT JOIN providers p ON t.provider_id = p.id
+                WHERE t.status = 'active'
+                ORDER BY t.created_at DESC";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        $tools = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+        foreach ($tools as &$tool) {
+            $features = $this->toolFeatures->findFeaturesByToolId((int) $tool['id']);
+            $tool['features'] = array_column($features, 'name');
+        }
+
+        return $tools;
+    }
+
+    public function getPublicToolByName(string $name): array
+    {
+        $db = db_connection();
+        $sql = "SELECT t.*,
+                       c.name AS category_name,
+                       p.name AS provider_name,
+                       uc.name AS created_by_name,
+                       uv.name AS validated_by_name
+                FROM ai_tools t
+                LEFT JOIN categories c ON t.category_id = c.id
+                LEFT JOIN providers p ON t.provider_id = p.id
+                LEFT JOIN users uc ON t.created_by = uc.id
+                LEFT JOIN users uv ON t.validated_by = uv.id
+                WHERE t.name = ? AND t.status = 'active'
+                LIMIT 1";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$name]);
+        $tool = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$tool) {
+            return ['success' => false, 'error' => 'Outil introuvable.'];
+        }
+
+        $features = $this->toolFeatures->findFeaturesByToolId((int) $tool['id']);
+        $tool['features'] = array_column($features, 'name');
+
+        $tm = new ToolModel();
+        $models = $tm->findModelsByToolId((int) $tool['id']);
+        $tool['models'] = array_column($models, 'name');
+
+        $tool['similar_tools'] = $this->findSimilarTools((int) $tool['category_id'], (int) $tool['id']);
+
+        return ['success' => true, 'data' => $tool];
+    }
+
+    private function findSimilarTools(int $categoryId, int $excludeId, int $limit = 6): array
+    {
+        $db = db_connection();
+        $sql = "SELECT name, logo_url FROM ai_tools
+                WHERE category_id = ? AND id != ? AND status = 'active'
+                LIMIT ?";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$categoryId, $excludeId, $limit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
     public function validateToolData(array $payload): array
@@ -33,7 +105,8 @@ final class ToolService
 
         if (!empty($payload['logo_url'])) {
             $isUrl = filter_var($payload['logo_url'], FILTER_VALIDATE_URL);
-            $isLocalPath = str_starts_with($payload['logo_url'], '/uploads/');
+            $isLocalPath = str_starts_with($payload['logo_url'], '/public/uploads/')
+                || str_starts_with($payload['logo_url'], '/uploads/');
             
             if (!$isUrl && !$isLocalPath) {
                 $errors['logo_url'] = 'Une URL du logo valide ou un chemin local est requis.';

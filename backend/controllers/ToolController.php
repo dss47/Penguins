@@ -10,6 +10,10 @@ final class ToolController
 
     public function index(): array
     {
-        return Response::success($this->toolService->listTools());
+        $name = $_GET['name'] ?? null;
+        if ($name) {
+            return $this->toolService->getPublicToolByName($name);
+        }
+        return Response::success($this->toolService->listPublicTools());
     }
 }

@@ -1,55 +1,77 @@
 import { useState, useEffect } from "react";
+import { Eye } from "lucide-react";
 import style from "../../style/Validations/table.module.css"
-import { faEye } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
-import { faDeleteLeft } from '@fortawesome/free-solid-svg-icons'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
-import { faXmark } from '@fortawesome/free-solid-svg-icons'
-import { faClock } from '@fortawesome/free-regular-svg-icons'
 
-function Main({ searchQuery = "", filterStatus = "tous", sortOption = "Plus récent" }){
-  const outils = [
-    { id: 1, nom: 'ScriptAI Pro', url: 'scriptai.pro', categorie: 'Génération contenu', soumis: 'Karim A.', date: '12 mai 2025', statut: 'attente', couleur: '#6c3fd4' },
-    { id: 2, nom: 'DevAssist AI', url: 'devassist.io', categorie: 'Développement', soumis: 'Sara M.', date: '10 mai 2025', statut: 'attente', couleur: '#1a7a4a' },
-    { id: 3, nom: 'PixelGen', url: 'pixelgen.app', categorie: 'Image & Design', soumis: 'Yassir B.', date: '9 mai 2025', statut: 'modifications', couleur: '#1a5fa8' },
-    { id: 4, nom: 'DataMind', url: 'datamind.ai', categorie: 'Analyse de données', soumis: 'Nadia K.', date: '7 mai 2025', statut: 'accepte', couleur: '#a85e1a' },
-    { id: 5, nom: 'ChatFlow Pro', url: 'chatflow.io', categorie: 'Chatbots & NLP', soumis: 'Omar L.', date: '5 mai 2025', statut: 'accepte', couleur: '#1a7a4a' },
-    { id: 6, nom: 'AutoBot X', url: 'autobotx.net', categorie: 'Automatisation', soumis: 'Ines T.', date: '3 mai 2025', statut: 'rejete', couleur: '#a81a1a' },
-    { id: 7, nom: 'VoiceClone AI', url: 'voiceclone.ai', categorie: 'Audio & Voix', soumis: 'Mehdi R.', date: "Aujourd'hui", statut: 'attente', couleur: '#1a5fa8' },
-    { id: 8, nom: 'SmartSEO', url: 'smartseo.com', categorie: 'Marketing', soumis: 'Ali C.', date: '1 mai 2025', statut: 'attente', couleur: '#1a5fa8' },
-    { id: 9, nom: 'CodeWizard', url: 'codewizard.app', categorie: 'Développement', soumis: 'Hassan N.', date: '30 avr 2025', statut: 'accepte', couleur: '#6c3fd4' },
-    { id: 10, nom: 'Visionary', url: 'visionary.ai', categorie: 'Image & Design', soumis: 'Salma G.', date: '28 avr 2025', statut: 'rejete', couleur: '#a85e1a' },
-    { id: 11, nom: 'DataCrunch', url: 'datacrunch.io', categorie: 'Analyse de données', soumis: 'Tarik O.', date: '25 avr 2025', statut: 'attente', couleur: '#1a7a4a' },
-    { id: 12, nom: 'WriteGenius', url: 'writgenius.com', categorie: 'Génération contenu', soumis: 'Fatima Z.', date: '22 avr 2025', statut: 'accepte', couleur: '#6c3fd4' },
-    { id: 13, nom: 'SoundScape', url: 'soundscape.net', categorie: 'Audio & Voix', soumis: 'Mounir M.', date: '20 avr 2025', statut: 'attente', couleur: '#1a5fa8' },
-    { id: 14, nom: 'LogicBot', url: 'logicbot.ai', categorie: 'Chatbots & NLP', soumis: 'Lina E.', date: '18 avr 2025', statut: 'modifications', couleur: '#1a7a4a' },
-    { id: 15, nom: 'WorkflowMax', url: 'workflowmax.io', categorie: 'Automatisation', soumis: 'Samir B.', date: '15 avr 2025', statut: 'accepte', couleur: '#a81a1a' },
-    { id: 16, nom: 'EcoBot', url: 'ecobot.green', categorie: 'Environnement', soumis: 'Yassir B.', date: '12 avr 2025', statut: 'attente', couleur: '#1a7a4a' },
-    { id: 17, nom: 'FinancePro', url: 'financepro.com', categorie: 'Finance', soumis: 'Nadia K.', date: '10 avr 2025', statut: 'accepte', couleur: '#a85e1a' },
-    { id: 18, nom: 'HealthAI', url: 'healthai.org', categorie: 'Santé', soumis: 'Omar L.', date: '8 avr 2025', statut: 'rejete', couleur: '#a81a1a' },
-    { id: 19, nom: 'EduLearn', url: 'edulearn.edu', categorie: 'Education', soumis: 'Ines T.', date: '5 avr 2025', statut: 'attente', couleur: '#1a5fa8' }
-  ];
-  
-  let filteredOutils = outils.filter(outil => {
-    if (filterStatus !== "tous" && outil.statut !== filterStatus) {
-      return false;
+const API_BASE = "http://localhost:8000";
+
+const STATUS_MAP = {
+  attente: ["waiting_ai_analysis", "ai_approved_pending_review", "waiting_manual_validation"],
+  accepte: ["published_to_catalog"],
+  rejete: ["ai_rejected", "rejected_by_admin"],
+};
+
+const BADGE_CLASS = {
+  waiting_ai_analysis: style.badgeAttente,
+  ai_approved_pending_review: style.badgeAttente,
+  waiting_manual_validation: style.badgeAttente,
+  published_to_catalog: style.badgeAccepte,
+  ai_rejected: style.badgeRejete,
+  rejected_by_admin: style.badgeRejete,
+};
+
+const BADGE_LABEL = {
+  waiting_ai_analysis: "En attente",
+  ai_approved_pending_review: "Approuvé IA",
+  waiting_manual_validation: "Validation req.",
+  published_to_catalog: "Acceptée",
+  ai_rejected: "Rejetée",
+  rejected_by_admin: "Rejetée",
+};
+
+const LOGO_COLORS = [
+  "#6c3fd4", "#1a7a4a", "#1a5fa8", "#a85e1a", "#a81a1a", "#0d9488",
+  "#b45309", "#4f46e5", "#059669", "#dc2626", "#7c3aed", "#0284c7",
+];
+
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  return new Date(dateStr).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function getColor(name) {
+  let hash = 0;
+  for (let i = 0; i < (name || "").length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return LOGO_COLORS[Math.abs(hash) % LOGO_COLORS.length];
+}
+
+function Main({ suggestions = [], loading = false, searchQuery = "", filterStatus = "tous", sortOption = "Plus récent", onView }) {
+  let filteredOutils = suggestions.filter((s) => {
+    if (filterStatus !== "tous") {
+      const validStatuses = STATUS_MAP[filterStatus] || [];
+      if (!validStatuses.includes(s.status)) return false;
     }
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      if (!outil.nom.toLowerCase().includes(q) && 
-          !outil.soumis.toLowerCase().includes(q) &&
-          !outil.categorie.toLowerCase().includes(q)) {
-        return false;
-      }
+      const name = (s.name || "").toLowerCase();
+      const author = (s.author_name || "").toLowerCase();
+      const category = (s.category_name || "").toLowerCase();
+      if (!name.includes(q) && !author.includes(q) && !category.includes(q)) return false;
     }
     return true;
   });
 
   if (sortOption === "A → Z") {
-    filteredOutils.sort((a, b) => a.nom.localeCompare(b.nom));
+    filteredOutils.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
   } else if (sortOption === "Plus ancien") {
     filteredOutils.reverse();
+  } else {
+    filteredOutils.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,72 +88,69 @@ function Main({ searchQuery = "", filterStatus = "tous", sortOption = "Plus réc
     currentPage * itemsPerPage
   );
 
-  const getStatutBadge = (statut) => {
-    switch (statut) {
-      case 'attente':      
-        return <span className={`${style.badge} ${style.badgeAttente}`}><FontAwesomeIcon icon={faClock} /> En attente</span>
-      case 'accepte':     
-        return <span className={`${style.badge} ${style.badgeAccepte}`}><FontAwesomeIcon icon={faCheck} /> Acceptée</span>
-      case 'rejete':      
-        return <span className={`${style.badge} ${style.badgeRejete}`}><FontAwesomeIcon icon={faTrash} /> Rejetée</span>
-      default:            
-        return null
-    }
-  }
-
-  const getActions = (statut) => {
-    if (statut === 'accepte') return <span className={style.actionPublie}><FontAwesomeIcon icon={faCheck} /> Publié</span>
-    if (statut === 'rejete')  return <span className={style.actionRejete}><FontAwesomeIcon icon={faXmark} /> Rejeté</span>
+  if (loading) {
     return (
-      <>
-        <button className={style.btnAccepter}><FontAwesomeIcon icon={faCheck} /> Accepter</button>
-        <button className={style.btnRejeter}><FontAwesomeIcon icon={faDeleteLeft} /></button>
-      </>
-    )
+      <div className={style.tableContainer}>
+        <div className={style.emptyState}>Chargement des suggestions...</div>
+      </div>
+    );
   }
 
   return(
     <>
       <div className={style.tableContainer}>
-        <table className={style.tableOutils}>
-          <thead>
-            <tr>
-              <th>Outil</th>
-              <th>Catégorie</th>
-              <th>Soumis par</th>
-              <th>Date</th>
-              <th>Statut</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentData.map(outil => (
-              <tr key={outil.id}>
-                <td>
-                  <div className={style.outilInfo}>
-                    <div className={style.outilLogo} style={{ background: outil.couleur }}>
-                      {outil.nom[0]}
-                    </div>
-                    <div>
-                      <div className={style.outilNom}>{outil.nom}</div>
-                      <div className={style.outilUrl}>{outil.url}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className={style.tdMuted}>{outil.categorie}</td>
-                <td className={style.tdMuted}>{outil.soumis}</td>
-                <td className={style.tdMuted}>{outil.date}</td>
-                <td>{getStatutBadge(outil.statut)}</td>
-                <td>
-                  <div className={style.actions}>
-                    <button className={style.btnVoir}><FontAwesomeIcon icon={faEye} /></button>
-                    {getActions(outil.statut)}
-                  </div>
-                </td>
+        {currentData.length === 0 ? (
+          <div className={style.emptyState}>Aucune suggestion trouvée.</div>
+        ) : (
+          <table className={style.tableOutils}>
+            <thead>
+              <tr>
+                <th>Outil</th>
+                <th>Catégorie</th>
+                <th>Soumis par</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentData.map((outil) => (
+                <tr key={outil.id}>
+                  <td>
+                    <div className={style.outilInfo}>
+                      {outil.logo_url ? (
+                        <img src={outil.logo_url.startsWith("http") ? outil.logo_url : API_BASE + outil.logo_url} alt="" className={style.outilLogo} />
+                      ) : (
+                        <div className={style.outilLogo} style={{ background: getColor(outil.name) }}>
+                          {(outil.name || "?").charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div>
+                        <div className={style.outilNom}>{outil.name}</div>
+                        <div className={style.outilUrl}>{outil.website_url || "-"}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className={style.tdMuted}>{outil.category_name || "-"}</td>
+                  <td className={style.tdMuted}>@{outil.author_name || "inconnu"}</td>
+                  <td className={style.tdMuted}>{formatDate(outil.created_at)}</td>
+                  <td>
+                    <span className={`${style.badge} ${BADGE_CLASS[outil.status] || style.badgeAttente}`}>
+                      {BADGE_LABEL[outil.status] || outil.status}
+                    </span>
+                  </td>
+                  <td>
+                    <div className={style.actions}>
+                      <button className={style.btnVoir} onClick={() => onView(outil)}>
+                        <Eye size={14} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
         
         {totalPages > 1 && (
           <div className={style.paginationContainer}>

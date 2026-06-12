@@ -2,16 +2,84 @@ import styles from "../style/Pages/tooldetailspage.module.css"
 import ToolDetailsHeader from "../components/toolDetails/toolDetailsHeader";
 import ToolDetailsMain from "../components/toolDetails/toolDetailsMain";
 import ToolDetailsSide from "../components/toolDetails/toolDetailsSide";
-import { useParams } from "react-router-dom";
-import { TOOLS_DATA } from "../data/tools.js";
+import { useParams, useNavigate } from "react-router-dom";
 import SimilarTools from "../components/toolDetails/SimilarTools";
+import { useEffect, useState, useCallback } from "react";
+import { Loader2 } from "lucide-react";
+import api, { API_BASE } from "../services/api";
+import ShelfPicker from "../components/library/ShelfPicker";
 
 const ToolDetailsPage = () => {
     const { name } = useParams();
-    const tool = TOOLS_DATA.find((t) => t.name === name);
+    const navigate = useNavigate();
+    const [tool, setTool] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+    const [isFavorited, setIsFavorited] = useState(false);
+    const [pickerToolId, setPickerToolId] = useState(null);
 
-    if (!tool) {
-        return <div>Tool not found</div>;
+    useEffect(() => {
+        setLoading(true);
+        setError(false);
+
+        const fetchTool = api.get("/tools?name=" + encodeURIComponent(name));
+        const fetchFavs = api.get("/favorites").catch(() => ({ data: [] }));
+
+        Promise.all([fetchTool, fetchFavs])
+            .then(([toolRes, favRes]) => {
+                const t = toolRes?.data;
+                if (!t) {
+                    setError(true);
+                    return;
+                }
+                t.icon = t.logo_url?.startsWith("/") ? API_BASE + t.logo_url : t.logo_url;
+                t.provider = t.provider_name;
+                t.category = t.category_name;
+                t.rating = t.global_rating;
+                t.created_by = t.created_by_name;
+                t.validated_by = t.validated_by_name;
+                if (t.similar_tools) {
+                    t.similar_tools = t.similar_tools.map(st => ({
+                        ...st,
+                        logo_url: st.logo_url?.startsWith("/") ? API_BASE + st.logo_url : st.logo_url,
+                    }));
+                }
+                setTool(t);
+
+                const favs = favRes?.data || [];
+                setIsFavorited(favs.some(f => Number(f.id) === Number(t.id)));
+            })
+            .catch(() => setError(true))
+            .finally(() => setLoading(false));
+    }, [name]);
+
+    const handleToggleFavorite = useCallback((toolId, next) => {
+        api.post("/favorites/toggle", { tool_id: toolId }).catch(() => {});
+        setIsFavorited(next);
+    }, []);
+
+    if (loading) {
+        return (
+            <div className={styles.pageContainer}>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh", color: "var(--text-muted)", gap: 12 }}>
+                    <Loader2 size={24} className="animate-spin" />
+                    <span>Chargement...</span>
+                </div>
+            </div>
+        );
+    }
+
+    if (!tool || error) {
+        return (
+            <div className={styles.pageContainer}>
+                <div className={styles.contentWrapper}>
+                    <div style={{ textAlign: "center", padding: "4rem 0", color: "var(--text-muted)" }}>
+                        <h2>Outil introuvable</h2>
+                        <p>Cet outil n'existe pas ou a été retiré.</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     const renderValue = (value) => {
@@ -30,14 +98,19 @@ const ToolDetailsPage = () => {
     return (
         <div className={styles.pageContainer}>
             <div className={styles.contentWrapper}>
-                <a href="#" className={styles.backLink}>
+                <a href="#" onClick={(e) => { e.preventDefault(); navigate(-1); }} className={styles.backLink}>
                     <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         <path d="M19 12H5M12 5l-7 7 7 7"/>
                     </svg>
                     Retour
                 </a>
 
-                <ToolDetailsHeader Tool={tool}/>
+                <ToolDetailsHeader
+                    Tool={tool}
+                    isFavorited={isFavorited}
+                    onToggleFavorite={handleToggleFavorite}
+                    onOpenShelfPicker={(id) => setPickerToolId(id)}
+                />
                 
                 <div className={styles.contentGrid}>
                     <ToolDetailsMain Tool={tool}/>
@@ -96,6 +169,10 @@ const ToolDetailsPage = () => {
                     <SimilarTools tools={tool.similar_tools} />
                 </div>
             </div>
+
+            {pickerToolId && (
+                <ShelfPicker toolId={pickerToolId} onClose={() => setPickerToolId(null)} />
+            )}
         </div>
     );
 };

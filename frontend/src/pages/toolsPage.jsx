@@ -1,38 +1,78 @@
 import styles from "../style/Pages/toolpage.module.css"
 import ToolComponent from "../components/tools/toolComponent"
-import { useState, useRef, useEffect } from "react";
-import { TOOLS_DATA } from "../data/tools.js";
-import { Search, ChevronDown, ListOrdered } from "lucide-react";
+import ShelfPicker from "../components/library/ShelfPicker"
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Search, ChevronDown, ListOrdered, Loader2 } from "lucide-react";
+import api, { API_BASE } from "../services/api";
 
 export default function ToolPage() {
+    const [tools, setTools] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [favoriteIds, setFavoriteIds] = useState(new Set());
     const [searchQuery, setSearchQuery] = useState("");
     const [sortOption, setSortOption] = useState("none");
     const [selectedCategory, setSelectedCategory] = useState("Any");
     const [isSortOpen, setIsSortOpen] = useState(false);
+    const [pickerToolId, setPickerToolId] = useState(null);
     const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        api.get("/tools")
+            .then((res) => {
+                const data = (res?.data || []).map(t => ({
+                    ...t,
+                    icon: t.logo_url?.startsWith("/") ? API_BASE + t.logo_url : t.logo_url,
+                    rating: t.global_rating,
+                    provider: t.provider_name,
+                    category: t.category_name,
+                }));
+                setTools(data);
+            })
+            .catch(() => {})
+            .finally(() => setLoading(false));
+    }, []);
+
+    useEffect(() => {
+        api.get("/favorites")
+            .then((res) => {
+                const favs = res?.data || [];
+                setFavoriteIds(new Set(favs.map(f => Number(f.id))));
+            })
+            .catch(() => {});
+    }, []);
+
+    const handleToggleFavorite = useCallback((toolId, next) => {
+        api.post("/favorites/toggle", { tool_id: toolId }).catch(() => {});
+        setFavoriteIds(prev => {
+            const nextSet = new Set(prev);
+            if (next) nextSet.add(Number(toolId));
+            else nextSet.delete(Number(toolId));
+            return nextSet;
+        });
+    }, []);
 
     const query = searchQuery.toLowerCase();
 
-    let searchResults = TOOLS_DATA
+    let searchResults = tools
         .filter(tool =>
             tool.name.toLowerCase().includes(query) ||
-            tool.provider.toLowerCase().includes(query) ||
-            tool.category.toLowerCase().includes(query) ||
-            tool.features.some(f => f.toLowerCase().includes(query))
+            (tool.provider || "").toLowerCase().includes(query) ||
+            (tool.category || "").toLowerCase().includes(query) ||
+            (tool.features || []).some(f => f.toLowerCase().includes(query))
         );
 
-    const categories = [...new Set(TOOLS_DATA.map(tool => tool.category))];
+    const categories = [...new Set(tools.map(tool => tool.category).filter(Boolean))];
 
     if (selectedCategory !== "Any") {
         searchResults = searchResults
             .filter(tool =>
-                tool.category.toLowerCase() === selectedCategory.toLowerCase());
+                (tool.category || "").toLowerCase() === selectedCategory.toLowerCase());
     }
 
     if (sortOption === "name") {
-        searchResults.sort((a, b) => a.name.localeCompare(b.name));
+        searchResults.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
     } else if (sortOption === "rating") {
-        searchResults.sort((a, b) => b.rating - a.rating);
+        searchResults.sort((a, b) => (b.rating || 0) - (a.rating || 0));
     }
 
     useEffect(() => {
@@ -57,6 +97,18 @@ export default function ToolPage() {
             default: return "Trier par...";
         }
     };
+
+    if (loading) {
+        return (
+            <div className={styles.allToolsContainer}>
+                <div className={styles.noise}></div>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh", color: "var(--text-muted)", gap: 12 }}>
+                    <Loader2 size={24} className="animate-spin" />
+                    <span>Chargement des outils...</span>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.allToolsContainer}>
@@ -125,11 +177,11 @@ export default function ToolPage() {
                                     onClick={() => setSelectedCategory("Any")} 
                                 >
                                     Toutes les catégories
-                                    <span className={styles.categoryCount}>{TOOLS_DATA.length}</span>
+                                    <span className={styles.categoryCount}>{tools.length}</span>
                                 </button>
                             </li>
                             {categories.map((category, index) => {
-                                const count = TOOLS_DATA.filter(t => t.category === category).length;
+                                const count = tools.filter(t => t.category === category).length;
                                 return (
                                     <li key={index}>
                                         <button 
@@ -151,10 +203,19 @@ export default function ToolPage() {
                         <p>{searchResults.length} outil{searchResults.length > 1 ? "s" : ""} trouvé{searchResults.length > 1 ? "s" : ""}</p>
                     </div>
                     <div className={styles.gridWrapper}>
-                        <ToolComponent tools={searchResults} />
+                        <ToolComponent
+                            tools={searchResults}
+                            favoriteIds={favoriteIds}
+                            onToggleFavorite={handleToggleFavorite}
+                            onOpenShelfPicker={(id) => setPickerToolId(id)}
+                        />
                     </div>
                 </div>
             </div>
+
+            {pickerToolId && (
+                <ShelfPicker toolId={pickerToolId} onClose={() => setPickerToolId(null)} />
+            )}
         </div>
     )
 }

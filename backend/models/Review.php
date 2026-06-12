@@ -73,4 +73,33 @@ final class Review extends BaseModel
 
         return $stmt->fetchAll();
     }
+
+    public function findById(int $id): ?array
+    {
+        $sql = 'SELECT r.*, t.name AS tool_name, u.name AS user_name 
+                FROM reviews r
+                INNER JOIN ai_tools t ON r.tool_id = t.id
+                INNER JOIN users u ON r.user_id = u.id
+                WHERE r.id = ?';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id]);
+
+        $result = $stmt->fetch();
+        return $result ?: null;
+    }
+
+    public function delete(int $id): bool
+    {
+        $sql = 'DELETE FROM reviews WHERE id = ?';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$id]);
+    }
+
+    public function deleteAllByUserId(int $userId): bool
+    {
+        $sql = 'DELETE FROM reviews WHERE user_id = ?';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$userId]);
+    }
 }

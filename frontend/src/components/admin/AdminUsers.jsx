@@ -1,29 +1,11 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../../style/admin/adminUsers.module.css";
 import BanConfirmForm from "../forms/BanConfirmForm";
 import PromoteConfirmForm from "../forms/PromoteConfirmForm";
+import DemoteConfirmForm from "../forms/DemoteConfirmForm";
+import UnbanConfirmForm from "../forms/UnbanConfirmForm";
 import { useAuth } from "../../context/AuthContext";
-
-// TODO: API → GET /api/admin/users
-const MOCK_USERS = [
-  { id: 1, name: "Marie Dupont",   email: "marie@example.com",  role: "user",    status: "active",  joined: "12 jan. 2025" },
-  { id: 2, name: "Jean Martin",    email: "jean@example.com",   role: "manager", status: "active",  joined: "3 fév. 2025" },
-  { id: 3, name: "Sophie Bernard", email: "sophie@example.com", role: "user",    status: "banned",  joined: "21 mars 2025" },
-  { id: 4, name: "Lucas Petit",    email: "lucas@example.com",  role: "user",    status: "active",  joined: "5 avr. 2025" },
-  { id: 5, name: "Emma Leroy",     email: "emma@example.com",   role: "admin",   status: "active",  joined: "1 jan. 2025" },
-  { id: 6, name: "Thomas Moreau",  email: "thomas@example.com", role: "user",    status: "active",  joined: "18 mai 2025" },
-  { id: 7, name: "Youssef Alaoui", email: "youssef@example.com", role: "user",    status: "active",  joined: "22 juin 2025" },
-  { id: 8, name: "Fatima Zahra",   email: "fatima@example.com",  role: "user",    status: "active",  joined: "14 juil. 2025" },
-  { id: 9, name: "Nicolas Roux",   email: "nicolas@example.com", role: "manager", status: "active",  joined: "9 août 2025" },
-  { id: 10, name: "Amine Benali",  email: "amine@example.com",   role: "user",    status: "banned",  joined: "2 sept. 2025" },
-  { id: 11, name: "Chloé Simon",   email: "chloe@example.com",   role: "user",    status: "active",  joined: "19 oct. 2025" },
-  { id: 12, name: "Julien Laurent",email: "julien@example.com",  role: "admin",   status: "active",  joined: "5 nov. 2025" },
-  { id: 13, name: "Sara Michel",   email: "sara@example.com",    role: "user",    status: "active",  joined: "11 déc. 2025" },
-  { id: 14, name: "Karim Haddad",  email: "karim@example.com",   role: "user",    status: "banned",  joined: "8 jan. 2026" },
-  { id: 15, name: "Léa Garcia",    email: "lea@example.com",     role: "manager", status: "active",  joined: "24 fév. 2026" },
-  { id: 16, name: "Paul Blanc",    email: "paul@example.com",    role: "user",    status: "active",  joined: "1 mars 2026" },
-  { id: 17, name: "Julie Tremblay",email: "julie@example.com",   role: "user",    status: "active",  joined: "10 mars 2026" }
-];
+import api from "../../services/api";
 
 const ROLE_LABELS = { admin: "Admin", manager: "Manager", user: "Utilisateur" };
 const ROLE_BADGE  = { admin: styles.badgeAdmin, manager: styles.badgeManager, user: styles.badgeUser };
@@ -35,16 +17,35 @@ const searchIcon = (
 );
 
 function getInitials(name) {
-  return name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+  return name ? name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() : "U";
 }
 
 export default function AdminUsers() {
   const { isAdmin } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
   const [search, setSearch]       = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
+  
   const [confirmBan, setConfirmBan]         = useState(null);
   const [confirmPromote, setConfirmPromote] = useState(null);
-  const [users, setUsers] = useState(MOCK_USERS);
+  const [confirmDemote, setConfirmDemote]   = useState(null);
+  const [confirmUnban, setConfirmUnban]     = useState(null);
+
+  const fetchUsers = () => {
+    setLoading(true);
+    api.get("/admin/users")
+      .then((res) => {
+        setUsers(res.data || []);
+      })
+      .catch((err) => console.error("Error fetching users:", err))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const filtered = users.filter((u) => {
     const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -67,13 +68,46 @@ export default function AdminUsers() {
   );
 
   const handleBan = (userId) => {
-    setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, status: "banned" } : u));
-    setConfirmBan(null);
+    api.post("/admin/users/ban", { id: userId })
+      .then(() => {
+        setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, status: "suspended" } : u));
+        setConfirmBan(null);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const handleUnban = (userId) => {
+    api.post("/admin/users/unban", { id: userId })
+      .then(() => {
+        setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, status: "active" } : u));
+        setConfirmUnban(null);
+      })
+      .catch((err) => console.error(err));
   };
 
   const handlePromote = (userId) => {
-    setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, role: "manager" } : u));
+    api.post("/admin/users/promote", { id: userId })
+      .then(() => {
+        setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, role: "manager" } : u));
+        setConfirmPromote(null);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const handleDemote = (userId) => {
+    api.post("/admin/users/demote", { id: userId })
+      .then(() => {
+        setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, role: "user" } : u));
+        setConfirmDemote(null);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const resetConfirms = () => {
+    setConfirmBan(null);
     setConfirmPromote(null);
+    setConfirmDemote(null);
+    setConfirmUnban(null);
   };
 
   return (
@@ -84,7 +118,7 @@ export default function AdminUsers() {
         <p className={styles.subtitle}>{users.length} comptes enregistrés sur la plateforme</p>
       </div>
 
-      {/* ── Toolbar ── */}
+      {/* ─�� Toolbar ── */}
       <div className={styles.toolbar}>
         <div className={styles.searchWrapper}>
           {searchIcon}
@@ -110,7 +144,9 @@ export default function AdminUsers() {
 
       {/* ── Tableau ── */}
       <div className={styles.tableWrapper}>
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className={styles.empty}>Chargement...</div>
+        ) : filtered.length === 0 ? (
           <div className={styles.empty}>Aucun utilisateur trouvé.</div>
         ) : (
           <table className={styles.table}>
@@ -125,8 +161,8 @@ export default function AdminUsers() {
             </thead>
             <tbody>
               {paginatedData.map((user) => (
-                <>
-                  <tr key={user.id}>
+                <React.Fragment key={user.id}>
+                  <tr>
                     {/* Utilisateur */}
                     <td>
                       <div className={styles.userCell}>
@@ -140,7 +176,7 @@ export default function AdminUsers() {
                     {/* Rôle */}
                     <td>
                       <span className={`${styles.badge} ${ROLE_BADGE[user.role]}`}>
-                        {ROLE_LABELS[user.role]}
+                        {ROLE_LABELS[user.role] || user.role}
                       </span>
                     </td>
                     {/* Statut */}
@@ -158,22 +194,46 @@ export default function AdminUsers() {
                           <button
                             className={`${styles.btnAction} ${styles.btnPromote}`}
                             onClick={() => {
-                              setConfirmPromote(confirmPromote === user.id ? null : user.id);
-                              setConfirmBan(null);
+                              resetConfirms();
+                              setConfirmPromote(user.id);
                             }}
                           >
                             ↑ Promouvoir
+                          </button>
+                        )}
+                        {isAdmin && user.role === "manager" && user.status === "active" && (
+                          <button
+                            className={`${styles.btnAction} ${styles.btnPromote}`}
+                            style={{ color: "var(--warning)", backgroundColor: "color-mix(in srgb, var(--warning) 15%, transparent)" }}
+                            onClick={() => {
+                              resetConfirms();
+                              setConfirmDemote(user.id);
+                            }}
+                          >
+                            ↓ Rétrograder
                           </button>
                         )}
                         {user.status === "active" && user.role !== "admin" && (
                           <button
                             className={`${styles.btnAction} ${styles.btnBan}`}
                             onClick={() => {
-                              setConfirmBan(confirmBan === user.id ? null : user.id);
-                              setConfirmPromote(null);
+                              resetConfirms();
+                              setConfirmBan(user.id);
                             }}
                           >
                             ✕ Bannir
+                          </button>
+                        )}
+                        {(user.status === "suspended" || user.status === "banned" || user.status === "deleted") && user.role !== "admin" && (
+                          <button
+                            className={`${styles.btnAction} ${styles.btnPromote}`}
+                            style={{ color: "var(--success)", backgroundColor: "color-mix(in srgb, var(--success) 15%, transparent)" }}
+                            onClick={() => {
+                              resetConfirms();
+                              setConfirmUnban(user.id);
+                            }}
+                          >
+                            ✓ Débannir
                           </button>
                         )}
                       </div>
@@ -205,7 +265,33 @@ export default function AdminUsers() {
                       </td>
                     </tr>
                   )}
-                </>
+
+                  {/* ── Formulaire confirm demote inline ── */}
+                  {confirmDemote === user.id && (
+                    <tr key={`demote-${user.id}`}>
+                      <td colSpan={5} style={{ padding: "0 16px 12px" }}>
+                        <DemoteConfirmForm
+                          userName={user.name}
+                          onConfirm={() => handleDemote(user.id)}
+                          onCancel={() => setConfirmDemote(null)}
+                        />
+                      </td>
+                    </tr>
+                  )}
+
+                  {/* ── Formulaire confirm unban inline ── */}
+                  {confirmUnban === user.id && (
+                    <tr key={`unban-${user.id}`}>
+                      <td colSpan={5} style={{ padding: "0 16px 12px" }}>
+                        <UnbanConfirmForm
+                          userName={user.name}
+                          onConfirm={() => handleUnban(user.id)}
+                          onCancel={() => setConfirmUnban(null)}
+                        />
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
               ))}
             </tbody>
           </table>

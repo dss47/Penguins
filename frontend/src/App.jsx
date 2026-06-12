@@ -5,25 +5,18 @@ import AdminPage from "./pages/adminPage"
 import { AuthProvider, useAuth } from "./context/AuthContext"
 
 function AppContent() {
-  const { loading, isAuthenticated, isAdmin, role } = useAuth()
+  const { loading, isAuthenticated, isAdmin } = useAuth()
 
   if (loading) {
     return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>Chargement...</div>
   }
 
-  if (isAuthenticated && (isAdmin || role === "manager")) {
-    const allowedRoutes = isAdmin
-      ? adminRoutes
-      : adminRoutes.filter((r) => r.path !== "dashboard")
-
+  if (isAuthenticated && isAdmin) {
     return (
       <Routes>
         <Route path="/admin" element={<AdminPage />}>
-          <Route
-            index
-            element={<Navigate to={isAdmin ? "dashboard" : "users"} replace />}
-          />
-          {allowedRoutes.map((route) => (
+          <Route index element={<Navigate to="dashboard" replace />} />
+          {adminRoutes.map((route) => (
             <Route key={route.path} path={route.path} element={route.element} />
           ))}
         </Route>

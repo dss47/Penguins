@@ -7,13 +7,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import style from "../../style/Validations/insight.module.css";
 
-function Insight() {
+function Insight({ total = 0, pending = 0, accepted = 0, rejected = 0 }) {
   return (
     <div className={style.insightContainer}>
       
       {/* Carte : Total Soumissions */}
       <div className={`${style.insightCard} ${style.cardTotal}`}>
-        <span className={style.insightNumber}>24</span>
+        <span className={style.insightNumber}>{total}</span>
         <span className={style.insightLabel}>
           <FontAwesomeIcon icon={faFolderOpen} className={style.insightIcon} /> Total soumissions
         </span>
@@ -21,7 +21,7 @@ function Insight() {
 
       {/* Carte : En attente */}
       <div className={`${style.insightCard} ${style.cardPending}`}>
-        <span className={style.insightNumber}>8</span>
+        <span className={style.insightNumber}>{pending}</span>
         <span className={style.insightLabel}>
           <FontAwesomeIcon icon={faClock} className={style.insightIcon} /> En attente
         </span>
@@ -29,7 +29,7 @@ function Insight() {
 
       {/* Carte : Acceptés */}
       <div className={`${style.insightCard} ${style.cardAccepted}`}>
-        <span className={style.insightNumber}>13</span>
+        <span className={style.insightNumber}>{accepted}</span>
         <span className={style.insightLabel}>
           <FontAwesomeIcon icon={faCircleCheck} className={style.insightIcon} /> Acceptées
         </span>
@@ -37,7 +37,7 @@ function Insight() {
 
       {/* Carte : Rejetés */}
       <div className={`${style.insightCard} ${style.cardRejected}`}>
-        <span className={style.insightNumber}>3</span>
+        <span className={style.insightNumber}>{rejected}</span>
         <span className={style.insightLabel}>
           <FontAwesomeIcon icon={faCircleXmark} className={style.insightIcon} /> Rejetées
         </span>
