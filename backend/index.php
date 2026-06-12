@@ -56,11 +56,14 @@ $reviewController = new ReviewController();
 $favoriteController = new FavoriteController();
 $shelfController = new ShelfController();
 $suggestionController = new SuggestionController();
+$searchHistoryController = new SearchHistoryController();
+$exploreController = new ExploreController();
 
 $routes = [
 	'POST /auth/register' => static fn() => json_response($authController->register($body)),
 	'POST /auth/login'    => static fn() => json_response($authController->login($body)),
 	'GET /user/profile'   => static fn() => json_response($userController->profile()),
+	'POST /explore/recommend' => static fn() => json_response($exploreController->recommend($body)),
 	'GET /admin/dashboard' => static fn() => json_response($adminController->dashboard()),
 	'GET /admin/users'     => static fn() => json_response($adminController->users()),
 	'POST /admin/users/promote' => static fn() => json_response($adminController->promoteUser($body)),
@@ -72,6 +75,7 @@ $routes = [
 	'POST /admin/suggestions/create'  => static fn() => json_response($adminController->createSuggestion($body, $_FILES['logo'] ?? null)),
 	'GET /admin/suggestions/history'  => static fn() => json_response($adminController->suggestionHistory()),
 	'POST /admin/suggestions/reject'  => static fn() => json_response($adminController->rejectSuggestion($body)),
+	'POST /admin/suggestions/delete'  => static fn() => json_response($adminController->deleteSuggestion($body)),
 	'POST /admin/suggestions/update'  => static fn() => json_response($adminController->updateSuggestion($body, $_FILES['logo'] ?? null)),
 	'POST /suggestions/create' => static fn() => json_response($suggestionController->create($body, $_FILES['logo'] ?? null)),
 	'GET /suggestions/history' => static fn() => json_response($suggestionController->history()),
@@ -79,6 +83,9 @@ $routes = [
 	'GET /admin/moderation/reviews'               => static fn() => json_response($adminController->moderationReviews()),
 	'POST /admin/moderation/reviews/approve'       => static fn() => json_response($adminController->approveModerationReview($body)),
 	'POST /admin/moderation/reviews/delete'        => static fn() => json_response($adminController->deleteModerationReview($body)),
+	'GET /admin/tools'                             => static fn() => json_response($adminController->tools()),
+	'POST /admin/tools/update-status'              => static fn() => json_response($adminController->updateToolStatus($body)),
+	'POST /admin/tools/delete'                     => static fn() => json_response($adminController->deleteTool($body)),
 	'GET /favorites'         => static fn() => json_response($favoriteController->index()),
 	'POST /favorites/toggle' => static fn() => json_response($favoriteController->toggle($body)),
 	'GET /shelves'           => static fn() => json_response($shelfController->list()),

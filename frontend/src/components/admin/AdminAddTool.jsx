@@ -152,9 +152,10 @@ export default function AdminAddTool() {
             .then((res) => {
                 const item = res.data;
                 if (!item?.id) {
+                    const message = item?.message || "Erreur de traitement de la réponse serveur";
                     setHistoryData((prev) => ({
                         ...prev,
-                        [tempId]: { ...prev[tempId], status: "waiting_manual_validation", rejection_reason: "Erreur de traitement de la réponse serveur" },
+                        [tempId]: { ...prev[tempId], status: "waiting_manual_validation", rejection_reason: message },
                     }));
                     setHistory((prev) => prev.map((h) =>
                         h.id === tempId ? { ...h, status: "waiting_manual_validation" } : h
@@ -173,12 +174,13 @@ export default function AdminAddTool() {
                 setSelectedHistoryId(item.id);
             })
             .catch((err) => {
+                const message = err?.message || err?.details || "Erreur lors de la soumission";
                 setHistoryData((prev) => ({
                     ...prev,
                     [tempId]: {
                         ...prev[tempId],
                         status: "waiting_manual_validation",
-                        rejection_reason: err.message || "Erreur lors de la soumission",
+                        rejection_reason: message,
                     },
                 }));
                 setHistory((prev) => prev.map((h) =>

@@ -51,14 +51,14 @@ final class SuggestionService
         // 2. Préparation du contexte "Slim"
         $slimContext = $this->buildSlimDatabaseContext();
 
-        // 3. Appel de l'IA (Correction ici ! 👇)
+        // 3. Appel de l'IA
         $aiResponseJson = $this->openRouterService->evaluateToolSubmission($payload, $slimContext);
 
         // 4. Traitement de la réponse de l'IA
         if ($aiResponseJson) {
             $aiData = json_decode($aiResponseJson, true);
-            
-            if (isset($aiData['status'])) {
+
+            if (json_last_error() === JSON_ERROR_NONE && is_array($aiData) && isset($aiData['status'])) {
                 $this->suggestionModel->updateFromAiValidation($suggestionId, $aiData);
                 $updatedSuggestion = $this->suggestionModel->findById($suggestionId);
                 
@@ -68,6 +68,8 @@ final class SuggestionService
                     'data'    => $updatedSuggestion
                 ];
             }
+
+            error_log('SuggestionService::createSuggestion invalid AI JSON: ' . json_last_error_msg() . ' | Response: ' . substr($aiResponseJson, 0, 500));
         }
 
         // 5. FALLBACK
@@ -75,8 +77,8 @@ final class SuggestionService
         $fallbackSuggestion = $this->suggestionModel->findById($suggestionId);
 
         return [
-            'success' => false,
-            'message' => 'L\'IA n\'a pas pu valider l\'outil. Transféré à l\'équipe de modération.',
+            'success' => true,
+            'message' => 'Suggestion enregistrée. L\'IA n\'a pas pu valider l\'outil, validation manuelle requise.',
             'data'    => $fallbackSuggestion
         ];
     }

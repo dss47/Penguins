@@ -6,8 +6,11 @@ final class ExploreService
 {
     // On injecte le Tool Model, mais aussi le OpenRouterService pour la recherche intelligente !
     public function __construct(
-        private readonly Tool $toolModel = new Tool(),
-        private readonly OpenRouterService $openRouterService = new OpenRouterService()
+        private readonly AiTool $toolModel = new AiTool(),
+        private readonly OpenRouterService $openRouterService = new OpenRouterService(),
+        private readonly SearchHistoryService $searchHistoryService = new SearchHistoryService(),
+        private readonly AuthMiddleware $authMiddleware = new AuthMiddleware(),
+        private readonly ToolService $toolService = new ToolService()
     ) {
     }
 
@@ -44,17 +47,25 @@ final class ExploreService
      * L'utilisateur tape un problème (ex: "Je suis étudiant et je veux résumer des PDF").
      * L'IA analyse, prend en compte sa profession, et renvoie une réponse ciblée.
      */
-    public function searchByPrompt(string $prompt, string $userProfession = 'Utilisateur'): array
+    public function searchByPrompt(string $prompt, ?int $userId = null): array
     {
-        if (empty(trim($prompt))) {
+        $cleanPrompt = trim($prompt);
+        if ($cleanPrompt === '') {
             return [
                 'success' => false,
                 'message' => "Votre requête ne peut pas être vide."
             ];
         }
 
-        // Appel de votre service IA que nous avons créé précédemment
-        $aiAnswer = $this->openRouterService->getRecommendations($prompt, $userProfession);
+        $candidates = $this->toolModel->recommendationCandidates();
+        if (empty($candidates)) {
+            return [
+                'success' => false,
+                'message' => "Aucun outil actif disponible pour la recommandation."
+            ];
+        }
+
+        $aiAnswer = $this->openRouterService->getRecommendations($cleanPrompt, $candidates);
 
         if (!$aiAnswer) {
             return [
@@ -63,12 +74,37 @@ final class ExploreService
             ];
         }
 
+        $candidateIds = array_map('intval', array_column($candidates, 'id'));
+        $selectedIds = array_values(array_slice(array_filter(
+            array_map('intval', $aiAnswer['tool_ids'] ?? []),
+            fn($id) => in_array($id, $candidateIds, true)
+        ), 0, 6));
+
+        $tools = $this->toolModel->findActiveByIds($selectedIds);
+        $title = trim((string) ($aiAnswer['title'] ?? ''));
+        if ($title === '') {
+            $title = substr($cleanPrompt, 0, 60);
+        }
+        $title = substr($title, 0, 60);
+        $reasoning = trim((string) ($aiAnswer['reasoning'] ?? ''));
+
+        $historyId = null;
+        if ($userId && $userId > 0) {
+            $history = $this->searchHistoryService->logSearch($userId, $cleanPrompt, $reasoning, $selectedIds, $title);
+            if (($history['success'] ?? false) && isset($history['search_id'])) {
+                $historyId = (int) $history['search_id'];
+            }
+        }
+
         return [
             'success' => true,
             'data' => [
-                'prompt' => $prompt,
-                'profession_context' => $userProfession,
-                'ai_reasoning' => $aiAnswer
+                'history_id' => $historyId,
+                'prompt' => $cleanPrompt,
+                'title' => $title,
+                'reasoning' => $reasoning,
+                'tool_ids' => $selectedIds,
+                'tools' => $tools
             ]
         ];
     }

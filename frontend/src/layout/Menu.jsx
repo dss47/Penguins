@@ -6,7 +6,7 @@ import style from "../style/layout/Menu.module.css";
 import { useAuth } from "../context/AuthContext";
 
 const Menu = ({ scrollToSection, refs }) => {
-    const { isAuthenticated, logout } = useAuth();
+    const { isAuthenticated, logout, role } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
     const isAuthPage = location.pathname === "/Auth";
@@ -108,8 +108,13 @@ const Menu = ({ scrollToSection, refs }) => {
                             <ul className={style.navLinksApp}>
                                 <li><Link className={style.Link} to="/tools">Explorer</Link></li>
                                 <li><Link className={style.Link} to="/Library">Bibliothèque</Link></li>
-                                <li><Link className={style.Link} to="/ProposerOutils">Proposer un outil</Link></li>
+                                {role !== "manager" && (
+                                    <li><Link className={style.Link} to="/ProposerOutils">Proposer un outil</Link></li>
+                                )}
                                 <li><Link className={style.Link} to="/Profile">Profil</Link></li>
+                                {role === "manager" && (
+                                    <li><Link className={style.Link} to="/manager">Manager panel</Link></li>
+                                )}
                             </ul>
                         </div>
 
@@ -129,6 +134,7 @@ const Menu = ({ scrollToSection, refs }) => {
                                     <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
                                     <span>Mode {theme === 'light' ? 'sombre' : 'clair'}</span>
                                 </button>
+
                                 {!isAuthPage && (
                                     isAuthenticated ? (
                                         <button onClick={() => { logout(); setIsDropdownOpen(false); }} className={style.dropdownItem}>

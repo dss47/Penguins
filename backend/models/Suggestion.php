@@ -145,4 +145,11 @@ final class Suggestion extends BaseModel
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($params);
     }
+
+    public function delete(int $id): bool
+    {
+        $sql = 'DELETE FROM suggestions WHERE id = :id';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $id]);
+    }
 }

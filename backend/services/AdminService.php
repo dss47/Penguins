@@ -121,4 +121,10 @@ final class AdminService
         $stmt = $this->db->prepare("UPDATE suggestions SET status = 'rejected_by_admin', rejection_reason = ? WHERE id = ?");
         return $stmt->execute([$reason, $id]);
     }
+
+    public function deleteSuggestion(int $id): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM suggestions WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
 }

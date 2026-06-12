@@ -14,6 +14,21 @@ final class ToolService
         return $this->toolModel->all() ?? [];
     }
 
+    public function listAllToolsWithDetails(): array
+    {
+        $db = db_connection();
+        $sql = "SELECT t.*,
+                       c.name AS category_name,
+                       p.name AS provider_name
+                FROM ai_tools t
+                LEFT JOIN categories c ON t.category_id = c.id
+                LEFT JOIN providers p ON t.provider_id = p.id
+                ORDER BY t.created_at DESC";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
     public function listPublicTools(): array
     {
         $db = db_connection();
@@ -176,6 +191,29 @@ final class ToolService
         }
 
         return ['success' => false, 'error' => 'Erreur lors de la mise à jour du statut.'];
+    }
+
+    public function deleteTool(int $id): array
+    {
+        $db = db_connection();
+        try {
+            $db->beginTransaction();
+
+            $db->prepare('DELETE FROM tool_models WHERE tool_id = ?')->execute([$id]);
+            $db->prepare('DELETE FROM tool_features WHERE tool_id = ?')->execute([$id]);
+            $db->prepare('DELETE FROM favorite_items WHERE tool_id = ?')->execute([$id]);
+            $db->prepare('DELETE FROM shelf_items WHERE tool_id = ?')->execute([$id]);
+            $db->prepare('DELETE FROM reviews WHERE tool_id = ?')->execute([$id]);
+            $db->prepare('DELETE FROM search_history_tools WHERE tool_id = ?')->execute([$id]);
+            $db->prepare('UPDATE suggestions SET tool_id = NULL WHERE tool_id = ?')->execute([$id]);
+            $this->toolModel->delete($id);
+
+            $db->commit();
+            return ['success' => true];
+        } catch (\PDOException $e) {
+            $db->rollBack();
+            return ['success' => false, 'error' => 'Erreur lors de la suppression: ' . $e->getMessage()];
+        }
     }
 
     public function updateTool(int $id, array $payload): array

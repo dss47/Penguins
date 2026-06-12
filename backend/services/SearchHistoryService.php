@@ -14,26 +14,31 @@ final class SearchHistoryService
      * Enregistre une nouvelle recherche magique (IA) dans l'historique de l'utilisateur.
      * Cette méthode est appelée juste après que l'ExploreService ait obtenu une réponse d'OpenRouter.
      */
-    public function logSearch(int $userId, string $prompt, string $aiReasoning, array $recommendedToolIds): array
+    public function logSearch(int $userId, string $prompt, string $aiReasoning, array $recommendedToolIds, ?string $title = null): array
     {
         if ($userId <= 0 || empty(trim($prompt))) {
             return ['success' => false, 'message' => 'Données de recherche invalides.'];
         }
 
         // 1. Sauvegarde de la recherche principale (Le prompt et le raisonnement de l'IA)
+        $cleanPrompt = trim($prompt);
+        $cleanTitle = trim((string) ($title ?? ''));
+        if ($cleanTitle === '') {
+            $cleanTitle = $cleanPrompt;
+        }
+
         $searchId = $this->searchHistoryModel->create([
             'user_id'      => $userId,
-            'prompt'       => trim($prompt),
+            'prompt_text'  => $cleanPrompt,
+            'search_type'  => 'ai_prompt',
+            'title'        => substr($cleanTitle, 0, 60),
             'ai_reasoning' => trim($aiReasoning)
         ]);
 
         // 2. Sauvegarde des outils recommandés dans la table pivot
         if ($searchId > 0 && !empty($recommendedToolIds)) {
             foreach ($recommendedToolIds as $toolId) {
-                $this->searchHistoryToolModel->create([
-                    'search_history_id' => $searchId,
-                    'tool_id'           => (int) $toolId
-                ]);
+                $this->searchHistoryToolModel->linkTool($searchId, (int) $toolId);
             }
         }
 

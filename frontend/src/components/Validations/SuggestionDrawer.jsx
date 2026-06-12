@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, ExternalLink, Bot, AlertTriangle, CheckCircle, XCircle, ArrowRight, Check, Star, Pencil, Save } from "lucide-react";
+import { X, ExternalLink, Bot, AlertTriangle, CheckCircle, XCircle, ArrowRight, Check, Star, Pencil, Save, Trash2 } from "lucide-react";
 import CreatableSelect from "react-select/creatable";
 import style from "../../style/Validations/table.module.css";
 import api from "../../services/api";
@@ -194,10 +194,25 @@ export default function SuggestionDrawer({
     api
       .post("/admin/suggestions/reject", { id: suggestion.id, reason })
       .then(() => {
-        onUpdate(suggestion.id, { status: "rejected_by_admin" });
+        onUpdate(suggestion.id, { status: "rejected_by_admin", rejection_reason: reason });
         handleClose();
       })
       .catch((err) => alert(err.message || "Erreur"))
+      .finally(() => setActionLoading(false));
+  };
+
+  const handleDeleteSuggestion = () => {
+    if (!window.confirm("Voulez-vous vraiment supprimer cette suggestion de la base de données ? Cette action est irréversible.")) {
+      return;
+    }
+    setActionLoading(true);
+    api
+      .post("/admin/suggestions/delete", { id: suggestion.id })
+      .then(() => {
+        onUpdate(suggestion.id, { deleted: true });
+        handleClose();
+      })
+      .catch((err) => alert(err.message || "Erreur lors de la suppression"))
       .finally(() => setActionLoading(false));
   };
 
@@ -248,7 +263,7 @@ export default function SuggestionDrawer({
     status === "rejected_by_admin" ? style.drawerBadgeRejectedAdmin :
     "";
 
-  const fs = (label) => ({
+  const fs = () => ({
     display: "flex",
     flexDirection: "column",
     gap: "0.4rem",
@@ -563,10 +578,16 @@ export default function SuggestionDrawer({
           <div className={style.drawerFooter}>
             <div className={style.footerActions}>
               {status === "ai_approved_pending_review" && (
-                <button className={style.btnFastTrack} onClick={handleFastTrack} disabled={actionLoading}>
-                  <CheckCircle size={16} />
-                  {actionLoading ? "Publication..." : "Ajouter aux outils (Fast-Track)"}
-                </button>
+                <>
+                  <button className={style.btnFastTrack} onClick={handleFastTrack} disabled={actionLoading}>
+                    <CheckCircle size={16} />
+                    {actionLoading ? "Publication..." : "Ajouter aux outils (Fast-Track)"}
+                  </button>
+                  <button className={style.btnRejectDrawer} onClick={() => setRejectOpen(true)} disabled={actionLoading}>
+                    <XCircle size={16} />
+                    Rejeter
+                  </button>
+                </>
               )}
               {status === "waiting_manual_validation" && (
                 <>
@@ -589,6 +610,18 @@ export default function SuggestionDrawer({
               {["waiting_ai_analysis", "ai_rejected", "rejected_by_admin"].includes(status) && (
                 <button className={style.btnDrawerClose} onClick={handleClose}>
                   Fermer le dossier
+                </button>
+              )}
+              {!suggestion.tool_id && (
+                <button 
+                  className={style.btnRejectDrawer} 
+                  style={{ marginLeft: "auto", backgroundColor: "transparent", color: "var(--danger)", border: "1px solid var(--danger)" }}
+                  onClick={handleDeleteSuggestion} 
+                  disabled={actionLoading}
+                  title="Supprimer la suggestion"
+                >
+                  <Trash2 size={16} />
+                  Supprimer
                 </button>
               )}
             </div>

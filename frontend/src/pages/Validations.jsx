@@ -52,6 +52,10 @@ export default function Validations() {
   }), [suggestions]);
 
   const handleUpdate = (id, updates) => {
+    if (updates.deleted) {
+      setSuggestions((prev) => prev.filter((s) => s.id !== id));
+      return;
+    }
     setSuggestions((prev) =>
       prev.map((s) => (s.id === id ? { ...s, ...updates } : s))
     );

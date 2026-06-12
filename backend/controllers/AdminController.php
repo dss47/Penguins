@@ -7,6 +7,7 @@ final class AdminController
     public function __construct(
         private readonly AdminService $adminService = new AdminService(),
         private readonly SuggestionService $suggestionService = new SuggestionService(),
+        private readonly ToolService $toolService = new ToolService(),
         private readonly Review $reviewModel = new Review(),
         private readonly Suggestion $suggestionModel = new Suggestion(),
         private readonly Category $categoryModel = new Category(),
@@ -78,11 +79,11 @@ final class AdminController
         if ($suggestionId <= 0) {
             return Response::error('ID invalide');
         }
-        
+
         $adminId = 1; // Fallback to 1 if user auth isn't passed in context
 
         $result = $this->suggestionService->promoteToTool($suggestionId, $adminId);
-        
+
         if ($result['success']) {
             return Response::success($result);
         }
@@ -102,6 +103,18 @@ final class AdminController
         
         $success = $this->adminService->rejectSuggestion($suggestionId, $reason);
         return $success ? Response::success(['message' => 'Suggestion rejetée']) : Response::error('Erreur');
+    }
+
+    public function deleteSuggestion(array $body): array
+    {
+        $suggestionId = (int) ($body['id'] ?? 0);
+
+        if ($suggestionId <= 0) {
+            return Response::error('ID invalide');
+        }
+
+        $success = $this->adminService->deleteSuggestion($suggestionId);
+        return $success ? Response::success(['message' => 'Suggestion supprimée']) : Response::error('Erreur lors de la suppression');
     }
 
     public function createSuggestion(array $body, ?array $logoFile = null): array
@@ -137,6 +150,10 @@ final class AdminController
         ];
 
         $result = $this->suggestionService->createSuggestion($payload, $logoFile);
+
+        if (($result['success'] ?? false) === false && empty($result['data'])) {
+            return Response::error($result['message'] ?? 'Erreur lors de la création de la suggestion.');
+        }
 
         return Response::success($result['data'] ?? $result);
     }
@@ -252,5 +269,31 @@ final class AdminController
 
         $success = $this->reviewModel->delete($reviewId);
         return $success ? Response::success(['message' => 'Commentaire supprimé']) : Response::error('Erreur lors de la suppression');
+    }
+
+    public function tools(): array
+    {
+        return Response::success($this->toolService->listAllToolsWithDetails());
+    }
+
+    public function updateToolStatus(array $body): array
+    {
+        $toolId = (int) ($body['id'] ?? 0);
+        $newStatus = trim((string) ($body['status'] ?? ''));
+        if ($toolId <= 0 || $newStatus === '') {
+            return Response::error('Paramètres invalides');
+        }
+        $result = $this->toolService->updateToolStatus($toolId, $newStatus);
+        return $result['success'] ? Response::success(['message' => 'Statut mis à jour']) : Response::error($result['error'] ?? 'Erreur');
+    }
+
+    public function deleteTool(array $body): array
+    {
+        $toolId = (int) ($body['id'] ?? 0);
+        if ($toolId <= 0) {
+            return Response::error('ID invalide');
+        }
+        $result = $this->toolService->deleteTool($toolId);
+        return $result['success'] ? Response::success(['message' => 'Outil supprimé']) : Response::error($result['error'] ?? 'Erreur');
     }
 }

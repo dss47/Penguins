@@ -12,6 +12,54 @@ final class AiTool extends BaseModel
         return $stmt->fetchAll() ?: [];
     }
 
+    public function recommendationCandidates(): array
+    {
+        $sql = "SELECT id, name FROM ai_tools WHERE status = 'active' ORDER BY name ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll() ?: [];
+    }
+
+    public function findActiveByIds(array $ids): array
+    {
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids), fn($id) => $id > 0)));
+        if (empty($ids)) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $sql = "SELECT t.id,
+                       t.name,
+                       t.description,
+                       t.logo_url,
+                       t.website_url,
+                       t.global_rating,
+                       t.website_rating,
+                       c.name AS category_name,
+                       p.name AS provider_name
+                FROM ai_tools t
+                LEFT JOIN categories c ON t.category_id = c.id
+                LEFT JOIN providers p ON t.provider_id = p.id
+                WHERE t.status = 'active' AND t.id IN ($placeholders)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($ids);
+        $tools = $stmt->fetchAll() ?: [];
+
+        $byId = [];
+        foreach ($tools as $tool) {
+            $byId[(int) $tool['id']] = $tool;
+        }
+
+        $ordered = [];
+        foreach ($ids as $id) {
+            if (isset($byId[$id])) {
+                $ordered[] = $byId[$id];
+            }
+        }
+
+        return $ordered;
+    }
+
     public function findById(int $toolId): ?array
     {
         $stmt = $this->db->prepare('SELECT * FROM ai_tools WHERE id = ? limit 1');
@@ -109,6 +157,12 @@ final class AiTool extends BaseModel
             ':release_date'   => $data['release_date'] ?? null,
             ':id'             => $toolId,
         ]);
+    }
+
+    public function delete(int $toolId): bool
+    {
+        $stmt = $this->db->prepare('DELETE FROM ai_tools WHERE id = ?');
+        return $stmt->execute([$toolId]);
     }
     
 }

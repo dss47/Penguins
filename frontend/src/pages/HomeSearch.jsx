@@ -3,17 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Search, Loader2, Plus, Star, Sparkles, Menu, ArrowLeft, Clock } from "lucide-react";
 import styles from "../style/Pages/HomeSearch.module.css";
 import { useAuth } from "../context/AuthContext";
-
-const MOCK_HISTORY = [
-    { id: 1, title: "Video editors" },
-    { id: 2, title: "Code assistants" },
-    { id: 3, title: "AI image generators" },
-    { id: 4, title: "Grammar checkers" },
-    { id: 5, title: "Music production tools" },
-    { id: 6, title: "Data visualization" },
-    { id: 7, title: "Note-taking apps" },
-    { id: 8, title: "Screen recording software" },
-];
+import api from "../services/api";
 
 const MOCK_RESULTS = [
     {
@@ -105,7 +95,9 @@ export default function HomeSearch() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
-    const [history, setHistory] = useState(MOCK_HISTORY);
+    const [history, setHistory] = useState([]);
+    const [historyLoading, setHistoryLoading] = useState(false);
+    const [historyError, setHistoryError] = useState("");
     const inputRef = useRef(null);
 
     useEffect(() => {
@@ -119,6 +111,43 @@ export default function HomeSearch() {
         const timer = setTimeout(() => setView("results"), 2000);
         return () => clearTimeout(timer);
     }, [view]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        if (!isAuthenticated) {
+            Promise.resolve().then(() => {
+                if (cancelled) return;
+                setHistory([]);
+                setHistoryError("");
+            });
+            return () => {
+                cancelled = true;
+            };
+        }
+
+        Promise.resolve().then(() => {
+            if (cancelled) return;
+            setHistoryLoading(true);
+            setHistoryError("");
+        });
+        api.get("/user/search-history")
+            .then((res) => {
+                if (!cancelled) setHistory(res.data || []);
+            })
+            .catch((err) => {
+                if (cancelled) return;
+                setHistory([]);
+                setHistoryError(err?.message || "Impossible de charger l'historique");
+            })
+            .finally(() => {
+                if (!cancelled) setHistoryLoading(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [isAuthenticated]);
 
     const handleSubmit = (term) => {
         const val = term ?? query;
@@ -153,11 +182,17 @@ export default function HomeSearch() {
                 <div className={styles.historyLabel}>Historique</div>
                 <div className={styles.historyList}>
                     {isAuthenticated ? (
-                        history.map((item) => (
+                        historyLoading ? (
+                            <div className={styles.historyItem}>Chargement...</div>
+                        ) : historyError ? (
+                            <div className={styles.historyItem}>{historyError}</div>
+                        ) : history.length === 0 ? (
+                            <div className={styles.historyItem}>Aucun historique</div>
+                        ) : history.map((item) => (
                             <button
                                 key={item.id}
                                 className={styles.historyItem}
-                                onClick={() => handleSubmit(item.title)}
+                                onClick={() => handleSubmit(item.prompt_text || item.title)}
                             >
                                 <Clock size={14} className={styles.historyIcon} />
                                 {item.title}

@@ -3,7 +3,6 @@ import LandingPage from "../pages/LandingPage"
 import ProposerOutils from "../pages/ProposerOutils"
 import ToolPage from "../pages/toolsPage"
 import Validations from "../pages/Validations"
-import MainPage from "../pages/MainPage"
 import Library from "../pages/Library"
 import ShelfItems from "../components/library/ShelfItems"
 import HomeSearch from "../pages/HomeSearch"
@@ -14,6 +13,7 @@ import AdminDashboard from "../components/admin/AdminDashboard";
 import AdminUsers from "../components/admin/AdminUsers";
 import AdminModeration from "../components/admin/AdminModeration";
 import AdminAddTool from "../components/admin/AdminAddTool";
+import AdminTools from "../components/admin/AdminTools";
 
 export const publicRoutes = [
     { path: '/', element: <LandingPage/>, name: 'Landing Page' },
@@ -21,7 +21,7 @@ export const publicRoutes = [
     { path: '/ProposerOutils', element: <ProposerOutils/>, name: 'Proposer Outils' },
     { path: '/tools', element: <ToolPage/>, name: 'tools' },
     { path: '/Validations', element: <Validations/>, name: 'Validations' },
-    { path: '/MainPage', element: <MainPage/>, name: 'Main Page' },
+    { path: '/MainPage', element: <HomeSearch/>, name: 'Main Page' },
     { path: '/Library', element: <Library/>, name: 'Library' },
     { path: '/Library/Shelf/:shelfIndex', element: <ShelfItems/>, name: 'Shelf Items' },
     { path: '/HomeSearch', element: <HomeSearch/>, name: 'Home Search' },
@@ -35,4 +35,5 @@ export const adminRoutes = [
     { path: 'suggestions', element: <Validations/>, name: 'Validations' },
     { path: 'moderation', element: <AdminModeration/>, name: 'Moderation' },
     { path: 'add', element: <AdminAddTool/>, name: 'Add Tool' },
+    { path: 'tools', element: <AdminTools/>, name: 'Manage Tools' },
 ]

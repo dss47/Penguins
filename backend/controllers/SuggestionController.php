@@ -55,6 +55,10 @@ final class SuggestionController
 
         $result = $this->suggestionService->createSuggestion($payload, $logoFile);
 
+        if (($result['success'] ?? false) === false && empty($result['data'])) {
+            return Response::error($result['message'] ?? 'Erreur lors de la création de la suggestion.');
+        }
+
         return Response::success($result['data'] ?? $result);
     }
 

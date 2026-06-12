@@ -66,6 +66,9 @@ Si le contenu est sain et respectueux, mets flagged à false.";
      */
     public function evaluateToolSubmission(array $toolData, array $slimContext): ?string
     {
+        // Ignorer la limite de temps d'exécution PHP par défaut (souvent 30s)
+        set_time_limit(120);
+
         $systemPrompt = $this->buildSystemPrompt($slimContext);
         $userMessage = "Évalue cet outil :\nNom: {$toolData['name']}\nURL: {$toolData['website_url']}\nDescription: {$toolData['description']}\nCatégorie sélectionnée ID: {$toolData['category_id']}\nFournisseur sélectionné ID: {$toolData['provider_id']}\nDate de sortie: {$toolData['release_date']}\nModèles: {$toolData['model_ids']}";
 
@@ -81,6 +84,46 @@ Si le contenu est sain et respectueux, mets flagged à false.";
 
         // Return null if ALL models in the queue failed
         return null; 
+    }
+
+    public function getRecommendations(string $prompt, array $toolsData): ?array
+    {
+        set_time_limit(120);
+
+        $toolsJson = json_encode($toolsData, JSON_UNESCAPED_UNICODE);
+
+        $systemPrompt = "Tu es un expert en outils d'intelligence artificielle.
+Ton but est de recommander les meilleurs outils parmi la liste fournie pour répondre au besoin de l'utilisateur.
+
+RÈGLES :
+1. Choisis un maximum de 6 outils pertinents dans la liste.
+2. Si le besoin est trop vague ou ne correspond à aucun outil, choisis-en moins ou aucun.
+3. Utilise UNIQUEMENT les IDs présents dans la liste fournie. N'invente jamais d'ID.
+4. Donne un titre très court, en 2 à 5 mots, qui résume la recherche.
+5. Retourne uniquement un JSON strict avec cette structure :
+{
+  \"tool_ids\": [1, 5, 12],
+  \"title\": \"Édition vidéo IA\",
+  \"reasoning\": \"Explication courte et claire du choix.\"
+}
+
+Liste des outils disponibles, au format {id, name} :
+$toolsJson";
+
+        $userMessage = "Besoin de l'utilisateur : " . $prompt;
+
+        foreach ($this->modelQueue as $model) {
+            $response = $this->attemptRequest($model, $systemPrompt, $userMessage);
+            
+            if ($response !== null) {
+                $decoded = json_decode($response, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded) && isset($decoded['tool_ids'], $decoded['title'], $decoded['reasoning']) && is_array($decoded['tool_ids'])) {
+                    return $decoded;
+                }
+                error_log('OpenRouterService::getRecommendations invalid JSON: ' . json_last_error_msg() . ' | Response: ' . substr($response, 0, 500));
+            }
+        }
+        return null;
     }
 
     private function attemptRequest(string $model, string $systemPrompt, string $userMessage): ?string
@@ -100,7 +143,7 @@ Si le contenu est sain et respectueux, mets flagged à false.";
             CURLOPT_POST           => true,
             CURLOPT_POSTFIELDS     => json_encode($payload),
             CURLOPT_CONNECTTIMEOUT => 5,
-            CURLOPT_TIMEOUT        => 25,
+            CURLOPT_TIMEOUT        => 90,
             CURLOPT_HTTPHEADER     => [
                 'Content-Type: application/json',
                 'Authorization: Bearer ' . $this->apiKey,
