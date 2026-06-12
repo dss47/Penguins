@@ -14,18 +14,17 @@ const Profile = () =>{
     const { isAuthenticated } = useAuth();
     if (!isAuthenticated) return <LoginPrompt />;
 
-    const userId = "123"; // Hardcoded userId
     return(
         <div className={style.shell}>
-            <ProfileHeader userId={userId} />
-            <Insights userId={userId} />
+            <ProfileHeader />
+            <Insights />
             <div className={style.grid}>
-                <Reviews userId={userId} />
-                <Favorites userId={userId} />
-                <Shelves userId={userId} />
-                <SearchHistory userId={userId} />
-                <Suggestions userId={userId} />
-                <AccountDetails userId={userId} />
+                <Reviews />
+                <Favorites />
+                <Shelves />
+                <SearchHistory />
+                <Suggestions />
+                <AccountDetails />
             </div>
         </div>
     )

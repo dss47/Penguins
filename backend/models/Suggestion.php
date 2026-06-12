@@ -106,6 +106,14 @@ final class Suggestion extends BaseModel
         ]);
     }
 
+    public function allByUserId(int $userId): array
+    {
+        $sql = 'SELECT * FROM suggestions WHERE user_id = ? ORDER BY created_at DESC';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll();
+    }
+
     public function getAdminHistory(int $adminUserId): array
     {
         $sql = 'SELECT * FROM suggestions 
@@ -121,7 +129,7 @@ final class Suggestion extends BaseModel
     public function update(int $id, array $data): bool
     {
         $allowedFields = ['name', 'website_url', 'description', 'category_id', 'provider_id',
-                          'model_ids', 'existing_feature_ids', 'release_date',
+                          'model_ids', 'existing_feature_ids', 'release_date', 'logo_url',
                           'fixed_name', 'fixed_url', 'fixed_description', 'fixed_category_id', 'fixed_provider_id',
                           'fixed_model_ids', 'fixed_feature_ids', 'fixed_release_date'];
         $sets = [];

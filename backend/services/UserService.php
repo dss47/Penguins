@@ -14,7 +14,7 @@ final class UserService
     }
 
     /**
-     * Met à jour le profil de l'utilisateur, incluant la photo de profil.
+     * Met à jour le profil de l'utilisateur, incluant la photo de profil et le mot de passe.
      */
     public function updateProfile(int $userId, array $data, ?array $file = null): array
     {
@@ -25,7 +25,6 @@ final class UserService
             }
             $data['profile_url'] = $uploadResult['path'];
             
-            // Delete old profile picture if exists
             $oldUser = $this->userModel->findById($userId);
             if ($oldUser && !empty($oldUser['profile_url']) && str_starts_with($oldUser['profile_url'], '/uploads/')) {
                 $oldPath = realpath(__DIR__ . '/../public' . $oldUser['profile_url']);
@@ -35,10 +34,52 @@ final class UserService
             }
         }
 
-        $updated = $this->userModel->update($userId, $data);
+        // Password change
+        $currentPassword = $data['current_password'] ?? '';
+        $newPassword = $data['new_password'] ?? '';
+        $newPasswordConfirmation = $data['new_password_confirmation'] ?? '';
 
-        if (!$updated) {
-            return ['success' => false, 'message' => 'Erreur lors de la mise à jour du profil.'];
+        unset($data['current_password'], $data['new_password'], $data['new_password_confirmation']);
+
+        if (!empty($currentPassword) || !empty($newPassword) || !empty($newPasswordConfirmation)) {
+            if (empty($currentPassword)) {
+                return ['success' => false, 'message' => 'Le mot de passe actuel est requis.'];
+            }
+            if (empty($newPassword)) {
+                return ['success' => false, 'message' => 'Le nouveau mot de passe est requis.'];
+            }
+            if ($newPassword !== $newPasswordConfirmation) {
+                return ['success' => false, 'message' => 'Les nouveaux mots de passe ne correspondent pas.'];
+            }
+            if (strlen($newPassword) < 6) {
+                return ['success' => false, 'message' => 'Le mot de passe doit contenir au moins 6 caractères.'];
+            }
+
+            $user = $this->userModel->findById($userId);
+            if (!$user || !password_verify($currentPassword, $user['password_hash'])) {
+                return ['success' => false, 'message' => 'Mot de passe actuel incorrect.'];
+            }
+
+            $this->userModel->updatePassword($userId, password_hash($newPassword, PASSWORD_DEFAULT));
+        }
+
+        if (isset($data['name']) || isset($data['email']) || array_key_exists('profession_id', $data) || isset($data['profile_url'])) {
+            $updateData = [];
+            if (isset($data['name'])) $updateData['name'] = $data['name'];
+            if (isset($data['email'])) $updateData['email'] = $data['email'];
+            if (array_key_exists('profession_id', $data)) $updateData['profession_id'] = $data['profession_id'];
+            if (isset($data['profile_url'])) $updateData['profile_url'] = $data['profile_url'];
+
+            if (!empty($updateData)) {
+                $current = $this->userModel->findById($userId);
+                $updateData['name'] ??= $current['name'];
+                $updateData['email'] ??= $current['email'];
+
+                $updated = $this->userModel->update($userId, $updateData);
+                if (!$updated) {
+                    return ['success' => false, 'message' => 'Erreur lors de la mise à jour du profil.'];
+                }
+            }
         }
 
         return ['success' => true, 'message' => 'Profil mis à jour avec succès.', 'profile_url' => $data['profile_url'] ?? null];

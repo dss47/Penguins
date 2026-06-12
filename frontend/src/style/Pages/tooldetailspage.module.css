@@ -191,6 +191,36 @@
     letter-spacing: -0.4px;
 }
 
+.reviewFilters {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: 0.2s;
+}
+.filterBtn:hover {
+    border-color: var(--border-hover);
+    color: var(--text-secondary);
+}
+
+.filterBtnActive {
+    background: var(--tag-bg);
+    border-color: var(--accent);
+    color: var(--accent-light);
+}
+
 .reviewsGrid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -205,6 +235,12 @@
     transition: border-color 0.3s, transform 0.2s;
 }
 .reviewCard:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+
+.reviewCardOwn {
+    border-color: rgba(124,92,252,0.3);
+    background: rgba(124,92,252,0.04);
+}
+.reviewCardOwn:hover { border-color: rgba(124,92,252,0.5); }
 
 .reviewHeader {
     display: flex;
@@ -231,6 +267,149 @@
     font-size: 13.5px;
     color: var(--text-secondary);
     line-height: 1.65;
+}
+
+.professionBadge {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.professionBadge::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    opacity: 0.5;
+}
+
+.privateBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin-left: 8px;
+}
+
+.reviewActions {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.reviewActionBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: 0.2s;
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.reviewActionBtn:hover { background: var(--surface2); color: var(--text-primary); }
+
+.reviewActionBtnDelete:hover { background: rgba(239,68,68,0.12); color: #f87171; }
+
+.deleteConfirm {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.deleteConfirmText {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.deleteConfirmActions {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.confirmBtn {
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #f87171;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.confirmBtn:hover { background: rgba(239,68,68,0.25); }
+
+.cancelBtn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: 0.2s;
+}
+.cancelBtn:hover { border-color: var(--border-hover); color: var(--text-primary); }
+
+.seeMoreBtn {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: center;
+}
+.seeMoreBtn:hover {
+    border-color: var(--accent);
+    color: var(--accent-light);
+    background: var(--tag-bg);
+}
+
+.editForm {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.editFormActions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 12px;
 }
 
 .btnReview {

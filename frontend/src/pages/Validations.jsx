@@ -10,6 +10,7 @@ export default function Validations() {
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
+  const [formOptions, setFormOptions] = useState({ categories: [], providers: [], models: [], features: [] });
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("tous"); 
@@ -28,6 +29,17 @@ export default function Validations() {
 
   useEffect(() => {
     fetchSuggestions();
+    api.get("/admin/data/lists")
+      .then((res) => {
+        const d = res.data || {};
+        setFormOptions({
+          categories: d.categories || [],
+          providers: d.providers || [],
+          models: d.models || [],
+          features: d.features || [],
+        });
+      })
+      .catch(() => {});
   }, []);
 
   const stats = useMemo(() => ({
@@ -70,6 +82,7 @@ export default function Validations() {
           suggestion={selectedSuggestion}
           onClose={() => setSelectedSuggestion(null)}
           onUpdate={handleUpdate}
+          formOptions={formOptions}
         />
       )}
     </>

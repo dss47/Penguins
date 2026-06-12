@@ -52,8 +52,10 @@ $authController = new AuthController();
 $userController = new UserController();
 $adminController = new AdminController();
 $toolController = new ToolController();
+$reviewController = new ReviewController();
 $favoriteController = new FavoriteController();
 $shelfController = new ShelfController();
+$suggestionController = new SuggestionController();
 
 $routes = [
 	'POST /auth/register' => static fn() => json_response($authController->register($body)),
@@ -70,7 +72,9 @@ $routes = [
 	'POST /admin/suggestions/create'  => static fn() => json_response($adminController->createSuggestion($body, $_FILES['logo'] ?? null)),
 	'GET /admin/suggestions/history'  => static fn() => json_response($adminController->suggestionHistory()),
 	'POST /admin/suggestions/reject'  => static fn() => json_response($adminController->rejectSuggestion($body)),
-	'POST /admin/suggestions/update'  => static fn() => json_response($adminController->updateSuggestion($body)),
+	'POST /admin/suggestions/update'  => static fn() => json_response($adminController->updateSuggestion($body, $_FILES['logo'] ?? null)),
+	'POST /suggestions/create' => static fn() => json_response($suggestionController->create($body, $_FILES['logo'] ?? null)),
+	'GET /suggestions/history' => static fn() => json_response($suggestionController->history()),
 	'GET /admin/data/lists'                         => static fn() => json_response($adminController->formData()),
 	'GET /admin/moderation/reviews'               => static fn() => json_response($adminController->moderationReviews()),
 	'POST /admin/moderation/reviews/approve'       => static fn() => json_response($adminController->approveModerationReview($body)),
@@ -83,7 +87,16 @@ $routes = [
 	'POST /shelves/update'   => static fn() => json_response($shelfController->update($body)),
 	'POST /shelves/delete'   => static fn() => json_response($shelfController->delete($body)),
 	'POST /shelves/toggle'   => static fn() => json_response($shelfController->toggleItem($body)),
-	'GET /tools' => static fn() => json_response($toolController->index()),
+	'GET /tools'          => static fn() => json_response($toolController->index()),
+	'GET /tools/reviews'  => static fn() => json_response($toolController->reviews()),
+	'POST /reviews/submit' => static fn() => json_response($reviewController->submit($body)),
+	'POST /reviews/update' => static fn() => json_response($reviewController->update($body)),
+	'POST /reviews/delete' => static fn() => json_response($reviewController->delete($body)),
+	'GET /user/reviews'  => static fn() => json_response($reviewController->list()),
+	'GET /user/search-history' => static fn() => json_response($searchHistoryController->list()),
+	'GET /user/stats' => static fn() => json_response($userController->stats()),
+	'POST /user/profile/update' => static fn() => json_response($userController->updateProfile($body, $_FILES['avatar'] ?? null)),
+	'GET /professions' => static fn() => json_response($userController->professions()),
 ];
 
 if (isset($routes["$method $uri"])) {

@@ -1,63 +1,58 @@
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import api, { API_BASE } from "../../services/api";
 import style from "../../style/profile/Favorites.module.css"
 
 const Favorites = () =>{
+    const [favorites, setFavorites] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        api.get("/favorites")
+            .then((res) => setFavorites(res.data || []))
+            .catch(() => {})
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) {
+        return (
+            <div className={style.card}>
+                <div className={style.card_head}><h2>⭐ Favorites</h2></div>
+                <div className={style.card_body} style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
+                    <Loader2 size={20} className="animate-spin" />
+                </div>
+            </div>
+        );
+    }
+
     return(
         <div className={style.card}>
         <div className={style.card_head}>
-          <h2>⭐ Favorites <span className={style.count}>24</span></h2>
-          <a href="#" className={style.see_all}>See all →</a>
+          <h2>⭐ Favorites {favorites.length > 0 && <span className={style.count}>({favorites.length})</span>}</h2>
         </div>
         <div className={style.card_body}>
-          <div className={style.fav_grid}>
-            <div className={style.fav_card}>
-              <div className={style.fav_logo}>🎨</div>
-              <div className={style.fav_info}>
-                <div className={style.fav_name}>Figma AI</div>
-                <div className={style.fav_cat}>Design</div>
-                <div className={style.rating}>★ 4.8</div>
-              </div>
+          {favorites.length === 0 ? (
+            <div className={style.empty}>No favorites yet.</div>
+          ) : (
+            <div className={style.fav_grid}>
+              {favorites.slice(0, 12).map((f) => (
+                <div key={f.id} className={style.fav_card}>
+                  <div className={style.fav_logo}>
+                    {f.logo_url ? (
+                      <img src={f.logo_url.startsWith("/") ? API_BASE + f.logo_url : f.logo_url} alt="" style={{ width: 28, height: 28, borderRadius: 6, objectFit: "cover" }} />
+                    ) : (
+                      (f.name || "?")[0]
+                    )}
+                  </div>
+                  <div className={style.fav_info}>
+                    <div className={style.fav_name}>{f.name}</div>
+                    <div className={style.fav_cat}>{f.category_name || "Uncategorized"}</div>
+                    <div className={style.rating}>★ {f.global_rating ? Number(f.global_rating).toFixed(1) : "—"}</div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className={style.fav_card}>
-              <div className={style.fav_logo}>🤖</div>
-              <div className={style.fav_info}>
-                <div className={style.fav_name}>Claude</div>
-                <div className={style.fav_cat}>Writing</div>
-                <div className={style.rating}>★ 4.9</div>
-              </div>
-            </div>
-            <div className={style.fav_card}>
-              <div className={style.fav_logo}>🖼️</div>
-              <div className={style.fav_info}>
-                <div className={style.fav_name}>DALL·E 3</div>
-                <div className={style.fav_cat}>Image Gen</div>
-                <div className={style.rating}>★ 4.6</div>
-              </div>
-            </div>
-            <div className={style.fav_card}>
-              <div className={style.fav_logo}>📊</div>
-              <div className={style.fav_info}>
-                <div className={style.fav_name}>Julius AI</div>
-                <div className={style.fav_cat}>Data Analysis</div>
-                <div className={style.rating}>★ 4.5</div>
-              </div>
-            </div>
-            <div className={style.fav_card}>
-              <div className={style.fav_logo}>🎵</div>
-              <div className={style.fav_info}>
-                <div className={style.fav_name}>Suno</div>
-                <div className={style.fav_cat}>Audio</div>
-                <div className={style.rating}>★ 4.4</div>
-              </div>
-            </div>
-            <div className={style.fav_card}>
-              <div className={style.fav_logo}>💬</div>
-              <div className={style.fav_info}>
-                <div className={style.fav_name}>Perplexity</div>
-                <div className={style.fav_cat}>Search</div>
-                <div className={style.rating}>★ 4.7</div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     )

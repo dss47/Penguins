@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 final class ModerationService
 {
+    public function __construct(private readonly OpenRouterService $openRouter = new OpenRouterService())
+    {
+    }
+
     /**
      * Liste noire locale de mots ou d'expressions interdites.
      * Permet un filtrage ultra-rapide (0 milliseconde) avant même d'appeler une API.
@@ -41,9 +45,8 @@ final class ModerationService
             ];
         }
 
-        // 3. (Optionnel) Vérification avancée via IA (OpenRouter / Llama Guard 3)
-        // Décommentez et ajustez si vous souhaitez utiliser une IA pour lire entre les lignes
-        // return $this->aiModerationCheck($cleanContent);
+        // 3. Vérification avancée via IA (AgentRouter)
+        return $this->aiModerationCheck($cleanContent);
 
         // Si tout va bien, le contenu est approuvé
         return [
@@ -76,31 +79,17 @@ final class ModerationService
     }
 
     /**
-     * Squelette pour une vérification IA approfondie (ex: Llama Guard 3 via OpenRouter).
-     * Retourne le même format enrichi que moderate().
+     * Vérification IA approfondie via AgentRouter.
      */
     private function aiModerationCheck(string $content): array
     {
-        // Ici, vous pourriez réutiliser votre OpenRouterService avec un prompt strict :
-        // "Analyse ce texte. Est-ce du spam, de la haine, ou du harcèlement ? Réponds en JSON."
-        
-        // Simulation d'une réponse d'API
-        $aiThinksItsSpam = false; 
-        
-        if ($aiThinksItsSpam) {
-            return [
-                'flagged' => true,
-                'reason' => 'Contenu suspect détecté par l\'IA',
-                'confidence_score' => 85,
-                'categories' => ['spam', 'ai_detected']
-            ];
-        }
+        $result = $this->openRouter->moderateComment($content);
 
         return [
-            'flagged' => false,
-            'reason' => '',
-            'confidence_score' => 0,
-            'categories' => []
+            'flagged'          => $result['flagged'],
+            'reason'           => $result['reason'],
+            'confidence_score' => $result['confidence_score'],
+            'categories'       => $result['flagged'] ? ['ai_detected'] : [],
         ];
     }
 }

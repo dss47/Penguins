@@ -26,6 +26,42 @@ final class OpenRouterService
     }
 
     /**
+     * Moderate a user comment/review for inappropriate content.
+     */
+    public function moderateComment(string $comment): array
+    {
+        $systemPrompt = "Tu es un modérateur de contenu. Analyse le commentaire suivant et détermine s'il contient du spam, des insultes, du harcèlement, un langage inapproprié ou tout contenu violant les règles d'une communauté d'IA.
+Réponds UNIQUEMENT en JSON strict avec cette structure exacte:
+{
+  \"flagged\": false,
+  \"reason\": \"\",
+  \"confidence_score\": 0
+}
+
+Si le contenu est problématique, mets flagged à true, donne la raison et un score de confiance entre 0 et 100.
+Si le contenu est sain et respectueux, mets flagged à false.";
+        $userMessage = "Commentaire à modérer : " . $comment;
+
+        foreach ($this->modelQueue as $model) {
+            $response = $this->attemptRequest($model, $systemPrompt, $userMessage);
+            if ($response !== null) {
+                $decoded = json_decode($response, true);
+                if ($decoded && isset($decoded['flagged'])) {
+                    return [
+                        'flagged' => (bool) $decoded['flagged'],
+                        'reason' => $decoded['reason'] ?? '',
+                        'confidence_score' => (int) ($decoded['confidence_score'] ?? 0),
+                    ];
+                }
+                return ['flagged' => false, 'reason' => '', 'confidence_score' => 0];
+            }
+            error_log("AgentRouter moderateComment: Modèle $model a échoué. Essai du modèle suivant...");
+        }
+
+        return ['flagged' => false, 'reason' => 'API IA indisponible, modération allégée', 'confidence_score' => 0];
+    }
+
+    /**
      * Evaluates a tool submission against the database lists.
      */
     public function evaluateToolSubmission(array $toolData, array $slimContext): ?string

@@ -1,70 +1,59 @@
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import api from "../../services/api";
 import style from "../../style/profile/SearchHistory.module.css"
 
 const SearchHistory = () =>{
+    const [history, setHistory] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        api.get("/user/search-history")
+            .then((res) => setHistory(res.data || []))
+            .catch(() => {})
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) {
+        return (
+            <div className={style.card}>
+                <div className={style.card_head}><h2>🔍 Search History</h2></div>
+                <div className={style.card_body} style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
+                    <Loader2 size={20} className="animate-spin" />
+                </div>
+            </div>
+        );
+    }
+
     return(
         <div className={style.card}>
         <div className={style.card_head}>
-          <h2>🔍 Search History <span className={style.count}>52</span></h2>
-          <a href="#" className={style.see_all}>Clear →</a>
+          <h2>🔍 Search History {history.length > 0 && <span className={style.count}>({history.length})</span>}</h2>
         </div>
         <div className={style.card_body}>
-          <div className={style.history_list}>
-            <div className={style.history_item}>
-              <div className={`${style.history_type_icon} ${style.ai}`}>✦</div>
-              <div className={style.history_content}>
-                <div className={style.history_title}>Best tools for UX wireframing in 2025</div>
-                <div className={style.history_prompt}>Find me AI-powered wireframing tools that integrate with Figma...</div>
-                <div className={style.history_cats}>
-                  <span className={style.history_cat_tag}>Design</span>
-                  <span className={style.history_cat_tag}>Productivity</span>
+          {history.length === 0 ? (
+            <div className={style.empty}>No search history yet.</div>
+          ) : (
+            <div className={style.history_list}>
+              {history.slice(0, 10).map((h) => (
+                <div key={h.id} className={style.history_item}>
+                  <div className={`${style.history_type_icon} ${h.search_type === "ai_prompt" ? style.ai : style.keyword}`}>
+                    {h.search_type === "ai_prompt" ? "✦" : "⌕"}
+                  </div>
+                  <div className={style.history_content}>
+                    <div className={style.history_title}>{h.title}</div>
+                    {h.prompt_text && <div className={style.history_prompt}>{h.prompt_text}</div>}
+                  </div>
+                  <div className={style.history_meta}>
+                    <div className={style.history_type_label}>{h.search_type === "ai_prompt" ? "AI Prompt" : "Keyword"}</div>
+                    <div className={style.history_date}>
+                      {h.created_at ? new Date(h.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className={style.history_meta}>
-                <div className={style.history_type_label}>AI Prompt</div>
-                <div className={style.history_date}>Jun 1</div>
-              </div>
+              ))}
             </div>
-            <div className={style.history_item}>
-              <div className={`${style.history_type_icon} ${style.keyword}`}>⌕</div>
-              <div className={style.history_content}>
-                <div className={style.history_title}>voice synthesis free tier</div>
-                <div className={style.history_prompt}>voice synthesis free tier</div>
-                <div className={style.history_cats}>
-                  <span className={style.history_cat_tag}>Audio</span>
-                </div>
-              </div>
-              <div className={style.history_meta}>
-                <div className={style.history_type_label}>Keyword</div>
-                <div className={style.history_date}>May 29</div>
-              </div>
-            </div>
-            <div className={style.history_item}>
-              <div className={`${style.history_type_icon} ${style.ai}`}>✦</div>
-              <div className={style.history_content}>
-                <div className={style.history_title}>AI tools for competitor analysis</div>
-                <div className={style.history_prompt}>Suggest tools for market research and brand tracking with AI...</div>
-                <div className={style.history_cats}>
-                  <span className={style.history_cat_tag}>Analytics</span>
-                  <span className={style.history_cat_tag}>Research</span>
-                </div>
-              </div>
-              <div className={style.history_meta}>
-                <div className={style.history_type_label}>AI Prompt</div>
-                <div className={style.history_date}>May 24</div>
-              </div>
-            </div>
-            <div className={style.history_item}>
-              <div className={`${style.history_type_icon} ${style.keyword}`}>⌕</div>
-              <div className={style.history_content}>
-                <div className={style.history_title}>open source llm deployment</div>
-                <div className={style.history_prompt}>open source llm deployment</div>
-              </div>
-              <div className={style.history_meta}>
-                <div className={style.history_type_label}>Keyword</div>
-                <div className={style.history_date}>May 18</div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     )

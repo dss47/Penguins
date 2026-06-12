@@ -42,7 +42,7 @@ final class SearchHistory extends BaseModel
     }
     public function allByUserId(int $userId): array
     {
-        $sql = 'SELECT id, title, search_type, created_at 
+        $sql = 'SELECT id, title, prompt_text, search_type, created_at 
                 FROM search_histories 
                 WHERE user_id = ? 
                 ORDER BY created_at DESC';

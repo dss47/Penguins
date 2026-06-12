@@ -47,13 +47,21 @@ final class SearchHistoryService
     /**
      * Récupère l'historique complet d'un utilisateur (pour son profil / dashboard).
      */
-    public function getUserHistory(int $userId): array
+    public function listUserHistory(int $userId): array
     {
         if ($userId <= 0) {
             return [];
         }
 
-        return $this->searchHistoryModel->findByUserId($userId);
+        return $this->searchHistoryModel->allByUserId($userId) ?: [];
+    }
+
+    /**
+     * @deprecated Use listUserHistory() instead
+     */
+    public function getUserHistory(int $userId): array
+    {
+        return $this->listUserHistory($userId);
     }
 
     /**

@@ -12,7 +12,8 @@ final class AdminController
         private readonly Category $categoryModel = new Category(),
         private readonly Provider $providerModel = new Provider(),
         private readonly Model $modelModel = new Model(),
-        private readonly Feature $featureModel = new Feature()
+        private readonly Feature $featureModel = new Feature(),
+        private readonly UploadService $uploadService = new UploadService()
     ) {
     }
 
@@ -140,13 +141,24 @@ final class AdminController
         return Response::success($result['data'] ?? $result);
     }
 
-    public function updateSuggestion(array $body): array
+    public function updateSuggestion(array $body, ?array $logoFile = null): array
     {
         $id = (int) ($body['id'] ?? 0);
         if ($id <= 0) {
             return Response::error('ID invalide');
         }
         unset($body['id']);
+
+        if ($logoFile && $logoFile['error'] === UPLOAD_ERR_OK) {
+            $customName = trim((string) ($body['fixed_name'] ?? $body['name'] ?? ''));
+            $uploadResult = $this->uploadService->handleUpload($logoFile, 'uploads/tools', $customName);
+            if ($uploadResult['success']) {
+                $body['logo_url'] = $uploadResult['path'];
+            } else {
+                error_log('AdminController::updateSuggestion upload error: ' . ($uploadResult['error'] ?? 'unknown'));
+            }
+        }
+
         $success = $this->suggestionModel->update($id, $body);
         if ($success) {
             $updated = $this->suggestionModel->findById($id);

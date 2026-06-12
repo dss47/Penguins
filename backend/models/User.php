@@ -60,4 +60,13 @@ public function create(array $data): int
             ':id'            => $id,
         ]);
     }
+
+    public function updatePassword(int $id, string $passwordHash): bool
+    {
+        $stmt = $this->db->prepare('UPDATE users SET password_hash = :password_hash, updated_at = NOW() WHERE id = :id');
+        return $stmt->execute([
+            ':password_hash' => $passwordHash,
+            ':id'            => $id,
+        ]);
+    }
 }
