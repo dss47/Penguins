@@ -15,6 +15,11 @@ final class ExploreController
         return Response::success($this->exploreService->home());
     }
 
+    public function landingSummary(): array
+    {
+        return Response::success($this->exploreService->landingSummary());
+    }
+
     public function search(array $query): array
     {
         return Response::success($this->exploreService->searchByKeywords((string) ($query['q'] ?? '')));

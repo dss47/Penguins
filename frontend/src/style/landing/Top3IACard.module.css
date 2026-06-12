@@ -88,6 +88,7 @@
     align-items: center;
     justify-content: center;
     font-size: 1.9rem;
+    object-fit: cover;
 }
 
 .rank1Card .icon{

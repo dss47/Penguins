@@ -42,4 +42,9 @@ final class ToolController
             'user_review' => $userReview,
         ]);
     }
+
+    public function topReviews(): array
+    {
+        return Response::success($this->reviewModel->topApprovedComments(3));
+    }
 }

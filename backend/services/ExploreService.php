@@ -27,6 +27,21 @@ final class ExploreService
         ];
     }
 
+    public function landingSummary(): array
+    {
+        $db = db_connection();
+
+        $categoriesStmt = $db->prepare('SELECT id, name, icon FROM categories ORDER BY name ASC LIMIT 6');
+        $categoriesStmt->execute();
+
+        return [
+            'tool_count' => (int) $db->query("SELECT COUNT(*) FROM ai_tools WHERE status = 'active'")->fetchColumn(),
+            'category_count' => (int) $db->query('SELECT COUNT(*) FROM categories')->fetchColumn(),
+            'community_members' => (int) $db->query("SELECT COUNT(*) FROM users WHERE role <> 'admin' AND status <> 'deleted'")->fetchColumn(),
+            'categories' => $categoriesStmt->fetchAll(PDO::FETCH_ASSOC) ?: [],
+        ];
+    }
+
     /**
      * Recherche classique par mots-clés (ex: "générateur image", "chatgpt").
      * Interroge directement la base de données (SQL LIKE ou Full-Text).
@@ -81,6 +96,13 @@ final class ExploreService
         ), 0, 6));
 
         $tools = $this->toolModel->findActiveByIds($selectedIds);
+        $toolFeatures = new ToolFeatures();
+        foreach ($tools as &$tool) {
+            $features = $toolFeatures->findFeaturesByToolId((int) $tool['id']);
+            $tool['features'] = array_column($features, 'name');
+        }
+        unset($tool);
+
         $title = trim((string) ($aiAnswer['title'] ?? ''));
         if ($title === '') {
             $title = substr($cleanPrompt, 0, 60);

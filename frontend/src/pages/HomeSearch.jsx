@@ -1,78 +1,29 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useEffectEvent, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Search, Loader2, Plus, Star, Sparkles, Menu, ArrowLeft, Clock } from "lucide-react";
 import styles from "../style/Pages/HomeSearch.module.css";
 import { useAuth } from "../context/AuthContext";
-import api from "../services/api";
-
-const MOCK_RESULTS = [
-    {
-        id: 1,
-        name: "DaVinci Resolve",
-        category: "Video",
-        rating: 4.8,
-        logo: "DR",
-        description: "Professional-grade video editing with advanced color grading and audio post-production.",
-        features: ["Color grading", "Fusion VFX", "Fairlight audio"],
-    },
-    {
-        id: 2,
-        name: "Adobe Premiere Pro",
-        category: "Video",
-        rating: 4.6,
-        logo: "PR",
-        description: "Industry-standard video editing software with seamless Creative Cloud integration.",
-        features: ["Multi-cam", "Auto-reframe", "Team projects"],
-    },
-    {
-        id: 3,
-        name: "Final Cut Pro",
-        category: "Video",
-        rating: 4.7,
-        logo: "FC",
-        description: "Apple's high-performance video editing solution built for the Mac ecosystem.",
-        features: ["Magnetic timeline", "Proxy workflow", "HDR support"],
-    },
-    {
-        id: 4,
-        name: "CapCut",
-        category: "Video",
-        rating: 4.5,
-        logo: "CC",
-        description: "Free all-in-one video editor with AI-powered features and extensive template library.",
-        features: ["Auto-captions", "AI effects", "Templates"],
-    },
-    {
-        id: 5,
-        name: "Shotcut",
-        category: "Video",
-        rating: 4.3,
-        logo: "SC",
-        description: "Open-source cross-platform video editor with wide format support.",
-        features: ["Open source", "4K support", "Audio filters"],
-    },
-    {
-        id: 6,
-        name: "Kdenlive",
-        category: "Video",
-        rating: 4.2,
-        logo: "KD",
-        description: "Powerful open-source video editor with a flexible and intuitive interface.",
-        features: ["Multitrack", "Proxy editing", "Effects"],
-    },
-];
+import api, { API_BASE } from "../services/api";
 
 const ToolCard = ({ tool }) => (
     <div className={styles.toolCard}>
         <div className={styles.toolCardTop}>
-            <div className={styles.toolLogo}>{tool.logo}</div>
+            {tool.logo_url ? (
+                <img
+                    className={styles.toolLogoImage}
+                    src={tool.logo_url.startsWith("http") ? tool.logo_url : `${API_BASE}${tool.logo_url}`}
+                    alt={tool.name}
+                />
+            ) : (
+                <div className={styles.toolLogo}>{tool.name?.slice(0, 2).toUpperCase() || "AI"}</div>
+            )}
             <div className={styles.toolInfo}>
                 <h4 className={styles.toolName}>{tool.name}</h4>
                 <div className={styles.toolMeta}>
-                    <span className={styles.categoryBadge}>{tool.category}</span>
+                    <span className={styles.categoryBadge}>{tool.category_name || "AI"}</span>
                     <span className={styles.rating}>
                         <Star size={13} fill="#fbbf24" />
-                        {tool.rating}
+                        {Number(tool.global_rating || tool.website_rating || 0).toFixed(1)}
                         <span className={styles.ratingValue}>/ 5</span>
                     </span>
                 </div>
@@ -80,11 +31,11 @@ const ToolCard = ({ tool }) => (
         </div>
         <p className={styles.toolDescription}>{tool.description}</p>
         <ul className={styles.toolFeatureList}>
-            {tool.features.map((f, i) => (
+            {(tool.features?.length ? tool.features : [tool.provider_name].filter(Boolean)).map((f, i) => (
                 <li key={i} className={styles.toolFeatureItem}>{f}</li>
             ))}
         </ul>
-        <button className={styles.detailsBtn}>Détails</button>
+        <Link to={`/tool/${encodeURIComponent(tool.name)}`} className={styles.detailsBtn}>Détails</Link>
     </div>
 );
 
@@ -98,18 +49,16 @@ export default function HomeSearch() {
     const [history, setHistory] = useState([]);
     const [historyLoading, setHistoryLoading] = useState(false);
     const [historyError, setHistoryError] = useState("");
+    const [result, setResult] = useState(null);
+    const [recommendError, setRecommendError] = useState("");
+    const [historyDetailsCache, setHistoryDetailsCache] = useState({});
     const inputRef = useRef(null);
+    const initialPromptRef = useRef("");
 
     useEffect(() => {
         if (view === "search" && inputRef.current) {
             inputRef.current.focus();
         }
-    }, [view]);
-
-    useEffect(() => {
-        if (view !== "loading") return;
-        const timer = setTimeout(() => setView("results"), 2000);
-        return () => clearTimeout(timer);
     }, [view]);
 
     useEffect(() => {
@@ -150,19 +99,107 @@ export default function HomeSearch() {
     }, [isAuthenticated]);
 
     const handleSubmit = (term) => {
-        const val = term ?? query;
+        const val = (term ?? query).trim();
         if (!val.trim()) return;
         setSearchTerm(val);
-        if (!history.some((h) => h.title.toLowerCase() === val.toLowerCase())) {
-            setHistory((prev) => [{ id: Date.now(), title: val }, ...prev]);
-        }
+        setResult(null);
+        setRecommendError("");
         setView("loading");
+
+        api.post("/explore/recommend", { prompt: val })
+            .then((res) => {
+                const data = res.data || {};
+                setResult(data);
+                if (data.history_id) {
+                    setHistoryDetailsCache((prev) => ({
+                        ...prev,
+                        [data.history_id]: {
+                            id: data.history_id,
+                            title: data.title,
+                            prompt_text: data.prompt,
+                            ai_reasoning: data.reasoning,
+                            tools: data.tools || [],
+                        },
+                    }));
+                }
+                if (isAuthenticated && data.title) {
+                    setHistory((prev) => {
+                        const next = prev.filter((h) => h.id !== data.history_id && h.prompt_text !== val);
+                        return [{ id: data.history_id || `local-${Date.now()}`, title: data.title, prompt_text: val }, ...next];
+                    });
+                }
+                setView("results");
+            })
+            .catch((err) => {
+                setRecommendError(err?.message || "Impossible de générer des recommandations.");
+                setView("results");
+            });
     };
+
+    const handleHistoryClick = (item) => {
+        const historyId = Number(item.id);
+        if (!historyId) return;
+
+        const cached = historyDetailsCache[historyId];
+        if (cached) {
+            setSearchTerm(cached.prompt_text || item.prompt_text || item.title);
+            setResult({
+                history_id: cached.id,
+                prompt: cached.prompt_text,
+                title: cached.title,
+                reasoning: cached.ai_reasoning,
+                tools: cached.tools || [],
+            });
+            setRecommendError("");
+            setView("results");
+            return;
+        }
+
+        setSearchTerm(item.prompt_text || item.title);
+        setResult(null);
+        setRecommendError("");
+        setView("loading");
+
+        api.get(`/user/search-history/details?id=${encodeURIComponent(historyId)}`)
+            .then((res) => {
+                const data = res.data || {};
+                setHistoryDetailsCache((prev) => ({ ...prev, [historyId]: data }));
+                setSearchTerm(data.prompt_text || item.prompt_text || item.title);
+                setResult({
+                    history_id: data.id,
+                    prompt: data.prompt_text,
+                    title: data.title,
+                    reasoning: data.ai_reasoning,
+                    tools: data.tools || [],
+                });
+                setView("results");
+            })
+            .catch((err) => {
+                setRecommendError(err?.message || "Impossible de charger cet historique.");
+                setView("results");
+            });
+    };
+
+    const submitPromptFromUrl = useEffectEvent((prompt) => {
+        setQuery(prompt);
+        handleSubmit(prompt);
+    });
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const prompt = (params.get("q") || "").trim();
+        if (!prompt || initialPromptRef.current === prompt) return;
+
+        initialPromptRef.current = prompt;
+        submitPromptFromUrl(prompt);
+    }, [location.search]);
 
     const resetToSearch = () => {
         setView("search");
         setQuery("");
         setSearchTerm("");
+        setResult(null);
+        setRecommendError("");
     };
 
     return (
@@ -192,7 +229,7 @@ export default function HomeSearch() {
                             <button
                                 key={item.id}
                                 className={styles.historyItem}
-                                onClick={() => handleSubmit(item.prompt_text || item.title)}
+                                onClick={() => handleHistoryClick(item)}
                             >
                                 <Clock size={14} className={styles.historyIcon} />
                                 {item.title}
@@ -266,18 +303,17 @@ export default function HomeSearch() {
                                 AI Point of View
                             </div>
                             <p className={styles.aiPovText}>
-                                Based on your need for {searchTerm.toLowerCase()}, I selected these
-                                tools for their strong feature sets, user satisfaction, and
-                                compatibility with modern workflows. Each recommendation balances
-                                performance, ease of use, and community support.
+                                {result?.reasoning || recommendError || "Aucune recommandation disponible pour cette recherche."}
                             </p>
                         </div>
 
-                        <div className={styles.toolGrid}>
-                            {MOCK_RESULTS.map((tool) => (
-                                <ToolCard key={tool.id} tool={tool} />
-                            ))}
-                        </div>
+                        {result?.tools?.length > 0 && (
+                            <div className={styles.toolGrid}>
+                                {result.tools.map((tool) => (
+                                    <ToolCard key={tool.id} tool={tool} />
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
             </main>

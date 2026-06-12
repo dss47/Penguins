@@ -6,7 +6,8 @@ final class SearchHistoryService
 {
     public function __construct(
         private readonly SearchHistory $searchHistoryModel = new SearchHistory(),
-        private readonly SearchHistoryTool $searchHistoryToolModel = new SearchHistoryTool()
+        private readonly SearchHistoryTool $searchHistoryToolModel = new SearchHistoryTool(),
+        private readonly ToolFeatures $toolFeatures = new ToolFeatures()
     ) {
     }
 
@@ -85,9 +86,14 @@ final class SearchHistoryService
             return null;
         }
 
-        // 2. Récupère les outils liés à cette recherche
-        // (Le modèle SearchHistoryTool devrait idéalement faire un JOIN avec la table tools pour ramener le nom/logo)
-        $search['recommended_tools'] = $this->searchHistoryToolModel->getToolsBySearchId($searchId);
+        $tools = $this->searchHistoryToolModel->findToolsByHistoryId($searchId);
+        foreach ($tools as &$tool) {
+            $features = $this->toolFeatures->findFeaturesByToolId((int) $tool['id']);
+            $tool['features'] = array_column($features, 'name');
+        }
+        unset($tool);
+
+        $search['tools'] = $tools;
 
         return $search;
     }

@@ -61,6 +61,34 @@ final class Review extends BaseModel
         return $stmt->fetchAll();
     }
 
+    public function topApprovedComments(int $limit = 3): array
+    {
+        $limit = max(1, min(10, $limit));
+
+        $sql = "SELECT r.id,
+                       r.comment,
+                       r.rating,
+                       r.created_at,
+                       u.name AS user_name,
+                       u.profile_url AS user_profile_url,
+                       p.name AS profession_name,
+                       t.name AS tool_name
+                FROM reviews r
+                INNER JOIN users u ON r.user_id = u.id
+                INNER JOIN ai_tools t ON r.tool_id = t.id
+                LEFT JOIN professions p ON u.profession_id = p.id
+                WHERE r.status = 'approved'
+                  AND r.comment IS NOT NULL
+                  AND TRIM(r.comment) <> ''
+                ORDER BY r.rating DESC, r.created_at DESC
+                LIMIT $limit";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
     public function findByUserAndTool(int $userId, int $toolId): ?array
     {
         $sql = 'SELECT r.*, u.name AS user_name, p.name AS profession_name

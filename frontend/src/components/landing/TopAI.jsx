@@ -1,24 +1,49 @@
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import style from "../../style/landing/TopAI.module.css"
 import Top3IACard from "./Top3IACard";
 import Top8AICard from "./Top8IACard"
+import api, { API_BASE } from "../../services/api";
+
+const logoUrl = (path) => {
+    if (!path) return "";
+    return path.startsWith("http") ? path : `${API_BASE}${path}`;
+};
+
+const normalizeRating = (tool) => Number(tool.global_rating || tool.website_rating || 0);
 
 const TopAI = ({scrollRef}) =>{
     const sectionRef = useRef(null);
-    const itemRefs = useRef([]);
-    const aiTools = [
-        { id:1 ,icon: "🤖", name: "ChatGPT", category: "Conversational AI", rate: 4.8 },
-        { id:2 ,icon: "✨", name: "Gemini", category: "Multimodal Assistant", rate: 4.7 },
-        { id:3 ,icon: "🧠", name: "Claude", category: "Conversational AI", rate: 4.8 },
-        { id:4 ,icon: "🎨", name: "Midjourney", category: "Image Generation", rate: 4.9 },
-        { id:5 ,icon: "🔍", name: "Perplexity", category: "AI Search Engine", rate: 4.6 },
-        { id:6 ,icon: "🚀", name: "Copilot", category: "Coding & Productivity", rate: 4.5 },
-        { id:7 ,icon: "🖌️", name: "DALL-E 3", category: "Image Generation", rate: 4.6 },
-        { id:8 ,icon: "✍️", name: "Jasper", category: "Marketing & Copywriting", rate: 4.4 }
-    ];
-    const sortedIA = [...aiTools].sort((a,b)=>b.rate-a.rate);
-    const rankedAI = sortedIA.map((ai,index)=>{
+    const [aiTools, setAiTools] = useState([]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        api.get("/tools")
+            .then((res) => {
+                if (cancelled) return;
+                const ranked = (res.data || [])
+                    .map((tool) => ({
+                        id: tool.id,
+                        imageUrl: logoUrl(tool.logo_url),
+                        name: tool.name,
+                        category: tool.category_name || "AI Tool",
+                        rate: normalizeRating(tool),
+                    }))
+                    .sort((a, b) => b.rate - a.rate)
+                    .slice(0, 8);
+                setAiTools(ranked);
+            })
+            .catch(() => {
+                if (!cancelled) setAiTools([]);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const rankedAI = aiTools.map((ai,index)=>{
         return{
             rank : index+1,
             ...ai
@@ -27,19 +52,15 @@ const TopAI = ({scrollRef}) =>{
 
     const top3AI = rankedAI.slice(0,3);
     const top8AI = rankedAI.slice(3,8);
-    const top3StartIndex = 3;
-    const top8LabelIndex = top3StartIndex + top3AI.length;
-    const top8StartIndex = top8LabelIndex + 1;
-    const setItemRef = (index) => (el) => {
-        itemRefs.current[index] = el;
-    };
 
     useEffect(() => {
         const timeouts = [];
+        const section = sectionRef.current;
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                    itemRefs.current.forEach((ref, index) => {
+                    const items = entry.target.querySelectorAll(`.${style.fromgrid}`);
+                    items.forEach((ref, index) => {
                         if (!ref) return;
                         const timeoutId = window.setTimeout(() => {
                             ref.classList.add(style.togrid);
@@ -51,27 +72,27 @@ const TopAI = ({scrollRef}) =>{
             });
         }, { threshold: 0.2 });
 
-        if (sectionRef.current) {
-            observer.observe(sectionRef.current);
+        if (section) {
+            observer.observe(section);
         }
 
         return () => {
             observer.disconnect();
             timeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
         };
-    }, []);
+    }, [aiTools.length]);
     return(
         <>
         <div ref={scrollRef}>
 
         <div className={style.TopAI} ref={sectionRef} >
             <div className={style.header}>
-                <div className={`${style.hero} ${style.fromgrid}`} ref={setItemRef(0)}>
+                <div className={`${style.hero} ${style.fromgrid}`}>
                     <span className={style.heroLine}></span>
                     COMMUNITY RATED
                 </div>
-                <h2 className={`${style.intro} ${style.fromgrid}`} ref={setItemRef(1)}>The Penguin Hall of Fame</h2>
-                <p className={`${style.desc} ${style.fromgrid}`} ref={setItemRef(2)}>Ranked by thousands of verified community reviews.</p>
+                <h2 className={`${style.intro} ${style.fromgrid}`}>The Penguin Hall of Fame</h2>
+                <p className={`${style.desc} ${style.fromgrid}`}>Ranked by thousands of verified community reviews.</p>
             </div>
             <div className={style.stage}>
                 <div className={style.stageBackdrop} aria-hidden="true">
@@ -81,34 +102,32 @@ const TopAI = ({scrollRef}) =>{
                 </div>
                 <div className={style.stageDot} aria-hidden="true"></div>
                 <div className={style.top3AI}>
-                {top3AI.map((ai3, index)=> (
+                {top3AI.map((ai3)=> (
                     <Top3IACard 
                         key={ai3.id}
-                        icon={ai3.icon}
+                        imageUrl={ai3.imageUrl}
                         name={ai3.name}
                         category={ai3.category}
-                        rate={ai3.rate}
+                        rate={ai3.rate.toFixed(1)}
                         stars={"⭐".repeat(Math.round(ai3.rate))}
                         rank={ai3.rank}
                         className={style.fromgrid}
-                        ref={setItemRef(top3StartIndex + index)}
                     />
                 ))}
                 </div>
                 <div className={style.stageBase} aria-hidden="true"></div>
             </div>
             <div className={style.rankSection}>
-                <div className={`${style.top8AIRank} ${style.fromgrid}`} ref={setItemRef(top8LabelIndex)}>Ranks 4 - 8</div>
+                <div className={`${style.top8AIRank} ${style.fromgrid}`}>Ranks 4 - 8</div>
                 <div className={style.top8AI}>
-                    {top8AI.map((ai8, index)=> (
+                    {top8AI.map((ai8)=> (
                         <Top8AICard
                             key={ai8.id}
-                            icon={ai8.icon}
+                            imageUrl={ai8.imageUrl}
                             name={ai8.name}
-                            rate={ai8.rate}
+                            rate={ai8.rate.toFixed(1)}
                             rank={ai8.rank}
                             className={style.fromgrid}
-                            ref={setItemRef(top8StartIndex + index)}
                         />
                     ))}
                 </div>

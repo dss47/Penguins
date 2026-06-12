@@ -2,11 +2,41 @@
 import style from "../../style/landing/LandingHome.module.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom";
+import api from "../../services/api";
+
+const formatCount = (value) => new Intl.NumberFormat("fr-FR").format(Number(value) || 0);
 
 const LandingHome = ({scrollRef}) => {
+    const navigate = useNavigate()
     const statsRefs = useRef([])
     const hintsRefs = useRef([])
+    const [prompt, setPrompt] = useState("")
+    const [landingData, setLandingData] = useState({
+        tool_count: 0,
+        category_count: 0,
+        community_members: 0,
+        categories: [],
+    })
+
+    useEffect(() => {
+        let cancelled = false
+
+        api.get("/landing/summary")
+            .then((res) => {
+                if (!cancelled) setLandingData(res.data || {})
+            })
+            .catch(() => {
+                if (!cancelled) {
+                    setLandingData({ tool_count: 0, category_count: 0, community_members: 0, categories: [] })
+                }
+            })
+
+        return () => {
+            cancelled = true
+        }
+    }, [])
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -18,23 +48,33 @@ const LandingHome = ({scrollRef}) => {
             })
         }, { threshold: 0.1 })
 
-        statsRefs.current.forEach((ref) => {
+        const stats = statsRefs.current
+        const hints = hintsRefs.current
+
+        stats.forEach((ref) => {
             if (ref) observer.observe(ref)
         })
 
-        hintsRefs.current.forEach((ref) => {
+        hints.forEach((ref) => {
             if (ref) observer.observe(ref)
         })
 
         return () => {
-            statsRefs.current.forEach((ref) => {
+            stats.forEach((ref) => {
                 if (ref) observer.unobserve(ref)
             })
-            hintsRefs.current.forEach((ref) => {
+            hints.forEach((ref) => {
                 if (ref) observer.unobserve(ref)
             })
         }
-    }, [])
+    }, [landingData.categories?.length])
+
+    const handleSearch = () => {
+        const value = prompt.trim()
+        if (!value) return
+        navigate(`/HomeSearch?q=${encodeURIComponent(value)}`)
+    }
+
     return(
         <>
         <main ref={scrollRef} className={style.main}>
@@ -44,29 +84,35 @@ const LandingHome = ({scrollRef}) => {
             <div className={style.searchField}>
                 <div className={style.submitionField}>
                     <div className={style.icon}><FontAwesomeIcon icon={faMagnifyingGlass} /></div> 
-                    <input  className={style.input} type="text" placeholder="e.g."/>
-                    <button className={style.searchBtn} >Search</button>
+                    <input
+                        className={style.input}
+                        type="text"
+                        placeholder="e.g. résumer des PDF pour mes cours"
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    />
+                    <button className={style.searchBtn} onClick={handleSearch}>Search</button>
                 </div>
                 <div className={style.hints}>
-                    <button className={`${style.hint} ${style.fromgrid}`} ref={(el) => hintsRefs.current[0] = el}>✍️ AI writing</button>
-                    <button className={`${style.hint} ${style.fromgrid}`} ref={(el) => hintsRefs.current[1] = el}>🎙️ Voice cloning</button>
-                    <button className={`${style.hint} ${style.fromgrid}`} ref={(el) => hintsRefs.current[2] = el}>🎨 Image gen</button>
-                    <button className={`${style.hint} ${style.fromgrid}`} ref={(el) => hintsRefs.current[3] = el}>📊 Data analysis</button>
-                    <button className={`${style.hint} ${style.fromgrid}`} ref={(el) => hintsRefs.current[4] = el}>🎬 Video creation</button>
-                    <button className={`${style.hint} ${style.fromgrid}`} ref={(el) => hintsRefs.current[5] = el}>💻 Code assistant</button>
+                    {(landingData.categories || []).map((category, index) => (
+                        <button key={category.id} className={`${style.hint} ${style.fromgrid}`} ref={(el) => hintsRefs.current[index] = el}>
+                            {category.icon || "✦"} {category.name}
+                        </button>
+                    ))}
                 </div>
             </div>
             <div className={style.heroStats}>
                 <div className={`${style.infos} ${style.fromgrid}`} ref={(el) => statsRefs.current[0] = el}>
-                    <p className={style.statNum}>3,200</p>
+                    <p className={style.statNum}>{formatCount(landingData.tool_count)}</p>
                     <p className={style.statValue}>Outils d'IA catalogués</p>
                 </div>
                 <div className={`${style.infos} ${style.fromgrid}`} ref={(el) => statsRefs.current[1] = el}>
-                    <p className={style.statNum}>4 8</p>
+                    <p className={style.statNum}>{formatCount(landingData.category_count)}</p>
                     <p className={style.statValue}>Catégories</p>
                 </div>
                 <div className={`${style.infos} ${style.fromgrid}`} ref={(el) => statsRefs.current[2] = el}>
-                    <p className={style.statNum}>12k+</p>
+                    <p className={style.statNum}>{formatCount(landingData.community_members)}</p>
                     <p className={style.statValue}>Membres de la communauté</p>
                 </div>
                 <div className={`${style.infos} ${style.fromgrid}`} ref={(el) => statsRefs.current[3] = el}>
