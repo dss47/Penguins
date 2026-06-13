@@ -296,4 +296,152 @@ final class AdminController
         $result = $this->toolService->deleteTool($toolId);
         return $result['success'] ? Response::success(['message' => 'Outil supprimé']) : Response::error($result['error'] ?? 'Erreur');
     }
+
+    // ── Categories ────────────────────────────────────────────
+
+    public function createCategory(array $body): array
+    {
+        $name = trim((string) ($body['name'] ?? ''));
+        if ($name === '') {
+            return Response::error('Le nom est obligatoire.');
+        }
+        $id = $this->categoryModel->create([
+            'name'        => $name,
+            'icon'        => $body['icon'] ?? null,
+            'description' => $body['description'] ?? null,
+        ]);
+        return Response::success(['id' => $id, 'message' => 'Catégorie créée']);
+    }
+
+    public function updateCategory(array $body): array
+    {
+        $id = (int) ($body['id'] ?? 0);
+        if ($id <= 0) {
+            return Response::error('ID invalide');
+        }
+        $updated = $this->categoryModel->update($id, $body);
+        return $updated ? Response::success(['message' => 'Catégorie mise à jour']) : Response::error('Erreur lors de la mise à jour');
+    }
+
+    public function deleteCategory(array $body): array
+    {
+        $id = (int) ($body['id'] ?? 0);
+        if ($id <= 0) {
+            return Response::error('ID invalide');
+        }
+        $deleted = $this->categoryModel->delete($id);
+        return $deleted ? Response::success(['message' => 'Catégorie supprimée']) : Response::error('Erreur lors de la suppression');
+    }
+
+    // ── Providers ─────────────────────────────────────────────
+
+    public function createProvider(array $body): array
+    {
+        $name = trim((string) ($body['name'] ?? ''));
+        if ($name === '') {
+            return Response::error('Le nom est obligatoire.');
+        }
+        $id = $this->providerModel->create([
+            'name'        => $name,
+            'website_url' => $body['website_url'] ?? null,
+            'description' => $body['description'] ?? null,
+            'status'      => $body['status'] ?? 'pending',
+        ]);
+        return Response::success(['id' => $id, 'message' => 'Fournisseur créé']);
+    }
+
+    public function updateProvider(array $body): array
+    {
+        $id = (int) ($body['id'] ?? 0);
+        if ($id <= 0) {
+            return Response::error('ID invalide');
+        }
+        $updated = $this->providerModel->update($id, $body);
+        return $updated ? Response::success(['message' => 'Fournisseur mis à jour']) : Response::error('Erreur lors de la mise à jour');
+    }
+
+    public function deleteProvider(array $body): array
+    {
+        $id = (int) ($body['id'] ?? 0);
+        if ($id <= 0) {
+            return Response::error('ID invalide');
+        }
+        $deleted = $this->providerModel->delete($id);
+        return $deleted ? Response::success(['message' => 'Fournisseur supprimé']) : Response::error('Erreur lors de la suppression');
+    }
+
+    // ── Features ──────────────────────────────────────────────
+
+    public function createFeature(array $body): array
+    {
+        $name = trim((string) ($body['name'] ?? ''));
+        if ($name === '') {
+            return Response::error('Le nom est obligatoire.');
+        }
+        $id = $this->featureModel->create([
+            'name'        => $name,
+            'description' => $body['description'] ?? null,
+            'type'        => $body['type'] ?? null,
+            'status'      => $body['status'] ?? 'active',
+        ]);
+        return Response::success(['id' => $id, 'message' => 'Fonctionnalité créée']);
+    }
+
+    public function updateFeature(array $body): array
+    {
+        $id = (int) ($body['id'] ?? 0);
+        if ($id <= 0) {
+            return Response::error('ID invalide');
+        }
+        $updated = $this->featureModel->update($id, $body);
+        return $updated ? Response::success(['message' => 'Fonctionnalité mise à jour']) : Response::error('Erreur lors de la mise à jour');
+    }
+
+    public function deleteFeature(array $body): array
+    {
+        $id = (int) ($body['id'] ?? 0);
+        if ($id <= 0) {
+            return Response::error('ID invalide');
+        }
+        $deleted = $this->featureModel->delete($id);
+        return $deleted ? Response::success(['message' => 'Fonctionnalité supprimée']) : Response::error('Erreur lors de la suppression');
+    }
+
+    // ── Models ────────────────────────────────────────────────
+
+    public function createModel(array $body): array
+    {
+        $name = trim((string) ($body['name'] ?? ''));
+        $providerId = (int) ($body['provider_id'] ?? 0);
+        if ($name === '' || $providerId <= 0) {
+            return Response::error('Le nom et le fournisseur sont obligatoires.');
+        }
+        $id = $this->modelModel->create([
+            'provider_id'  => $providerId,
+            'name'         => $name,
+            'description'  => $body['description'] ?? null,
+            'status'       => $body['status'] ?? 'active',
+        ]);
+        return Response::success(['id' => $id, 'message' => 'Modèle créé']);
+    }
+
+    public function updateModel(array $body): array
+    {
+        $id = (int) ($body['id'] ?? 0);
+        if ($id <= 0) {
+            return Response::error('ID invalide');
+        }
+        $updated = $this->modelModel->update($id, $body);
+        return $updated ? Response::success(['message' => 'Modèle mis à jour']) : Response::error('Erreur lors de la mise à jour');
+    }
+
+    public function deleteModel(array $body): array
+    {
+        $id = (int) ($body['id'] ?? 0);
+        if ($id <= 0) {
+            return Response::error('ID invalide');
+        }
+        $deleted = $this->modelModel->delete($id);
+        return $deleted ? Response::success(['message' => 'Modèle supprimé']) : Response::error('Erreur lors de la suppression');
+    }
 }

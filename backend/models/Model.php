@@ -55,6 +55,26 @@ final class Model extends BaseModel
 
         return $stmt->fetchAll();
     }
+    public function update(int $id, array $data): bool
+    {
+        $sql = 'UPDATE models SET provider_id = :provider_id, name = :name, description = :description, status = :status WHERE id = :id';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':provider_id' => (int) $data['provider_id'],
+            ':name'        => $data['name'],
+            ':description' => $data['description'] ?? null,
+            ':status'      => $data['status'] ?? 'active',
+            ':id'          => $id,
+        ]);
+    }
+
+    public function delete(int $id): bool
+    {
+        $sql = 'DELETE FROM models WHERE id = ?';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$id]);
+    }
+
     public function updateStatus(int $id, string $status): bool
     {
         $sql = 'UPDATE models SET status = :status WHERE id = :id';

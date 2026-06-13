@@ -14,6 +14,7 @@ import AdminUsers from "../components/admin/AdminUsers";
 import AdminModeration from "../components/admin/AdminModeration";
 import AdminAddTool from "../components/admin/AdminAddTool";
 import AdminTools from "../components/admin/AdminTools";
+import AdminEntityManager from "../components/admin/AdminEntityManager";
 
 export const publicRoutes = [
     { path: '/', element: <LandingPage/>, name: 'Landing Page' },
@@ -36,4 +37,5 @@ export const adminRoutes = [
     { path: 'moderation', element: <AdminModeration/>, name: 'Moderation' },
     { path: 'add', element: <AdminAddTool/>, name: 'Add Tool' },
     { path: 'tools', element: <AdminTools/>, name: 'Manage Tools' },
+    { path: 'data', element: <AdminEntityManager/>, name: 'Gérer les données' },
 ]

@@ -31,12 +31,13 @@ final class Provider extends BaseModel
 
     public function update(int $id, array $data): bool
     {
-        $sql = 'UPDATE providers SET name = :name, website_url = :website_url, description = :description WHERE id = :id';
+        $sql = 'UPDATE providers SET name = :name, website_url = :website_url, description = :description, status = :status WHERE id = :id';
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             ':name'        => $data['name'],
             ':website_url' => $data['website_url'] ?? null,
             ':description' => $data['description'] ?? null,
+            ':status'      => $data['status'] ?? 'pending',
             ':id'          => $id,
         ]);
     }
@@ -92,5 +93,12 @@ final class Provider extends BaseModel
         $stmt->execute([$status]);
 
         return $stmt->fetchAll();
+    }
+
+    public function delete(int $id): bool
+    {
+        $sql = 'DELETE FROM providers WHERE id = ?';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$id]);
     }
 }
