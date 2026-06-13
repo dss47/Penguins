@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { ChevronLeft, Clock, Plus, AlertTriangle, Info } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
@@ -43,6 +44,8 @@ function diffRows(item) {
 }
 
 export default function AdminAddTool() {
+    const location = useLocation();
+    const isManager = location.pathname.startsWith("/manager");
     const [sidebarExpanded, setSidebarExpanded] = useState(false);
     const [selectedHistoryId, setSelectedHistoryId] = useState(null);
     const fileInputRef = useRef(null);
@@ -277,7 +280,7 @@ export default function AdminAddTool() {
     return (
         <div className={sidebarStyles.proposerPage} style={{ background: "transparent" }}>
             <div className={sidebarStyles.proposerLayout}>
-                <aside className={`${sidebarStyles.sidebar} ${!sidebarExpanded ? sidebarStyles.sidebarCollapsed : ""}`}>
+                <aside className={`${sidebarStyles.sidebar} ${!sidebarExpanded ? sidebarStyles.sidebarCollapsed : ""}`} style={isManager ? { left: 0, top: "144px", height: "calc(100vh - 144px)", zIndex: 101 } : undefined}>
                     <div className={sidebarStyles.sidebarHeader}>
                         <button className={sidebarStyles.toggleBtn} onClick={() => setSidebarExpanded(!sidebarExpanded)}>
                             <ChevronLeft size={18} />
