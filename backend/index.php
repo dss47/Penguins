@@ -2,26 +2,20 @@
 
 declare(strict_types=1);
 
-spl_autoload_register(static function (string $class): void {
-	$baseDir = __DIR__ . DIRECTORY_SEPARATOR;
-	$paths = [
-		$baseDir . 'controllers/' . $class . '.php',
-		$baseDir . 'services/' . $class . '.php',
-		$baseDir . 'models/' . $class . '.php',
-		$baseDir . 'middleware/' . $class . '.php',
-		$baseDir . 'utils/' . $class . '.php',
-		$baseDir . 'config/' . $class . '.php',
-	];
-
-	foreach ($paths as $path) {
-		if (is_file($path)) {
-			require_once $path;
-			return;
-		}
-	}
-});
-
+require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/config/database.php';
+
+use App\Controllers\AuthController;
+use App\Controllers\UserController;
+use App\Controllers\AdminController;
+use App\Controllers\ToolController;
+use App\Controllers\ReviewController;
+use App\Controllers\FavoriteController;
+use App\Controllers\ShelfController;
+use App\Controllers\SuggestionController;
+use App\Controllers\SearchHistoryController;
+use App\Controllers\ExploreController;
+use App\Utils\Response;
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: http://localhost:5173');
