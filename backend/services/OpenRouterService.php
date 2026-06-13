@@ -7,27 +7,21 @@ final class OpenRouterService
     private string $apiKey;
     private string $apiUrl;
     
-    /**
-     * Priority queue updated for AgentRouter supported models.
-     * If the first model fails or is rate-limited, it tries the second one!
-     */
+    // Priority queue of AI models: if the first fails or is rate-limited, the next is tried
     private array $modelQueue = [
-        'claude-opus-4-6', // Premier choix : supporte endpoint openai
-        'glm-5.1',         // Deuxième choix (fallback) si le premier est surchargé
+        'claude-opus-4-6',
+        'glm-5.1',
     ];
 
     public function __construct()
     {
-        // On charge la configuration centralisée depuis ton fichier env.php
         $config = require __DIR__ . '/../config/env.php';
         
         $this->apiUrl = $config['ai_base_url'];
         $this->apiKey = $config['ai_api_key']; 
     }
 
-    /**
-     * Moderate a user comment/review for inappropriate content.
-     */
+    // Moderates a user comment/review for inappropriate content via AI
     public function moderateComment(string $comment): array
     {
         $systemPrompt = "Tu es un modérateur de contenu. Analyse le commentaire suivant et détermine s'il contient du spam, des insultes, du harcèlement, un langage inapproprié ou tout contenu violant les règles d'une communauté d'IA.
@@ -61,12 +55,9 @@ Si le contenu est sain et respectueux, mets flagged à false.";
         return ['flagged' => false, 'reason' => 'API IA indisponible, modération allégée', 'confidence_score' => 0];
     }
 
-    /**
-     * Evaluates a tool submission against the database lists.
-     */
+    // Evaluates a tool submission against existing database records via AI
     public function evaluateToolSubmission(array $toolData, array $slimContext): ?string
     {
-        // Ignorer la limite de temps d'exécution PHP par défaut (souvent 30s)
         set_time_limit(120);
 
         $systemPrompt = $this->buildSystemPrompt($slimContext);
@@ -86,6 +77,7 @@ Si le contenu est sain et respectueux, mets flagged à false.";
         return null; 
     }
 
+    // Gets AI recommendations: sends user prompt and tool list, returns selected tool IDs, title, and reasoning
     public function getRecommendations(string $prompt, array $toolsData): ?array
     {
         set_time_limit(120);
@@ -126,6 +118,7 @@ $toolsJson";
         return null;
     }
 
+    // Attempts a single API request to the given model with system prompt and user message
     private function attemptRequest(string $model, string $systemPrompt, string $userMessage): ?string
     {
         $payload = [
@@ -174,14 +167,14 @@ $toolsJson";
             $decodedData = json_decode($response, true);
             $rawContent = $decodedData['choices'][0]['message']['content'] ?? null;
             if ($rawContent === null) return null;
-            // Strip Markdown code fences if the AI wraps JSON in ```json ... ```
-            $stripped = preg_replace('/^```(?:json)?\s*\n?(.*?)\n?```\s*$/s', '$1', trim($rawContent));
+                $stripped = preg_replace('/^```(?:json)?\s*\n?(.*?)\n?```\s*$/s', '$1', trim($rawContent));
             return $stripped ?: $rawContent;
         }
 
         return null;
     }
 
+    // Builds the system prompt for tool evaluation, embedding the database context as JSON
     private function buildSystemPrompt(array $context): string
     {
         $catJson = json_encode($context['categories'], JSON_UNESCAPED_UNICODE);

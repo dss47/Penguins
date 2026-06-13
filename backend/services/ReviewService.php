@@ -11,9 +11,7 @@ final class ReviewService
     ) {
     }
 
-    /**
-     * Handles a user submitting a new review or comment.
-     */
+    // Handles a user submitting a new review or comment, runs AI moderation, and returns the result
     public function submitReview(int $userId, array $payload): array
     {
         $comment = trim($payload['comment'] ?? '');
@@ -63,6 +61,7 @@ final class ReviewService
         ];
     }
 
+    // Updates an existing review, re-runs AI moderation if the comment changed
     public function updateReview(int $userId, int $reviewId, array $payload): array
     {
         $existing = $this->reviewModel->findById($reviewId);
@@ -115,11 +114,13 @@ final class ReviewService
         ];
     }
 
+    // Returns all reviews submitted by a given user
     public function listUserReviews(int $userId): array
     {
         return $this->reviewModel->allByUserId($userId) ?: [];
     }
 
+    // Deletes a review owned by the given user
     public function deleteReview(int $userId, int $reviewId): array
     {
         $existing = $this->reviewModel->findById($reviewId);
@@ -138,6 +139,7 @@ final class ReviewService
         return ['success' => true, 'message' => 'Review deleted successfully.'];
     }
 
+    // Bans a user and permanently deletes all of their reviews
     public function banUserAndCleanUp(int $userId, int $offensiveReviewId): array
     {
         if ($userId <= 0) {

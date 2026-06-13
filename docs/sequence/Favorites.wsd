@@ -13,7 +13,7 @@ database "MySQL (favorite_items)" as db
 
 user -> react : Clicks "Heart/Favorite" icon on a Tool
 activate react
-  react -> auth : POST /api/favorites\n{tool_id} (Sends JWT Token)
+  react -> auth : POST /favorites/toggle\n{tool_id} (Sends JWT Token)
   activate auth
   
     alt Token Invalide ou Absent

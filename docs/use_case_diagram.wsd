@@ -16,7 +16,7 @@ actor "AI Engine" as ai <<System>>
 manager --|> user
 admin --|> manager
 
-rectangle "Penguin"{
+rectangle "Penguins"{
     
     rectangle "Authentification" {
         usecase "s'inscrire" as sign_up
@@ -26,7 +26,7 @@ rectangle "Penguin"{
 
     rectangle "Exploration" {
         usecase "parcourir la page d'accueil" as voir_page_accueil
-        usecase "rechercher par mots-cles" as keywords_recherche
+        usecase "rechercher par mots-clés" as keywords_recherche
         usecase "rechercher par suggestion IA" as prompt_recherche
         usecase "filtrer par categorie ou fournisseur" as filter_outils
         usecase "afficher les details d'un outil" as voir_details_outil
@@ -36,27 +36,28 @@ rectangle "Penguin"{
         usecase "ajouter l'outils aux favoris" as favoris
         usecase "gerer les rayons de costumes" as gere_costumes
         usecase "Afficher l'historique de recherche" as historique
-        usecase "Rediger un avis et une note " as avis_note
-        usecase "suggerer a nouvel outil d'IA" as suggerer_AI
+        usecase "Rédiger un avis et une note" as avis_note
+        usecase "Suggérer un nouvel outil d'IA" as suggerer_AI
+        usecase "Modifier son profil" as modifier_profil
     }
 
     rectangle "Administration & Configuration" {
         usecase "acceder au tableau de bord" as dashboard
         usecase "Gestion des suggestions de utilisateurs" as gestion_suggestions
-        usecase "Approve outil" as approve
-        usecase "reject outil" as reject
-        usecase "gerer les categories and featues" as CF_gerer
-        usecase "examiner le contenu signale" as examiner_contenu
+        usecase "Approuver un outil" as approve
+        usecase "Rejeter un outil" as reject
+        usecase "Gérer les données\n(catégories, fournisseurs,\nfonctionnalités, modèles)" as gerer_donnees
+        usecase "Gérer les outils (activer/désactiver)" as gerer_outils
+        usecase "examiner le contenu signalé" as examiner_contenu
 
         usecase "bannir ou suspendre l'utilisateur" as suspend
         usecase "Gerer les roles (Promouvoir Manager)" as gerer_roles
-        usecase "Configurer les parametres du systeme" as config_systeme
         usecase "Consulter les statistiques globales" as stats_globales
     }
 
     rectangle "Background IA" {
-        usecase "extraire les categories" as ai_extraire
-        usecase "valider les donnees de l'outil " as ai_validation
+        usecase "Analyser la requête\net recommander" as ai_recommandation
+        usecase "valider les données de l'outil" as ai_validation
         usecase "Contenu modere" as ai_modere
     }
 }
@@ -86,25 +87,30 @@ user --> gere_costumes
 user --> historique
 user --> avis_note
 user --> suggerer_AI
+user --> modifier_profil
 
 
 manager --> dashboard
 manager --> gestion_suggestions
-manager --> CF_gerer
+manager --> gerer_donnees
+manager --> gerer_outils
 manager --> examiner_contenu
+
 
 admin --> suspend
 admin --> gerer_roles
-admin --> config_systeme
 admin --> stats_globales
+admin --> gerer_outils
+admin --> examiner_contenu
+admin --> gestion_suggestions
 
 
-ai_extraire <-- ai
+ai_recommandation <-- ai
 ai_validation <-- ai
 ai_modere <-- ai
 
 
-prompt_recherche .> ai_extraire : <<include>>
+prompt_recherche .> ai_recommandation : <<include>>
 suggerer_AI .> ai_validation : <<include>>
 avis_note .> ai_modere : <<include>>
 

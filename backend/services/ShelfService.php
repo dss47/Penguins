@@ -10,6 +10,7 @@ final class ShelfService
     ) {
     }
 
+    // Returns the user's shelves with a flag indicating whether a given tool is in each shelf
     public function getUserShelvesWithStatus(int $userId, int $toolId): array
     {
         if ($userId <= 0 || $toolId <= 0) {
@@ -25,6 +26,7 @@ final class ShelfService
         return $shelves;
     }
 
+    // Lists all shelves for a user, including tool count and tool details for each shelf
     public function listUserShelves(int $userId): array
     {
         if ($userId <= 0) {
@@ -42,6 +44,7 @@ final class ShelfService
         return $shelves;
     }
 
+    // Creates a new empty shelf for the user with a given name and optional description
     public function createEmptyShelf(string $name, int $userId, ?string $description = null): array
     {
         $cleanName = trim($name);
@@ -67,6 +70,7 @@ final class ShelfService
         ];
     }
 
+    // Toggles a tool's membership in a shelf (adds if absent, removes if present)
     public function toggleShelfItem(int $shelfId, int $toolId): string
     {
         if ($shelfId <= 0 || $toolId <= 0) {
@@ -76,6 +80,7 @@ final class ShelfService
         return $this->shelfItemModel->toggle($shelfId, $toolId);
     }
     
+    // Updates the name and description of a shelf, verifying ownership
     public function updateShelf(int $shelfId, string $name, ?string $description, int $userId): array
     {
         $shelf = $this->shelfModel->findById($shelfId);
@@ -93,6 +98,7 @@ final class ShelfService
         return ['success' => true, 'message' => 'Collection mise à jour.', 'shelf' => $this->shelfModel->findById($shelfId)];
     }
 
+    // Deletes a shelf, verifying ownership
     public function deleteShelf(int $shelfId, int $userId): array
     {
         $shelf = $this->shelfModel->findById($shelfId);
@@ -103,6 +109,7 @@ final class ShelfService
         return ['success' => true, 'message' => 'Collection supprimée.'];
     }
 
+    // Returns basic info for a shelf, verifying ownership
     public function getShelfInfo(int $shelfId, int $userId): ?array
     {
         if ($shelfId <= 0 || $userId <= 0) {
@@ -115,6 +122,7 @@ final class ShelfService
         return $shelf;
     }
 
+    // Returns all tools in a shelf, verifying ownership
     public function getToolsInShelf(int $shelfId, int $userId): array
     {
         if ($shelfId <= 0 || $userId <= 0) {

@@ -60,17 +60,29 @@ $searchHistoryController = new SearchHistoryController();
 $exploreController = new ExploreController();
 
 $routes = [
+	// ── Auth ────────────────────────────────────────────────
 	'POST /auth/register' => static fn() => json_response($authController->register($body)),
 	'POST /auth/login'    => static fn() => json_response($authController->login($body)),
+
+	// ── User ────────────────────────────────────────────────
 	'GET /user/profile'   => static fn() => json_response($userController->profile()),
+	'GET /user/stats' => static fn() => json_response($userController->stats()),
+	'POST /user/profile/update' => static fn() => json_response($userController->updateProfile($body, $_FILES['avatar'] ?? null)),
+	'GET /professions' => static fn() => json_response($userController->professions()),
+
+	// ── Explore ──────────────────────────────────────────────
 	'GET /landing/summary' => static fn() => json_response($exploreController->landingSummary()),
 	'POST /explore/recommend' => static fn() => json_response($exploreController->recommend($body)),
+
+	// ── Admin Dashboard & Users ─────────────────────────────
 	'GET /admin/dashboard' => static fn() => json_response($adminController->dashboard()),
 	'GET /admin/users'     => static fn() => json_response($adminController->users()),
 	'POST /admin/users/promote' => static fn() => json_response($adminController->promoteUser($body)),
 	'POST /admin/users/demote'  => static fn() => json_response($adminController->demoteUser($body)),
 	'POST /admin/users/ban'     => static fn() => json_response($adminController->banUser($body)),
 	'POST /admin/users/unban'   => static fn() => json_response($adminController->unbanUser($body)),
+
+	// ── Admin Suggestions ───────────────────────────────────
 	'GET /admin/suggestions'    => static fn() => json_response($adminController->suggestions()),
 	'POST /admin/suggestions/approve' => static fn() => json_response($adminController->approveSuggestion($body)),
 	'POST /admin/suggestions/create'  => static fn() => json_response($adminController->createSuggestion($body, $_FILES['logo'] ?? null)),
@@ -78,8 +90,12 @@ $routes = [
 	'POST /admin/suggestions/reject'  => static fn() => json_response($adminController->rejectSuggestion($body)),
 	'POST /admin/suggestions/delete'  => static fn() => json_response($adminController->deleteSuggestion($body)),
 	'POST /admin/suggestions/update'  => static fn() => json_response($adminController->updateSuggestion($body, $_FILES['logo'] ?? null)),
+
+	// ── User Suggestions ────────────────────────────────────
 	'POST /suggestions/create' => static fn() => json_response($suggestionController->create($body, $_FILES['logo'] ?? null)),
 	'GET /suggestions/history' => static fn() => json_response($suggestionController->history()),
+
+	// ── Admin Entity Manager (Categories, Providers, Features, Models) ──
 	'GET /admin/data/lists'                         => static fn() => json_response($adminController->formData()),
 	'POST /admin/data/categories/create'            => static fn() => json_response($adminController->createCategory($body)),
 	'POST /admin/data/categories/update'            => static fn() => json_response($adminController->updateCategory($body)),
@@ -93,32 +109,43 @@ $routes = [
 	'POST /admin/data/models/create'                => static fn() => json_response($adminController->createModel($body)),
 	'POST /admin/data/models/update'                => static fn() => json_response($adminController->updateModel($body)),
 	'POST /admin/data/models/delete'                => static fn() => json_response($adminController->deleteModel($body)),
+
+	// ── Admin Moderation ────────────────────────────────────
 	'GET /admin/moderation/reviews'               => static fn() => json_response($adminController->moderationReviews()),
 	'POST /admin/moderation/reviews/approve'       => static fn() => json_response($adminController->approveModerationReview($body)),
 	'POST /admin/moderation/reviews/delete'        => static fn() => json_response($adminController->deleteModerationReview($body)),
+
+	// ── Admin Tools ─────────────────────────────────────────
 	'GET /admin/tools'                             => static fn() => json_response($adminController->tools()),
 	'POST /admin/tools/update-status'              => static fn() => json_response($adminController->updateToolStatus($body)),
 	'POST /admin/tools/delete'                     => static fn() => json_response($adminController->deleteTool($body)),
+
+	// ── Favorites ──────────────────────────────────────────
 	'GET /favorites'         => static fn() => json_response($favoriteController->index()),
 	'POST /favorites/toggle' => static fn() => json_response($favoriteController->toggle($body)),
+
+	// ── Shelves ──────────────────────────────────────────────
 	'GET /shelves'           => static fn() => json_response($shelfController->list()),
 	'GET /shelves/items'     => static fn() => json_response($shelfController->show($_GET)),
 	'POST /shelves/create'   => static fn() => json_response($shelfController->create($body)),
 	'POST /shelves/update'   => static fn() => json_response($shelfController->update($body)),
 	'POST /shelves/delete'   => static fn() => json_response($shelfController->delete($body)),
 	'POST /shelves/toggle'   => static fn() => json_response($shelfController->toggleItem($body)),
+
+	// ── Tools ──────────────────────────────────────────────
 	'GET /tools'          => static fn() => json_response($toolController->index()),
 	'GET /tools/reviews'  => static fn() => json_response($toolController->reviews()),
 	'GET /reviews/top'   => static fn() => json_response($toolController->topReviews()),
+
+	// ── Reviews ──────────────────────────────────────────────
 	'POST /reviews/submit' => static fn() => json_response($reviewController->submit($body)),
 	'POST /reviews/update' => static fn() => json_response($reviewController->update($body)),
 	'POST /reviews/delete' => static fn() => json_response($reviewController->delete($body)),
 	'GET /user/reviews'  => static fn() => json_response($reviewController->list()),
+
+	// ── Search History ──────────────────────────────────────
 	'GET /user/search-history' => static fn() => json_response($searchHistoryController->list()),
 	'GET /user/search-history/details' => static fn() => json_response($searchHistoryController->details($_GET)),
-	'GET /user/stats' => static fn() => json_response($userController->stats()),
-	'POST /user/profile/update' => static fn() => json_response($userController->updateProfile($body, $_FILES['avatar'] ?? null)),
-	'GET /professions' => static fn() => json_response($userController->professions()),
 ];
 
 if (isset($routes["$method $uri"])) {

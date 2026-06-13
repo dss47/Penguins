@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 final class Model extends BaseModel
 {
+    // Creates a new model and returns its ID
     public function create(array $data): int
     {
         $sql = 'INSERT INTO models (
@@ -28,6 +29,7 @@ final class Model extends BaseModel
 
         return (int) $this->db->lastInsertId();
     }
+    // Finds a model by its ID
     public function findById(int $id): ?array
     {
         $sql = 'SELECT * FROM models WHERE id = ? LIMIT 1';
@@ -38,6 +40,7 @@ final class Model extends BaseModel
         return $model ?: null;
     }
 
+    // Returns all models ordered by name
     public function all(): array
     {
         $sql = 'SELECT * FROM models ORDER BY name ASC';
@@ -47,6 +50,7 @@ final class Model extends BaseModel
         return $stmt->fetchAll();
     }
 
+    // Returns active models filtered by provider ID
     public function allByProviderId(int $providerId): array
     {
         $sql = 'SELECT * FROM models WHERE provider_id = ? AND status = \'active\' ORDER BY name ASC';
@@ -55,6 +59,7 @@ final class Model extends BaseModel
 
         return $stmt->fetchAll();
     }
+    // Updates an existing model's fields
     public function update(int $id, array $data): bool
     {
         $sql = 'UPDATE models SET provider_id = :provider_id, name = :name, description = :description, status = :status WHERE id = :id';
@@ -68,6 +73,7 @@ final class Model extends BaseModel
         ]);
     }
 
+    // Deletes a model by its ID
     public function delete(int $id): bool
     {
         $sql = 'DELETE FROM models WHERE id = ?';
@@ -75,6 +81,7 @@ final class Model extends BaseModel
         return $stmt->execute([$id]);
     }
 
+    // Updates only the status field of a model
     public function updateStatus(int $id, string $status): bool
     {
         $sql = 'UPDATE models SET status = :status WHERE id = :id';

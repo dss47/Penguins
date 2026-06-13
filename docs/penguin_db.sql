@@ -48,7 +48,7 @@ CREATE TABLE `ai_tools` (
   CONSTRAINT `fk_ai_tools_created_by_users` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
   CONSTRAINT `fk_ai_tools_provider_id_providers` FOREIGN KEY (`provider_id`) REFERENCES `providers` (`id`),
   CONSTRAINT `fk_ai_tools_validated_by_users` FOREIGN KEY (`validated_by`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,7 +87,7 @@ CREATE TABLE `favorite_items` (
   KEY `fk_favorite_items_tool_id_ai_tools` (`tool_id`),
   CONSTRAINT `fk_favorite_items_tool_id_ai_tools` FOREIGN KEY (`tool_id`) REFERENCES `ai_tools` (`id`),
   CONSTRAINT `fk_favorite_items_user_id_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,7 +107,7 @@ CREATE TABLE `features` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -189,7 +189,7 @@ CREATE TABLE `reviews` (
   KEY `fk_reviews_tool_id_ai_tools` (`tool_id`),
   CONSTRAINT `fk_reviews_tool_id_ai_tools` FOREIGN KEY (`tool_id`) REFERENCES `ai_tools` (`id`),
   CONSTRAINT `fk_reviews_user_id_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -210,7 +210,7 @@ CREATE TABLE `search_histories` (
   PRIMARY KEY (`id`),
   KEY `fk_search_histories_user_id_users` (`user_id`),
   CONSTRAINT `fk_search_histories_user_id_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,7 +229,7 @@ CREATE TABLE `search_history_tools` (
   KEY `fk_sht_tool_idx` (`tool_id`),
   CONSTRAINT `fk_sht_history` FOREIGN KEY (`search_history_id`) REFERENCES `search_histories` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_sht_tool` FOREIGN KEY (`tool_id`) REFERENCES `ai_tools` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -249,7 +249,7 @@ CREATE TABLE `shelf_items` (
   KEY `fk_shelf_items_tool_id_ai_tools` (`tool_id`),
   CONSTRAINT `fk_shelf_items_shelf_id_shelves` FOREIGN KEY (`shelf_id`) REFERENCES `shelves` (`id`),
   CONSTRAINT `fk_shelf_items_tool_id_ai_tools` FOREIGN KEY (`tool_id`) REFERENCES `ai_tools` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -269,7 +269,7 @@ CREATE TABLE `shelves` (
   PRIMARY KEY (`id`),
   KEY `fk_shelves_user_id_users` (`user_id`),
   CONSTRAINT `fk_shelves_user_id_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -283,21 +283,30 @@ CREATE TABLE `suggestions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `category_id` int(11) NOT NULL,
+  `fixed_category_id` int(11) DEFAULT NULL,
   `provider_id` int(11) DEFAULT NULL,
+  `fixed_provider_id` int(11) DEFAULT NULL,
   `model_id` int(11) DEFAULT NULL,
+  `model_ids` text DEFAULT NULL,
+  `fixed_model_id` int(11) DEFAULT NULL,
+  `fixed_model_ids` text DEFAULT NULL,
   `name` varchar(255) NOT NULL,
+  `fixed_name` varchar(255) DEFAULT NULL,
   `logo_url` varchar(2083) DEFAULT NULL,
   `website_url` varchar(2083) DEFAULT NULL,
+  `fixed_url` varchar(2083) DEFAULT NULL,
   `description` text DEFAULT NULL,
-  `proposed_provider_name` varchar(255) DEFAULT NULL,
-  `proposed_model_name` varchar(255) DEFAULT NULL,
-  `proposed_new_features` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`proposed_new_features`)),
+  `fixed_description` text DEFAULT NULL,
   `existing_feature_ids` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`existing_feature_ids`)),
+  `fixed_feature_ids` longtext DEFAULT NULL,
   `release_date` date DEFAULT NULL,
+  `fixed_release_date` date DEFAULT NULL,
   `why_this_tool` text DEFAULT NULL,
-  `status` enum('pending_ai','rejected_ai','pending_manager','rejected_manager','approved') NOT NULL DEFAULT 'pending_ai',
+  `status` enum('waiting_ai_analysis','ai_approved_pending_review','ai_rejected','waiting_manual_validation','rejected_by_admin','published_to_catalog') NOT NULL DEFAULT 'waiting_ai_analysis',
   `rejection_reason` text DEFAULT NULL,
   `ai_moderation_notes` text DEFAULT NULL,
+  `ai_global_rating` decimal(3,2) DEFAULT NULL,
+  `tool_id` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
@@ -305,11 +314,13 @@ CREATE TABLE `suggestions` (
   KEY `fk_suggestions_category_id_categories` (`category_id`),
   KEY `fk_suggestions_provider_id_providers` (`provider_id`),
   KEY `fk_suggestions_model_id_models` (`model_id`),
+  KEY `fk_suggestions_tool_id` (`tool_id`),
   CONSTRAINT `fk_suggestions_category_id_categories` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
   CONSTRAINT `fk_suggestions_model_id_models` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`),
   CONSTRAINT `fk_suggestions_provider_id_providers` FOREIGN KEY (`provider_id`) REFERENCES `providers` (`id`),
+  CONSTRAINT `fk_suggestions_tool_id` FOREIGN KEY (`tool_id`) REFERENCES `ai_tools` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_suggestions_user_id_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -329,7 +340,7 @@ CREATE TABLE `tool_features` (
   KEY `fk_tool_features_feature_id_features` (`feature_id`),
   CONSTRAINT `fk_tool_features_feature_id_features` FOREIGN KEY (`feature_id`) REFERENCES `features` (`id`),
   CONSTRAINT `fk_tool_features_tool_id_ai_tools` FOREIGN KEY (`tool_id`) REFERENCES `ai_tools` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -348,7 +359,7 @@ CREATE TABLE `tool_models` (
   KEY `fk_tm_model_idx` (`model_id`),
   CONSTRAINT `fk_tm_model` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_tm_tool` FOREIGN KEY (`tool_id`) REFERENCES `ai_tools` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -373,7 +384,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `email` (`email`),
   KEY `fk_users_profession_id_professions` (`profession_id`),
   CONSTRAINT `fk_users_profession_id_professions` FOREIGN KEY (`profession_id`) REFERENCES `professions` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -385,4 +396,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-06-11 19:39:19
+-- Dump completed on 2026-06-13 10:51:15

@@ -1,0 +1,239 @@
+@startuml user_reviews
+skinparam maxMessageSize 200
+
+actor "User" as user
+participant "React UI\n(Tool Detail & Profile)" as react
+participant "AuthMiddleware" as auth
+participant "ReviewController" as controller
+participant "ReviewService" as service
+participant "OpenRouterService\n(AI Moderation)" as ai
+participant "Models\n(Review, User)" as model
+participant "Response.php" as res
+database "MySQL" as db
+
+
+== 1. Submitting a Review ==
+
+user -> react : Writes rating (5 stars) & comment, clicks "Submit"
+activate react
+  react -> auth : POST /reviews/submit\n{tool_id: 12, rating: 5, comment: "Excellent!"}
+  activate auth
+    auth -> controller : Forward Request (Inject user_id)
+    activate controller
+      
+      controller -> service : submitReview(user_id, payload)
+      activate service
+        service -> model : findByUserAndTool(user_id, tool_id)
+        activate model
+          model -> db : SELECT id FROM reviews WHERE user_id=? AND tool_id=?
+          activate db
+            db --> model : Result (null or existing review)
+          deactivate db
+          model --> service : Existing review or null
+        deactivate model
+        
+        alt Review already exists
+            service --> controller : Returns "Already reviewed" error
+            controller -> res : formatError("You already reviewed this tool", 409)
+            activate res
+              res --> controller : JSON String
+            deactivate res
+            controller --> react : HTTP 409 Conflict
+            react --> user : Shows "Vous avez déjà noté cet outil"
+            
+        else No existing review
+            service -> ai : moderateComment(comment)
+            activate ai
+              ai --> service : JSON {flagged: true/false, categories: [...]}
+            deactivate ai
+            
+            alt Commentaire inapproprié (Flagged)
+                service -> model : create(data, status='flagged')
+                activate model
+                  model -> db : INSERT INTO reviews (..., status='flagged')
+                  activate db
+                    db --> model : Returns new_review_id
+                  deactivate db
+                  model --> service : Created review (flagged)
+                deactivate model
+                
+                service --> controller : Returns "En attente de modération"
+                controller -> res : formatCreated({message: "En attente de modération"})
+                activate res
+                  res --> controller : JSON String
+                deactivate res
+                controller --> react : HTTP 201 Created
+                react --> user : Shows "Votre avis est en cours de vérification"
+                
+            else Commentaire propre (Approved)
+                service -> model : create(data, status='approved')
+                activate model
+                  model -> db : INSERT INTO reviews (..., status='approved')
+                  activate db
+                    db --> model : Returns new_review_id
+                  deactivate db
+                  model --> service : Created review (approved)
+                deactivate model
+                
+                service --> controller : Returns "Publié immédiatement"
+                controller -> res : formatCreated({message: "Merci pour votre avis !"})
+                activate res
+                  res --> controller : JSON String
+                deactivate res
+                controller --> react : HTTP 201 Created
+                react --> user : Shows the review posted immediately
+            end
+        end
+      deactivate service
+    deactivate controller
+  deactivate auth
+deactivate react
+
+
+== 2. Listing User's Own Reviews ==
+
+user -> react : Navigates to "Mes avis" in profile
+activate react
+  react -> auth : GET /user/reviews
+  activate auth
+    auth -> controller : Forward Request
+    activate controller
+      controller -> service : listUserReviews(user_id)
+      activate service
+        service -> model : allByUserId(user_id)
+        activate model
+          model -> db : SELECT r.*, t.name as tool_name\nFROM reviews r JOIN ai_tools t ON r.tool_id = t.id\nWHERE r.user_id = ?\nORDER BY r.created_at DESC
+          activate db
+            db --> model : Array of reviews with tool names
+          deactivate db
+          model --> service : Reviews array
+        deactivate model
+        service --> controller : Reviews with tool info
+      deactivate service
+      
+      controller -> res : formatSuccess(reviews)
+      activate res
+        res --> controller : JSON String
+      deactivate res
+      controller --> react : HTTP 200 OK
+    deactivate controller
+  deactivate auth
+  
+  react --> user : Shows list of all user reviews with status badges
+deactivate react
+
+
+== 3. Updating a Review ==
+
+user -> react : Clicks "Modifier" on a review, changes rating/comment
+activate react
+  react -> auth : POST /reviews/update\n{review_id: 88, rating: 4, comment: "Updated"}
+  activate auth
+    auth -> controller : Forward Request
+    activate controller
+      controller -> service : updateReview(user_id, review_id, payload)
+      activate service
+        
+        service -> model : findById(review_id)
+        activate model
+          model -> db : SELECT * FROM reviews WHERE id = ?
+          activate db
+            db --> model : Review row
+          deactivate db
+          
+          alt Review not found or not owned by user
+              model --> service : null
+              service --> controller : Returns error
+              controller -> res : formatError("Review not found", 404)
+              controller --> react : HTTP 404
+              react --> user : Shows error message
+          else Review belongs to user
+              model --> service : Review object
+          end
+        deactivate model
+        
+        service -> ai : moderateComment(new_comment)
+        activate ai
+          ai --> service : JSON {flagged: true/false}
+        deactivate ai
+        
+        alt Commentaire modifié inapproprié (Flagged)
+            service -> model : update(review_id, data, status='flagged')
+        else Commentaire modifié propre (Approved)
+            service -> model : update(review_id, data, status='approved')
+        end
+        activate model
+          model -> db : UPDATE reviews SET rating=4, comment='Updated', status=?\nWHERE id = 88
+          activate db
+            db --> model : Success
+          deactivate db
+          model --> service : Updated review
+        deactivate model
+        
+        service --> controller : Returns "Updated successfully"
+        controller -> res : formatSuccess({message: "Avis modifié"})
+        activate res
+          res --> controller : JSON String
+        deactivate res
+        controller --> react : HTTP 200 OK
+      deactivate service
+    deactivate controller
+  deactivate auth
+  
+  react -> react : Updates review in list
+  react --> user : Shows "Avis modifié avec succès"
+deactivate react
+
+
+== 4. Deleting a Review ==
+
+user -> react : Clicks "Supprimer" on a review, confirms dialog
+activate react
+  react -> auth : POST /reviews/delete\n{review_id: 88}
+  activate auth
+    auth -> controller : Forward Request
+    activate controller
+      controller -> service : deleteReview(user_id, review_id)
+      activate service
+        service -> model : findById(review_id)
+        activate model
+          model -> db : SELECT user_id FROM reviews WHERE id = ?
+          activate db
+            db --> model : Result
+          deactivate db
+          
+          alt Review not found or not owned by user
+              model --> service : null
+              service --> controller : Returns error
+              controller -> res : formatError("Not found", 404)
+              controller --> react : HTTP 404
+          else Owned by user
+              model --> service : Review exists
+          end
+        deactivate model
+        
+        service -> model : delete(review_id)
+        activate model
+          model -> db : DELETE FROM reviews WHERE id = 88
+          activate db
+            db --> model : Success
+          deactivate db
+          model --> service : Deleted
+        deactivate model
+        
+        service --> controller : Returns success
+      deactivate service
+      
+      controller -> res : formatSuccess({deleted: true})
+      activate res
+        res --> controller : JSON String
+      deactivate res
+      controller --> react : HTTP 200 OK
+    deactivate controller
+  deactivate auth
+  
+  react -> react : Removes review from list
+  react --> user : Shows "Avis supprimé"
+deactivate react
+
+@enduml

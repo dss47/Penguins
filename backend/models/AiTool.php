@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 final class AiTool extends BaseModel
 {
+    // Returns all AI tools ordered by creation date (newest first)
     public function all(): array
     {
         $sql = 'SELECT * FROM ai_tools ORDER BY created_at DESC';
@@ -12,6 +13,7 @@ final class AiTool extends BaseModel
         return $stmt->fetchAll() ?: [];
     }
 
+    // Returns only active tool names and IDs for AI recommendation candidates
     public function recommendationCandidates(): array
     {
         $sql = "SELECT id, name FROM ai_tools WHERE status = 'active' ORDER BY name ASC";
@@ -20,6 +22,7 @@ final class AiTool extends BaseModel
         return $stmt->fetchAll() ?: [];
     }
 
+    // Finds active tools by an array of IDs, preserving the input order
     public function findActiveByIds(array $ids): array
     {
         $ids = array_values(array_unique(array_filter(array_map('intval', $ids), fn($id) => $id > 0)));
@@ -60,6 +63,7 @@ final class AiTool extends BaseModel
         return $ordered;
     }
 
+    // Finds a single tool by its ID
     public function findById(int $toolId): ?array
     {
         $stmt = $this->db->prepare('SELECT * FROM ai_tools WHERE id = ? limit 1');
@@ -67,6 +71,7 @@ final class AiTool extends BaseModel
         $tool = $stmt->fetch();
         return $tool ?: null;
     }
+    // Finds a single tool by its name
     public function findByName(string $name): ?array
     {
         $stmt = $this->db->prepare('SELECT * FROM ai_tools WHERE name = ? limit 1');
@@ -75,6 +80,7 @@ final class AiTool extends BaseModel
         return $tool ?: null;
     }
 
+    // Creates a new AI tool record and returns its ID, or null on failure
     public function create(array $data): ?int 
     {
         $sql = 'INSERT INTO ai_tools (
@@ -121,6 +127,7 @@ final class AiTool extends BaseModel
         ]);
     return (int) $this->db->lastInsertId();
     }
+    // Updates only the status field of a tool
     public function updateStatus(int $toolId, string $newStatus): bool
     {
         $sql = 'UPDATE ai_tools SET status = :status WHERE id = :id';
@@ -130,6 +137,7 @@ final class AiTool extends BaseModel
             ':id'     => $toolId
         ]);
     }
+    // Updates the core fields of an existing AI tool
     public function update(int $toolId, array $data): bool
     {
         $sql = 'UPDATE ai_tools SET 
@@ -159,6 +167,7 @@ final class AiTool extends BaseModel
         ]);
     }
 
+    // Deletes an AI tool by its ID
     public function delete(int $toolId): bool
     {
         $stmt = $this->db->prepare('DELETE FROM ai_tools WHERE id = ?');

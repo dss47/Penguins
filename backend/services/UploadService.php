@@ -12,14 +12,7 @@ final class UploadService
         $this->baseDir = realpath(__DIR__ . '/../public') ?: __DIR__ . '/../public';
     }
 
-    /**
-     * Handle single file upload.
-     * 
-     * @param array $file The $_FILES['input_name'] array
-     * @param string $destinationFolder e.g. 'uploads/tools' or 'uploads/userProfile'
-     * @param string|null $customName Optional base name for the file (tool name)
-     * @return array ['success' => bool, 'path' => string|null, 'error' => string|null]
-     */
+    // Handles a single file upload: validates MIME type, size, generates unique filename, and moves to destination
     public function handleUpload(array $file, string $destinationFolder, ?string $customName = null): array
     {
         if (!isset($file['error']) || is_array($file['error'])) {

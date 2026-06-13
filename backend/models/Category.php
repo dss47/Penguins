@@ -5,6 +5,7 @@ declare(strict_types=1);
 final class Category extends BaseModel
 {
 
+    // Creates a new category and returns its ID
     public function create(array $data): int
     {
         $sql = 'INSERT INTO categories (
@@ -27,6 +28,7 @@ final class Category extends BaseModel
         return (int) $this->db->lastInsertId();
     }
 
+    // Updates an existing category's name, icon, and description
     public function update(int $id, array $data): bool
     {
         $sql = 'UPDATE categories SET name = :name, icon = :icon, description = :description WHERE id = :id';
@@ -39,6 +41,7 @@ final class Category extends BaseModel
         ]);
     }
 
+    // Finds a category by its ID
     public function findById(int $id): ?array
     {
         $sql = 'SELECT * FROM categories WHERE id = ? LIMIT 1';
@@ -49,6 +52,7 @@ final class Category extends BaseModel
         return $category ?: null;
     }
 
+    // Returns all categories ordered by name
     public function all(): array
     {
         $sql = 'SELECT id, name, icon, description FROM categories ORDER BY name ASC';
@@ -58,6 +62,7 @@ final class Category extends BaseModel
         return $stmt->fetchAll();
     }
 
+    // Deletes a category by its ID
     public function delete(int $id): bool
     {
         $sql = 'DELETE FROM categories WHERE id = ?';

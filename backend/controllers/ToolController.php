@@ -11,6 +11,7 @@ final class ToolController
     ) {
     }
 
+    // Returns a list of public tools or details for a specific tool by name
     public function index(): array
     {
         $name = $_GET['name'] ?? null;
@@ -20,6 +21,7 @@ final class ToolController
         return Response::success($this->toolService->listPublicTools());
     }
 
+    // Returns approved reviews and the current user's review for a given tool
     public function reviews(): array
     {
         $toolId = (int) ($_GET['tool_id'] ?? 0);
@@ -43,6 +45,7 @@ final class ToolController
         ]);
     }
 
+    // Returns the top 3 approved reviews across all tools
     public function topReviews(): array
     {
         return Response::success($this->reviewModel->topApprovedComments(3));

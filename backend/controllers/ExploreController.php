@@ -10,21 +10,25 @@ final class ExploreController
     ) {
     }
 
+    // Returns home page data (latest, featured, trending tools)
     public function home(): array
     {
         return Response::success($this->exploreService->home());
     }
 
+    // Returns landing page summary stats (tool count, categories, community members)
     public function landingSummary(): array
     {
         return Response::success($this->exploreService->landingSummary());
     }
 
+    // Searches tools by keyword query
     public function search(array $query): array
     {
         return Response::success($this->exploreService->searchByKeywords((string) ($query['q'] ?? '')));
     }
 
+    // Performs an AI-powered recommendation based on a user's prompt
     public function recommend(array $body): array
     {
         $prompt = (string) ($body['prompt'] ?? '');

@@ -14,6 +14,7 @@ final class UserController
 	) {
 	}
 
+	// Authenticates the user via JWT and returns the user ID
 	private function authenticate(): int
 	{
 		$tokenPayload = $this->authMiddleware->authenticate();
@@ -23,6 +24,7 @@ final class UserController
 		return (int) $tokenPayload['user_id'];
 	}
 
+	// Returns the authenticated user's profile data
 	public function profile(): array
 	{
 		$userId = $this->authenticate();
@@ -54,6 +56,7 @@ final class UserController
 		]);
 	}
 
+	// Returns aggregate stats for the authenticated user (favorites, shelves, reviews, etc.)
 	public function stats(): array
 	{
 		$userId = $this->authenticate();
@@ -78,6 +81,7 @@ final class UserController
 		]);
 	}
 
+	// Updates the authenticated user's profile (name, email, password, photo)
 	public function updateProfile(array $body, ?array $file = null): array
 	{
 		$userId = $this->authenticate();
@@ -105,11 +109,13 @@ final class UserController
 		return Response::error($result['message'] ?? 'Erreur lors de la mise à jour');
 	}
 
+	// Returns all available professions
 	public function professions(): array
 	{
 		return Response::success((new Profession())->all());
 	}
 
+	// Schedules the authenticated user's account for deletion
 	public function deleteAccount(int $userId): array
 	{
 		return Response::success($this->userService->scheduleDeletion($userId));

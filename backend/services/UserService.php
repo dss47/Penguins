@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 final class UserService
 {
-    // Durée de la période de grâce avant suppression définitive (en jours)
+    // Grace period in days before permanent account deletion
     private const GRACE_PERIOD_DAYS = 30;
 
     public function __construct(
@@ -13,9 +13,7 @@ final class UserService
     ) {
     }
 
-    /**
-     * Met à jour le profil de l'utilisateur, incluant la photo de profil et le mot de passe.
-     */
+    // Updates the user's profile, including profile photo and password
     public function updateProfile(int $userId, array $data, ?array $file = null): array
     {
         if ($file && $file['error'] !== UPLOAD_ERR_NO_FILE) {
@@ -34,7 +32,6 @@ final class UserService
             }
         }
 
-        // Password change
         $currentPassword = $data['current_password'] ?? '';
         $newPassword = $data['new_password'] ?? '';
         $newPasswordConfirmation = $data['new_password_confirmation'] ?? '';
@@ -85,21 +82,15 @@ final class UserService
         return ['success' => true, 'message' => 'Profil mis à jour avec succès.', 'profile_url' => $data['profile_url'] ?? null];
     }
 
-    /**
-     * Planifie la suppression du compte utilisateur.
-     * Le compte n'est pas effacé, mais mis en "attente de suppression".
-     */
+    // Schedules the user account for deletion after a grace period
     public function scheduleDeletion(int $userId): array
     {
         if ($userId <= 0) {
             return ['success' => false, 'message' => 'ID Utilisateur invalide.'];
         }
 
-        // Calcule la date exacte de suppression définitive (Aujourd'hui + 30 jours)
         $scheduledDate = date('Y-m-d H:i:s', strtotime('+' . self::GRACE_PERIOD_DAYS . ' days'));
 
-        // Suppose que votre modèle a une méthode pour mettre à jour le statut et la date de suppression
-        // Ex: UPDATE users SET status = 'pending_deletion', deletion_scheduled_at = ? WHERE id = ?
         $updated = $this->userModel->scheduleDeletion($userId, $scheduledDate);
 
         if (!$updated) {
@@ -116,17 +107,13 @@ final class UserService
         ];
     }
 
-    /**
-     * Annule la suppression et restaure le compte si l'utilisateur se reconnecte 
-     * pendant la période de grâce.
-     */
+    // Restores a user account that was scheduled for deletion during the grace period
     public function restoreAccount(int $userId): array
     {
         if ($userId <= 0) {
             return ['success' => false, 'message' => 'ID Utilisateur invalide.'];
         }
 
-        // Suppose que le modèle remet le statut à 'active' et nullifie 'deletion_scheduled_at'
         $restored = $this->userModel->restoreAccount($userId);
 
         if (!$restored) {
@@ -142,16 +129,9 @@ final class UserService
         ];
     }
 
-    /**
-     * Traite les suppressions définitives.
-     * Cette méthode ne sera pas appelée par React, mais par un script CRON sur votre serveur !
-     * Elle supprime tous les comptes dont la date `deletion_scheduled_at` est dépassée.
-     * * @return int Le nombre de comptes qui ont été supprimés.
-     */
+    // Processes permanent account deletions (intended for CRON, not React)
     public function processPermanentDeletions(): int
     {
-        // Suppose que votre modèle récupère les IDs des utilisateurs dont le temps est écoulé
-        // Ex: SELECT id FROM users WHERE status = 'pending_deletion' AND deletion_scheduled_at <= NOW()
         $usersToDelete = $this->userModel->getUsersReadyForPermanentDeletion();
 
         $deletedCount = 0;
@@ -159,8 +139,6 @@ final class UserService
         foreach ($usersToDelete as $user) {
             $userId = (int) $user['id'];
             
-            // Note : Une vraie suppression définitive demande souvent de nettoyer d'autres tables
-            // (ex: effacer l'avatar du serveur, anonymiser les commentaires, etc.)
             $success = $this->userModel->deletePermanently($userId);
             
             if ($success) {

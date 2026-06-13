@@ -1,0 +1,17 @@
+' ── Package: Utils ────────────────────────────────────────
+package "Utils" as util_pkg {
+  class JwtService {
+    {field} - string $secret
+    {method} + generateToken(array $payload): string
+    {method} + decode(string $token): ?array
+  }
+
+  class Response {
+    {method} {static} + success(mixed $data, int $statusCode): array
+    {method} {static} + created(mixed $data): array
+    {method} {static} + error(string $message, int $statusCode, mixed $details): array
+  }
+
+  ' ── Hidden alignment links ───────────────────────────────
+  JwtService -[hidden]-> Response
+}

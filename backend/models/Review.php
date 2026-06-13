@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 final class Review extends BaseModel
 {
+    // Creates a new review and returns its ID
     public function create(array $data): int
     {
         $sql = 'INSERT INTO reviews (
@@ -32,6 +33,7 @@ final class Review extends BaseModel
         return (int) $this->db->lastInsertId();
     }
 
+    // Updates the moderation status and AI flag reason for a review
     public function updateModeration(int $reviewId, string $status, ?string $aiFlagReason = null): bool
     {
         $sql = 'UPDATE reviews 
@@ -46,6 +48,7 @@ final class Review extends BaseModel
         ]);
     }
 
+    // Returns all approved reviews for a given tool, with user and profession info
     public function allApprovedByToolId(int $toolId): array
     {
         $sql = 'SELECT r.*, u.name AS user_name, p.name AS profession_name
@@ -61,6 +64,7 @@ final class Review extends BaseModel
         return $stmt->fetchAll();
     }
 
+    // Returns the top-rated approved comments across all tools, with user and tool details
     public function topApprovedComments(int $limit = 3): array
     {
         $limit = max(1, min(10, $limit));
@@ -89,6 +93,7 @@ final class Review extends BaseModel
         return $stmt->fetchAll();
     }
 
+    // Finds a single review by user ID and tool ID combination
     public function findByUserAndTool(int $userId, int $toolId): ?array
     {
         $sql = 'SELECT r.*, u.name AS user_name, p.name AS profession_name
@@ -105,6 +110,7 @@ final class Review extends BaseModel
         return $result ?: null;
     }
 
+    // Updates an existing review's comment, rating, status, and flag reason
     public function update(int $id, array $data): bool
     {
         $sql = 'UPDATE reviews 
@@ -122,6 +128,7 @@ final class Review extends BaseModel
         ]);
     }
 
+    // Returns all reviews filtered by moderation status, with tool and user info
     public function allByStatus(string $status): array
     {
         $sql = 'SELECT r.*, t.name AS tool_name, u.name AS user_name 
@@ -137,6 +144,7 @@ final class Review extends BaseModel
         return $stmt->fetchAll();
     }
 
+    // Finds a single review by its ID with tool, user, and profession info
     public function findById(int $id): ?array
     {
         $sql = 'SELECT r.*, t.name AS tool_name, u.name AS user_name, p.name AS profession_name
@@ -153,6 +161,7 @@ final class Review extends BaseModel
         return $result ?: null;
     }
 
+    // Deletes a review by its ID
     public function delete(int $id): bool
     {
         $sql = 'DELETE FROM reviews WHERE id = ?';
@@ -160,6 +169,7 @@ final class Review extends BaseModel
         return $stmt->execute([$id]);
     }
 
+    // Returns all reviews submitted by a specific user, with tool info
     public function allByUserId(int $userId): array
     {
         $sql = 'SELECT r.*, t.name AS tool_name, t.logo_url AS tool_logo
@@ -174,6 +184,7 @@ final class Review extends BaseModel
         return $stmt->fetchAll();
     }
 
+    // Deletes all reviews submitted by a specific user (used during account deletion)
     public function deleteAllByUserId(int $userId): bool
     {
         $sql = 'DELETE FROM reviews WHERE user_id = ?';

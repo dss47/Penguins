@@ -1,118 +1,107 @@
 @startuml ai_semantic_search
 skinparam maxMessageSize 200
 
-
 actor "User" as user
 participant "React UI\n(Search & Sidebar)" as react
-participant "SearchController" as controller
-participant "SearchService" as service
-participant "AI Engine\n(OpenAI/Claude)" as ai
-participant "Models\n(History, Tool)" as model
+participant "ExploreController" as explore_ctrl
+participant "ExploreService" as service
+participant "OpenRouterService\n(AI Engine)" as ai
+participant "SearchHistoryController" as history_ctrl
+participant "SearchHistoryService" as history_svc
+participant "Models\n(Category, AiTool)" as model
 participant "Response.php" as res
 database "MySQL" as db
 
 
-== Phase 1: The AI Prompt Search ==
+== Phase 1: AI Prompt Search (Recommendation) ==
 
 user -> react : Types "I need to make a podcast", hits Enter
 activate react
   
-  react -> controller : POST /api/search/ai\n{prompt: "I need to make a podcast"}
-  activate controller
-    controller -> service : processAiSearch(prompt, user_id)
+  react -> explore_ctrl : POST /explore/recommend\n{prompt: "I need to make a podcast"}
+  activate explore_ctrl
+    explore_ctrl -> service : searchByPrompt(prompt, user_id)
     activate service
       
-
-      service -> ai : POST /analyze\nPrompt: "Give a short title and category names"
+      service -> ai : getRecommendations(prompt, toolsData)
       activate ai
-        ai --> service : JSON: {\n  title: "Podcast Creation",\n  categories: ["Audio Editing", "Text-to-Speech"]\n}
+        ai --> service : JSON: {\n  title: "Podcast Creation",\n  toolIds: [1, 5, 12]\n}
       deactivate ai
       
-
-      service -> model : findCategoryIds(["Audio Editing", "Text-to-Speech"])
+      service -> model : findActiveByIds([1, 5, 12])
       activate model
-        model -> db : SELECT id FROM categories WHERE name IN (...)
-        activate db
-          db --> model : Returns IDs: [3, 9]
-        deactivate db
-        model --> service : Returns IDs: [3, 9]
-      deactivate model
-      
-
-      service -> model : logSearch(prompt, title, user_id, category_ids)
-      activate model
-        model -> db : INSERT INTO search_histories (prompt, title, user_id)
-        activate db
-          db --> model : Returns new_search_id (e.g., 55)
-        deactivate db
-        
-        model -> db : INSERT INTO search_history_categories (search_id, category_id)\nVALUES (55, 3), (55, 9)
-        activate db
-          db --> model : Success
-        deactivate db
-        model --> service : Returns History Object
-      deactivate model
-      
-
-      service -> model : getToolsByCategories([3, 9])
-      activate model
-        model -> db : SELECT * FROM ai_tools WHERE category_id IN (3, 9) AND status='active'
+        model -> db : SELECT * FROM ai_tools WHERE id IN (...) AND status='active'
         activate db
           db --> model : Array of matching tools
         deactivate db
-        
-
         model --> service : Tools Array
       deactivate model
       
-      service --> controller : Returns {history_item, tools}
+      service -> history_svc : logSearch(user_id, prompt, title, toolIds)
+      activate history_svc
+        history_svc -> model : logSearch(prompt, title, user_id)
+        activate model
+          model -> db : INSERT INTO search_histories (prompt, title, user_id)
+          activate db
+            db --> model : Returns new_search_id
+          deactivate db
+          
+          model -> db : INSERT INTO search_history_tools (search_id, tool_id)
+          activate db
+            db --> model : Success
+          deactivate db
+          model --> history_svc : History Object
+        deactivate model
+        history_svc --> service : History Object
+      deactivate history_svc
+      
+      service --> explore_ctrl : Returns {history_item, tools}
     deactivate service
     
-    controller -> res : formatSuccess(data)
+    explore_ctrl -> res : formatSuccess(data)
     activate res
-      res --> controller : JSON String
+      res --> explore_ctrl : JSON String
     deactivate res
     
-    controller --> react : HTTP 200 OK
-  deactivate controller
+    explore_ctrl --> react : HTTP 200 OK
+  deactivate explore_ctrl
   
   react -> react : Prepends "Podcast Creation" to Sidebar History
-  react --> user : Displays the Audio Editing tools!
+  react --> user : Displays the recommended tools!
 deactivate react
 
 
 == Phase 2: Reloading from Sidebar History ==
 
-user -> react : Clicks "+" (Clears UI)
 user -> react : Clicks "Podcast Creation" from Sidebar History
 activate react
   
-  react -> controller : GET /api/search/history/55/results
-  activate controller
-    controller -> service : fetchHistoryResults(search_id=55)
-    activate service
+  react -> history_ctrl : GET /search/history/details?id=55
+  activate history_ctrl
+    history_ctrl -> history_svc : getSearchDetails(search_id=55, user_id)
+    activate history_svc
       
-      service -> model : fetchToolsByHistoryId(55)
+      history_svc -> model : fetchToolsByHistoryId(55)
       activate model
         
-        model -> db : SELECT t.* FROM ai_tools t\nJOIN search_history_categories shc ON t.category_id = shc.category_id\nWHERE shc.search_id = 55 AND t.status = 'active'
+        model -> db : SELECT t.* FROM ai_tools t\nJOIN search_history_tools sht ON t.id = sht.tool_id\nWHERE sht.search_id = 55 AND t.status = 'active'
         activate db
           db --> model : Array of matching tools
         deactivate db
         
-        model --> service : Tools Array
+        model --> history_svc : Tools Array
       deactivate model
       
-      service --> controller : Returns Tools Array
-    deactivate service
+      history_svc --> history_ctrl : Returns Tools Array
+    deactivate history_svc
     
-    controller -> res : formatSuccess(Tools Array)
+    history_ctrl -> res : formatSuccess(Tools Array)
     activate res
-      res --> controller : JSON String
+      res --> history_ctrl : JSON String
     deactivate res
     
-    controller --> react : HTTP 200 OK
-  deactivate controller
+    history_ctrl --> react : HTTP 200 OK
+  deactivate history_ctrl
   
   react --> user : Displays the exact same tools again instantly!
 deactivate react

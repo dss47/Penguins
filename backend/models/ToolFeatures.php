@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 final class ToolFeatures extends BaseModel
 {
+    // Links a feature to a tool in the many-to-many relationship
     public function linkFeatureToTool(int $toolId, int $featureId): bool
     {
         $sql = 'INSERT INTO tool_features (tool_id, feature_id) VALUES (?, ?)';
@@ -12,6 +13,7 @@ final class ToolFeatures extends BaseModel
         return $stmt->execute([$toolId, $featureId]);
     }
 
+    // Removes a feature-to-tool link
     public function unlinkFeatureFromTool(int $toolId, int $featureId): bool
     {
         $sql = 'DELETE FROM tool_features WHERE tool_id = ? AND feature_id = ?';
@@ -20,6 +22,7 @@ final class ToolFeatures extends BaseModel
         return $stmt->execute([$toolId, $featureId]);
     }
     
+    // Returns all features linked to a specific tool
     public function findFeaturesByToolId(int $toolId): array
     {
         $sql = 'SELECT f.* FROM tool_features tf

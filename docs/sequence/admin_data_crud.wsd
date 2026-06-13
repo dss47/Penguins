@@ -1,0 +1,129 @@
+@startuml admin_data_management
+skinparam maxMessageSize 200
+
+actor "Admin/Manager" as admin
+participant "React UI\n(AdminEntityManager)" as react
+participant "AdminController" as controller
+participant "Models\n(Category/Provider/Feature/Model)" as model
+participant "Response.php" as res
+database "MySQL" as db
+
+
+== 1. Listing existing data ==
+
+admin -> react : Navigates to "Gérer les données" tab
+activate react
+  react -> controller : GET /admin/suggestions\n(formData includes categories/providers/features/models)
+  activate controller
+    controller -> model : fetchAll() for each entity type
+    activate model
+      model -> db : SELECT * FROM categories\nSELECT * FROM providers\nSELECT * FROM features\nSELECT * FROM models
+      activate db
+        db --> model : Arrays of all entities
+      deactivate db
+      model --> controller : Grouped data arrays
+    deactivate model
+    
+    controller -> res : formatSuccess({categories, providers, features, models})
+    activate res
+      res --> controller : JSON String
+    deactivate res
+    
+    controller --> react : HTTP 200 OK\nJSON with all entity lists
+  deactivate controller
+  
+  react --> admin : Displays tabbed table\n(one tab per entity type)
+deactivate react
+
+
+== 2. Creating a new entity ==
+
+admin -> react : Clicks "Ajouter" on a tab (e.g., Categories)
+activate react
+  react -> react : Opens modal with empty form
+  admin -> react : Fills name, status, clicks "Enregistrer"
+  
+  react -> controller : POST /admin/data/category/create\n{name: "Audio Editing", status: "active"}
+  activate controller
+    controller -> model : create(data)
+    activate model
+      model -> db : INSERT INTO categories (name, status)\nVALUES ('Audio Editing', 'active')
+      activate db
+        db --> model : Returns new_category_id
+      deactivate db
+      model --> controller : Returns created entity
+    deactivate model
+    
+    controller -> res : formatCreated(entity)
+    activate res
+      res --> controller : JSON String
+    deactivate res
+    
+    controller --> react : HTTP 201 Created\n{success: true, data: entity}
+  deactivate controller
+  
+  react -> react : Prepends new row to table
+  react --> admin : Shows "Catégorie ajoutée avec succès"
+deactivate react
+
+
+== 3. Updating an existing entity ==
+
+admin -> react : Clicks "Modifier" on a row
+activate react
+  react -> react : Opens modal with pre-filled form
+  admin -> react : Edits name/status, clicks "Enregistrer"
+  
+  react -> controller : POST /admin/data/category/update\n{id: 5, name: "Audio Prod", status: "inactive"}
+  activate controller
+    controller -> model : update(id, data)
+    activate model
+      model -> db : UPDATE categories SET name='Audio Prod', status='inactive'\nWHERE id = 5
+      activate db
+        db --> model : Success (rows affected)
+      deactivate db
+      model --> controller : Returns updated entity
+    deactivate model
+    
+    controller -> res : formatSuccess(entity)
+    activate res
+      res --> controller : JSON String
+    deactivate res
+    
+    controller --> react : HTTP 200 OK\n{success: true, data: entity}
+  deactivate controller
+  
+  react -> react : Updates row in table
+  react --> admin : Shows "Catégorie modifiée avec succès"
+deactivate react
+
+
+== 4. Deleting an entity ==
+
+admin -> react : Clicks "Supprimer" on a row, confirms dialog
+activate react
+  
+  react -> controller : POST /admin/data/category/delete\n{id: 5}
+  activate controller
+    controller -> model : delete(id)
+    activate model
+      model -> db : DELETE FROM categories WHERE id = 5
+      activate db
+        db --> model : Success
+      deactivate db
+      model --> controller : Returns success
+    deactivate model
+    
+    controller -> res : formatSuccess({deleted: true})
+    activate res
+      res --> controller : JSON String
+    deactivate res
+    
+    controller --> react : HTTP 200 OK\n{success: true}
+  deactivate controller
+  
+  react -> react : Removes row from table
+  react --> admin : Shows "Catégorie supprimée avec succès"
+deactivate react
+
+@enduml

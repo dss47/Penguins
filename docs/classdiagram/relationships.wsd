@@ -1,0 +1,98 @@
+' ═══════════════════════════════════════════════════════════
+' RELATIONSHIPS
+' ═══════════════════════════════════════════════════════════
+
+' ── Force inter-column spacing ──────────────────────────────
+AdminController -[hidden]-> Category
+AdminController -[hidden]-> Suggestion
+SuggestionService -[hidden]-> ToolService
+ExploreService -[hidden]-> SuggestionService
+
+' ── AdminController → Model (direct CRUD access) ────────────
+' Longest arrows first so they get dedicated routing channels
+AdminController ..> Category : uses directly
+AdminController ..> Provider : uses directly
+AdminController ..> Feature : uses directly
+AdminController ..> Model : uses directly
+AdminController ..> Review : uses directly
+AdminController ..> Suggestion : uses directly
+
+' ── Controller → Service dependencies ─────────────────────
+AdminController ..> AdminService : uses
+AdminController ..> SuggestionService : uses
+AdminController ..> ToolService : uses
+AdminController ..> UploadService : uses
+
+AuthController ..> AuthService : uses
+ExploreController ..> ExploreService : uses
+ExploreController ..> AuthMiddleware : uses
+FavoriteController ..> FavoriteService : uses
+FavoriteController ..> AuthMiddleware : uses
+ReviewController ..> ReviewService : uses
+ReviewController ..> AuthMiddleware : uses
+ShelfController ..> ShelfService : uses
+ShelfController ..> AuthMiddleware : uses
+SuggestionController ..> SuggestionService : uses
+ToolController ..> ToolService : uses
+UserController ..> UserService : uses
+UserController ..> AuthMiddleware : uses
+UserController ..> FavoriteService : uses
+UserController ..> ShelfService : uses
+
+' ── Service → Model dependencies ──────────────────────────
+AuthService ..> User : uses
+AuthService ..> JwtService : uses
+CategoryService ..> Category : uses
+FeatureService ..> Feature : uses
+ModelService ..> Model : uses
+ProviderService ..> Provider : uses
+ToolService ..> AiTool : uses
+ToolService ..> ToolFeatures : uses
+ReviewService ..> Review : uses
+ReviewService ..> ModerationService : uses
+ReviewService ..> User : uses
+ReviewService ..> Suggestion : uses
+FavoriteService ..> FavoriteItem : uses
+ShelfService ..> Shelf : uses
+ShelfService ..> ShelfItem : uses
+SearchHistoryService ..> SearchHistory : uses
+SearchHistoryService ..> SearchHistoryTool : uses
+SearchHistoryService ..> ToolFeatures : uses
+ExploreService ..> AiTool : uses
+ExploreService ..> OpenRouterService : uses
+ExploreService ..> SearchHistoryService : uses
+ExploreService ..> AuthMiddleware : uses
+ExploreService ..> ToolService : uses
+ModerationService ..> OpenRouterService : uses
+RecommendationService ..> AiTool : uses
+RecommendationService ..> OpenRouterService : uses
+RecommendationService ..> SearchHistoryService : uses
+SuggestionService ..> Suggestion : uses
+SuggestionService ..> OpenRouterService : uses
+SuggestionService ..> Category : uses
+SuggestionService ..> Provider : uses
+SuggestionService ..> Model : uses
+SuggestionService ..> Feature : uses
+SuggestionService ..> ToolService : uses
+SuggestionService ..> UploadService : uses
+SuggestionService ..> ToolModel : uses
+SuggestionService ..> ToolFeatures : uses
+UserService ..> User : uses
+UserService ..> UploadService : uses
+ProfessionService ..> Profession : uses
+
+' ── Middleware → Utils ─────────────────────────────────────
+AuthMiddleware ..> JwtService : uses
+
+' ── Routes (index.php) instantiates all controllers ───────
+note "index.php" as router_note
+router_note ..> AuthController : instantiates
+router_note ..> UserController : instantiates
+router_note ..> AdminController : instantiates
+router_note ..> ToolController : instantiates
+router_note ..> ReviewController : instantiates
+router_note ..> FavoriteController : instantiates
+router_note ..> ShelfController : instantiates
+router_note ..> SuggestionController : instantiates
+router_note ..> SearchHistoryController : instantiates
+router_note ..> ExploreController : instantiates

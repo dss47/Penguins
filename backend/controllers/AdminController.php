@@ -18,16 +18,19 @@ final class AdminController
     ) {
     }
 
+    // Returns admin dashboard data with aggregated stats
     public function dashboard(): array
     {
         return Response::success($this->adminService->getDashboardData());
     }
 
+    // Returns all users for the admin user management panel
     public function users(): array
     {
         return Response::success($this->adminService->getUsers());
     }
 
+    // Promotes a user to manager role
     public function promoteUser(array $body): array
     {
         $userId = (int) ($body['id'] ?? 0);
@@ -38,6 +41,7 @@ final class AdminController
         return $success ? Response::success(['message' => 'Utilisateur promu']) : Response::error('Erreur');
     }
 
+    // Demotes a manager back to regular user role
     public function demoteUser(array $body): array
     {
         $userId = (int) ($body['id'] ?? 0);
@@ -48,6 +52,7 @@ final class AdminController
         return $success ? Response::success(['message' => 'Utilisateur rétrogradé']) : Response::error('Erreur');
     }
 
+    // Bans (suspends) a user
     public function banUser(array $body): array
     {
         $userId = (int) ($body['id'] ?? 0);
@@ -58,6 +63,7 @@ final class AdminController
         return $success ? Response::success(['message' => 'Utilisateur banni']) : Response::error('Erreur');
     }
 
+    // Unbans a user by setting status back to active
     public function unbanUser(array $body): array
     {
         $userId = (int) ($body['id'] ?? 0);
@@ -68,11 +74,13 @@ final class AdminController
         return $success ? Response::success(['message' => 'Utilisateur débanni']) : Response::error('Erreur');
     }
 
+    // Returns all suggestions for the admin suggestion management panel
     public function suggestions(): array
     {
         return Response::success($this->adminService->getSuggestions());
     }
 
+    // Approves a suggestion and promotes it to a published tool
     public function approveSuggestion(array $body): array
     {
         $suggestionId = (int) ($body['id'] ?? 0);
@@ -92,6 +100,7 @@ final class AdminController
         return Response::error($errorMessage);
     }
 
+    // Rejects a suggestion with an optional reason
     public function rejectSuggestion(array $body): array
     {
         $suggestionId = (int) ($body['id'] ?? 0);
@@ -105,6 +114,7 @@ final class AdminController
         return $success ? Response::success(['message' => 'Suggestion rejetée']) : Response::error('Erreur');
     }
 
+    // Permanently deletes a suggestion by its ID
     public function deleteSuggestion(array $body): array
     {
         $suggestionId = (int) ($body['id'] ?? 0);
@@ -117,6 +127,7 @@ final class AdminController
         return $success ? Response::success(['message' => 'Suggestion supprimée']) : Response::error('Erreur lors de la suppression');
     }
 
+    // Creates a suggestion from the admin panel (with optional logo upload)
     public function createSuggestion(array $body, ?array $logoFile = null): array
     {
         $name = trim((string) ($body['name'] ?? ''));
@@ -158,6 +169,7 @@ final class AdminController
         return Response::success($result['data'] ?? $result);
     }
 
+    // Updates an existing suggestion's data (with optional logo replacement)
     public function updateSuggestion(array $body, ?array $logoFile = null): array
     {
         $id = (int) ($body['id'] ?? 0);
@@ -184,6 +196,7 @@ final class AdminController
         return Response::error('Erreur lors de la mise à jour');
     }
 
+    // Returns the admin's suggestion history with resolved names for categories, providers, models, and features
     public function suggestionHistory(): array
     {
         $adminId = 1;
@@ -228,6 +241,7 @@ final class AdminController
         return Response::success($history);
     }
 
+    // Returns all form reference data (categories, providers, models, features)
     public function formData(): array
     {
         $categories = $this->categoryModel->all();
@@ -243,12 +257,14 @@ final class AdminController
         ]);
     }
 
+    // Returns all reviews flagged by AI moderation
     public function moderationReviews(): array
     {
         $flagged = $this->reviewModel->allByStatus('flagged');
         return Response::success($flagged);
     }
 
+    // Approves a moderation-flagged review
     public function approveModerationReview(array $body): array
     {
         $reviewId = (int) ($body['id'] ?? 0);
@@ -260,6 +276,7 @@ final class AdminController
         return $success ? Response::success(['message' => 'Commentaire approuvé']) : Response::error('Erreur lors de l\'approbation');
     }
 
+    // Deletes a moderation-flagged review
     public function deleteModerationReview(array $body): array
     {
         $reviewId = (int) ($body['id'] ?? 0);
@@ -271,11 +288,13 @@ final class AdminController
         return $success ? Response::success(['message' => 'Commentaire supprimé']) : Response::error('Erreur lors de la suppression');
     }
 
+    // Returns all tools with category and provider names for the admin panel
     public function tools(): array
     {
         return Response::success($this->toolService->listAllToolsWithDetails());
     }
 
+    // Updates a tool's status (pending, active, archived, deprecated)
     public function updateToolStatus(array $body): array
     {
         $toolId = (int) ($body['id'] ?? 0);
@@ -287,6 +306,7 @@ final class AdminController
         return $result['success'] ? Response::success(['message' => 'Statut mis à jour']) : Response::error($result['error'] ?? 'Erreur');
     }
 
+    // Deletes a tool and all its related data
     public function deleteTool(array $body): array
     {
         $toolId = (int) ($body['id'] ?? 0);
@@ -296,8 +316,6 @@ final class AdminController
         $result = $this->toolService->deleteTool($toolId);
         return $result['success'] ? Response::success(['message' => 'Outil supprimé']) : Response::error($result['error'] ?? 'Erreur');
     }
-
-    // ── Categories ────────────────────────────────────────────
 
     public function createCategory(array $body): array
     {
@@ -313,6 +331,7 @@ final class AdminController
         return Response::success(['id' => $id, 'message' => 'Catégorie créée']);
     }
 
+    // Updates an existing category
     public function updateCategory(array $body): array
     {
         $id = (int) ($body['id'] ?? 0);
@@ -323,6 +342,7 @@ final class AdminController
         return $updated ? Response::success(['message' => 'Catégorie mise à jour']) : Response::error('Erreur lors de la mise à jour');
     }
 
+    // Deletes a category by its ID
     public function deleteCategory(array $body): array
     {
         $id = (int) ($body['id'] ?? 0);
@@ -333,8 +353,7 @@ final class AdminController
         return $deleted ? Response::success(['message' => 'Catégorie supprimée']) : Response::error('Erreur lors de la suppression');
     }
 
-    // ── Providers ─────────────────────────────────────────────
-
+    // Creates a new provider
     public function createProvider(array $body): array
     {
         $name = trim((string) ($body['name'] ?? ''));
@@ -350,6 +369,7 @@ final class AdminController
         return Response::success(['id' => $id, 'message' => 'Fournisseur créé']);
     }
 
+    // Updates an existing provider
     public function updateProvider(array $body): array
     {
         $id = (int) ($body['id'] ?? 0);
@@ -360,6 +380,7 @@ final class AdminController
         return $updated ? Response::success(['message' => 'Fournisseur mis à jour']) : Response::error('Erreur lors de la mise à jour');
     }
 
+    // Deletes a provider by its ID
     public function deleteProvider(array $body): array
     {
         $id = (int) ($body['id'] ?? 0);
@@ -370,8 +391,7 @@ final class AdminController
         return $deleted ? Response::success(['message' => 'Fournisseur supprimé']) : Response::error('Erreur lors de la suppression');
     }
 
-    // ── Features ──────────────────────────────────────────────
-
+    // Creates a new feature
     public function createFeature(array $body): array
     {
         $name = trim((string) ($body['name'] ?? ''));
@@ -387,6 +407,7 @@ final class AdminController
         return Response::success(['id' => $id, 'message' => 'Fonctionnalité créée']);
     }
 
+    // Updates an existing feature
     public function updateFeature(array $body): array
     {
         $id = (int) ($body['id'] ?? 0);
@@ -397,6 +418,7 @@ final class AdminController
         return $updated ? Response::success(['message' => 'Fonctionnalité mise à jour']) : Response::error('Erreur lors de la mise à jour');
     }
 
+    // Deletes a feature by its ID
     public function deleteFeature(array $body): array
     {
         $id = (int) ($body['id'] ?? 0);
@@ -407,8 +429,7 @@ final class AdminController
         return $deleted ? Response::success(['message' => 'Fonctionnalité supprimée']) : Response::error('Erreur lors de la suppression');
     }
 
-    // ── Models ────────────────────────────────────────────────
-
+    // Creates a new AI model
     public function createModel(array $body): array
     {
         $name = trim((string) ($body['name'] ?? ''));
@@ -425,6 +446,7 @@ final class AdminController
         return Response::success(['id' => $id, 'message' => 'Modèle créé']);
     }
 
+    // Updates an existing model
     public function updateModel(array $body): array
     {
         $id = (int) ($body['id'] ?? 0);
@@ -435,6 +457,7 @@ final class AdminController
         return $updated ? Response::success(['message' => 'Modèle mis à jour']) : Response::error('Erreur lors de la mise à jour');
     }
 
+    // Deletes a model by its ID
     public function deleteModel(array $body): array
     {
         $id = (int) ($body['id'] ?? 0);

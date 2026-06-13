@@ -8,6 +8,7 @@ final class AuthMiddleware
 	{
 	}
 
+	// Extracts and validates the Bearer token from the Authorization header, returns decoded payload or null
 	public function authenticate(): ?array
 	{
 		$authHeader = $_SERVER['HTTP_AUTHORIZATION']

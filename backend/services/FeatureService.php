@@ -8,19 +8,13 @@ final class FeatureService
     {
     }
 
-    /**
-     * Récupère toutes les fonctionnalités sous forme de liste simple.
-     */
+    // Returns all features as a simple list
     public function getAllFeatures(): array
     {
         return $this->featureModel->all();
     }
 
-    /**
-     * ASTUCE FRONTEND : Récupère les fonctionnalités et les regroupe par "type".
-     * Idéal pour React : permet de générer des sections distinctes de checkboxes
-     * (ex: une section "Licence", une section "Accès", etc.)
-     */
+    // Returns features grouped by their type (licensing, access, modality, capability)
     public function getGroupedFeatures(): array
     {
         $allFeatures = $this->featureModel->all();
@@ -34,9 +28,7 @@ final class FeatureService
         return $grouped;
     }
 
-    /**
-     * Récupère une fonctionnalité spécifique par son ID.
-     */
+    // Returns a single feature by its ID
     public function getFeatureById(int $id): ?array
     {
         if ($id <= 0) {
@@ -46,9 +38,7 @@ final class FeatureService
         return $this->featureModel->findById($id);
     }
 
-    /**
-     * Crée une nouvelle fonctionnalité (Admin Panel).
-     */
+    // Creates a new feature (Admin Panel)
     public function createFeature(array $data): array
     {
         if (empty(trim($data['name'] ?? ''))) {
@@ -74,9 +64,7 @@ final class FeatureService
         ];
     }
 
-    /**
-     * Met à jour une fonctionnalité existante.
-     */
+    // Updates an existing feature
     public function updateFeature(int $id, array $data): array
     {
         if ($id <= 0) {
@@ -109,16 +97,13 @@ final class FeatureService
         ];
     }
 
-    /**
-     * Supprime une fonctionnalité.
-     */
+    // Deletes a feature
     public function deleteFeature(int $id): array
     {
         if ($id <= 0) {
             throw new InvalidArgumentException("ID invalide.");
         }
 
-        // Le modèle devraitidéalement supprimer aussi les liaisons dans la table pivot (tool_features)
         $deleted = $this->featureModel->delete($id);
 
         if (!$deleted) {

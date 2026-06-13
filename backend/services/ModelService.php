@@ -8,32 +8,23 @@ final class ModelService
     {
     }
 
-    /**
-     * Récupère tous les modèles d'IA de la base de données.
-     * Idéalement avec une jointure SQL dans le modèle pour ramener le nom du provider.
-     */
+    // Returns all AI models from the database
     public function getAllModels(): array
     {
         return $this->modelModel->all();
     }
 
-    /**
-     * ASTUCE FRONTEND : Récupère uniquement les modèles liés à un fournisseur précis.
-     * Parfait pour les formulaires avec des menus déroulants liés/dépendants.
-     */
+    // Returns only the models linked to a specific provider (for dependent dropdowns)
     public function getModelsByProvider(int $providerId): array
     {
         if ($providerId <= 0) {
             return [];
         }
 
-        // Suppose que votre classe Model possède une méthode `findByProviderId`
         return $this->modelModel->findByProviderId($providerId);
     }
 
-    /**
-     * Récupère un modèle spécifique par son ID.
-     */
+    // Returns a single model by its ID
     public function getModelById(int $id): ?array
     {
         if ($id <= 0) {
@@ -43,9 +34,7 @@ final class ModelService
         return $this->modelModel->findById($id);
     }
 
-    /**
-     * Ajoute un nouveau modèle d'IA (Admin Panel).
-     */
+    // Creates a new AI model (Admin Panel)
     public function createModel(array $data): array
     {
         if (empty(trim($data['name'] ?? ''))) {
@@ -72,16 +61,13 @@ final class ModelService
         ];
     }
 
-    /**
-     * Met à jour un modèle existant.
-     */
+    // Updates an existing model (partial update supported)
     public function updateModel(int $id, array $data): array
     {
         if ($id <= 0) {
             throw new InvalidArgumentException("ID de modèle invalide.");
         }
 
-        // On ne met à jour que les champs envoyés (mise à jour partielle possible)
         $payload = [];
         
         if (isset($data['provider_id'])) {
@@ -113,9 +99,7 @@ final class ModelService
         ];
     }
 
-    /**
-     * Supprime un modèle.
-     */
+    // Deletes a model
     public function deleteModel(int $id): array
     {
         if ($id <= 0) {

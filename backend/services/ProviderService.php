@@ -8,18 +8,13 @@ final class ProviderService
     {
     }
 
-    /**
-     * Récupère tous les fournisseurs.
-     * Utilisé pour remplir les listes déroulantes (Select) dans les formulaires.
-     */
+    // Returns all providers, used to populate dropdown select inputs in forms
     public function getAllProviders(): array
     {
         return $this->providerModel->all();
     }
 
-    /**
-     * Récupère un fournisseur spécifique par son ID.
-     */
+    // Returns a single provider by its ID
     public function getProviderById(int $id): ?array
     {
         if ($id <= 0) {
@@ -29,10 +24,7 @@ final class ProviderService
         return $this->providerModel->findById($id);
     }
 
-    /**
-     * ASTUCE FRONTEND : Récupère un fournisseur ET la liste de ses modèles.
-     * Parfait pour une page du type : /providers/1 (Page profil d'OpenAI affichant GPT-4, GPT-3.5, etc.)
-     */
+    // Returns a provider with its associated models (e.g., for a provider profile page)
     public function getProviderWithModels(int $id): ?array
     {
         if ($id <= 0) {
@@ -45,17 +37,12 @@ final class ProviderService
             return null;
         }
 
-        // Suppose que votre classe Provider possède une méthode `getModelsByProviderId`
-        // ou que vous utilisez un JOIN SQL. Si ce n'est pas le cas, vous pouvez 
-        // injecter le ModelService ici pour faire la liaison !
         $provider['models'] = $this->providerModel->getModelsByProviderId($id) ?? [];
 
         return $provider;
     }
 
-    /**
-     * Crée un nouveau fournisseur (Admin Panel).
-     */
+    // Creates a new provider (Admin Panel)
     public function createProvider(array $data): array
     {
         if (empty(trim($data['name'] ?? ''))) {
@@ -68,7 +55,6 @@ final class ProviderService
             'description' => !empty($data['description']) ? trim($data['description']) : null
         ];
 
-        // Optionnel : Validation basique de l'URL si elle est fournie
         if ($payload['website_url'] && !filter_var($payload['website_url'], FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException("L'URL du site web n'est pas valide.");
         }
@@ -82,9 +68,7 @@ final class ProviderService
         ];
     }
 
-    /**
-     * Met à jour un fournisseur existant.
-     */
+    // Updates an existing provider
     public function updateProvider(int $id, array $data): array
     {
         if ($id <= 0) {
@@ -121,9 +105,7 @@ final class ProviderService
         ];
     }
 
-    /**
-     * Supprime un fournisseur.
-     */
+    // Deletes a provider
     public function deleteProvider(int $id): array
     {
         if ($id <= 0) {

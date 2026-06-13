@@ -8,19 +8,13 @@ final class ProfessionService
     {
     }
 
-    /**
-     * Récupère toutes les professions.
-     * Idéal pour peupler le menu déroulant lors de l'inscription (Select input).
-     */
+    // Returns all professions, used to populate the registration dropdown
     public function getAllProfessions(): array
     {
-        // On s'attend à ce que le modèle trie par ordre alphabétique (ORDER BY name ASC)
         return $this->professionModel->all();
     }
 
-    /**
-     * Récupère une profession spécifique par son ID.
-     */
+    // Returns a single profession by its ID
     public function getProfessionById(int $id): ?array
     {
         if ($id <= 0) {
@@ -30,9 +24,7 @@ final class ProfessionService
         return $this->professionModel->findById($id);
     }
 
-    /**
-     * Ajoute une nouvelle profession depuis le panel d'administration.
-     */
+    // Creates a new profession from the admin panel
     public function createProfession(array $data): array
     {
         $name = trim($data['name'] ?? '');
@@ -54,9 +46,7 @@ final class ProfessionService
         ];
     }
 
-    /**
-     * Met à jour le nom d'une profession existante.
-     */
+    // Updates an existing profession's name
     public function updateProfession(int $id, array $data): array
     {
         if ($id <= 0) {
@@ -89,11 +79,7 @@ final class ProfessionService
         ];
     }
 
-    /**
-     * Supprime une profession.
-     * Attention : Il faut s'assurer que des utilisateurs ne sont pas déjà liés à cet ID,
-     * sinon cela causera une erreur de clé étrangère (Foreign Key constraint).
-     */
+    // Deletes a profession (ensure no users are linked to this ID)
     public function deleteProfession(int $id): array
     {
         if ($id <= 0) {

@@ -10,6 +10,7 @@ final class ReviewController
     ) {
     }
 
+    // Authenticates the user via JWT and returns the user ID
     private function authenticate(): int
     {
         $user = $this->authMiddleware->authenticate();
@@ -19,6 +20,7 @@ final class ReviewController
         return (int) $user['user_id'];
     }
 
+    // Submits a new review with AI moderation
     public function submit(array $payload): array
     {
         $userId = $this->authenticate();
@@ -38,6 +40,7 @@ final class ReviewController
         return Response::error($result['message'] ?? 'Erreur lors de la soumission');
     }
 
+    // Updates an existing review
     public function update(array $payload): array
     {
         $userId = $this->authenticate();
@@ -62,6 +65,7 @@ final class ReviewController
         return Response::error($result['message'] ?? 'Erreur lors de la modification');
     }
 
+    // Lists all reviews for the authenticated user
     public function list(): array
     {
         $userId = $this->authenticate();
@@ -73,6 +77,7 @@ final class ReviewController
         return Response::success($reviews);
     }
 
+    // Deletes a review by its ID
     public function delete(array $payload): array
     {
         $userId = $this->authenticate();

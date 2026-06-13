@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 final class SearchHistory extends BaseModel
 {
+    // Creates a new search history record and returns its ID
     public function create(array $data): int
     {
         $sql = 'INSERT INTO search_histories (
@@ -31,6 +32,7 @@ final class SearchHistory extends BaseModel
 
         return (int) $this->db->lastInsertId();
     }
+    // Finds a search history record by its ID
     public function findById(int $historyId): ?array
     {
         $sql = 'SELECT * FROM search_histories WHERE id = ? LIMIT 1';
@@ -40,6 +42,7 @@ final class SearchHistory extends BaseModel
 
         return $history ?: null;
     }
+    // Returns all search history records for a user, ordered by newest first
     public function allByUserId(int $userId): array
     {
         $sql = 'SELECT id, title, prompt_text, search_type, created_at 

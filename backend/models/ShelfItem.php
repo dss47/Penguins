@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 final class ShelfItem extends BaseModel
 {
+    // Returns all tools in a shelf, with tool details
     public function allByShelfId(int $shelfId): array
     {
         $sql = 'SELECT t.*, si.created_at AS added_to_shelf_at 
@@ -17,6 +18,7 @@ final class ShelfItem extends BaseModel
 
         return $stmt->fetchAll();
     }
+    // Finds a shelf item by its ID
     public function findById(int $id): ?array
     {
         $sql = 'SELECT * FROM shelf_items WHERE id = ? LIMIT 1';
@@ -26,6 +28,7 @@ final class ShelfItem extends BaseModel
         return $stmt->fetch() ?: null;
     }
 
+    // Adds a tool to a shelf and returns the new item ID
     public function addToShelf(array $data): int 
     {
         $sql = 'INSERT INTO shelf_items (
@@ -45,6 +48,7 @@ final class ShelfItem extends BaseModel
         return (int) $this->db->lastInsertId();
     }
 
+    // Removes a tool from a shelf
     public function removeFromShelf(int $shelfId, int $toolId): bool
     {
         $sql = 'DELETE FROM shelf_items WHERE shelf_id = ? AND tool_id = ?';
@@ -53,6 +57,7 @@ final class ShelfItem extends BaseModel
         return $stmt->execute([$shelfId, $toolId]);
     }
 
+    // Checks whether a tool is already in a shelf
     public function exists(int $shelfId, int $toolId): bool
     {
         $sql = 'SELECT 1 FROM shelf_items WHERE shelf_id = ? AND tool_id = ? LIMIT 1';
@@ -61,6 +66,7 @@ final class ShelfItem extends BaseModel
         return (bool) $stmt->fetch();
     }
 
+    // Toggles a tool in a shelf (adds if absent, removes if present), returns the action
     public function toggle(int $shelfId, int $toolId): string
     {
         if ($this->exists($shelfId, $toolId)) {
@@ -71,6 +77,7 @@ final class ShelfItem extends BaseModel
         return 'added';
     }
 
+    // Returns tools in a shelf with provider and category info
     public function getToolsByShelfId(int $shelfId): array
     {
         $sql = 'SELECT t.*, p.name AS provider_name, c.name AS category_name

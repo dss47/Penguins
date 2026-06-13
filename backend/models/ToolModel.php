@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 final class ToolModel extends BaseModel
 {
+    // Links a model to a tool in the many-to-many relationship
     public function linkModelToTool(int $toolId, int $modelId): bool
     {
         $sql = 'INSERT INTO tool_models (tool_id, model_id) VALUES (?, ?)';
@@ -12,6 +13,7 @@ final class ToolModel extends BaseModel
         return $stmt->execute([$toolId, $modelId]);
     }
 
+    // Removes a model-to-tool link
     public function unlinkModelFromTool(int $toolId, int $modelId): bool
     {
         $sql = 'DELETE FROM tool_models WHERE tool_id = ? AND model_id = ?';
@@ -20,6 +22,7 @@ final class ToolModel extends BaseModel
         return $stmt->execute([$toolId, $modelId]);
     }
     
+    // Returns all active models linked to a specific tool
     public function findModelsByToolId(int $toolId): array
     {
         $sql = 'SELECT m.* FROM tool_models tm

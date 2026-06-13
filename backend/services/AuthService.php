@@ -10,6 +10,7 @@ final class AuthService
 	) {
 	}
 
+	// Validates input and creates a new user account, returns the created user data
 	public function registerUser(string $firstName, string $lastName, string $email, string $password): array
 	{
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -49,6 +50,7 @@ final class AuthService
 		]);
 	}
 
+	// Verifies email and password, returns a JWT token and user data on success
 	public function verifyCredentials(string $email, string $password): array|false
 	{
 		$user = $this->userModel->findByEmail($email);
@@ -78,6 +80,7 @@ final class AuthService
 		];
 	}
 
+	// Returns a logout success response
 	public function logout(): array
 	{
 		return Response::success(['message' => 'Déconnexion réussie']);

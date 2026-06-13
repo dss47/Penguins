@@ -9,11 +9,13 @@ final class ToolService
         private readonly ToolFeatures $toolFeatures = new ToolFeatures()
     ) {}
 
+    // Returns all tools from the database
     public function listTools(): array
     {
         return $this->toolModel->all() ?? [];
     }
 
+    // Returns all tools with category and provider names, ordered by creation date
     public function listAllToolsWithDetails(): array
     {
         $db = db_connection();
@@ -29,6 +31,7 @@ final class ToolService
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
+    // Returns only active tools with category/provider names and their feature list
     public function listPublicTools(): array
     {
         $db = db_connection();
@@ -52,6 +55,7 @@ final class ToolService
         return $tools;
     }
 
+    // Returns detailed data for a single active tool by its name, including features, models, and similar tools
     public function getPublicToolByName(string $name): array
     {
         $db = db_connection();
@@ -87,6 +91,7 @@ final class ToolService
         return ['success' => true, 'data' => $tool];
     }
 
+    // Finds up to $limit tools in the same category, excluding the given tool ID
     private function findSimilarTools(int $categoryId, int $excludeId, int $limit = 6): array
     {
         $db = db_connection();
@@ -98,6 +103,7 @@ final class ToolService
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
+    // Validates tool creation/update payload fields, returns an array of error messages
     public function validateToolData(array $payload): array
     {
         $errors = [];
@@ -147,6 +153,7 @@ final class ToolService
     }
 
 
+    // Validates and creates a new tool, returns the new tool ID on success
     public function createTool(array $payload, int $userId): array
     {
         $errors = $this->validateToolData($payload);
@@ -166,6 +173,7 @@ final class ToolService
         return ['success' => false, 'errors' => ['general' => 'Erreur lors de la création de l\'outil.']];
     }
 
+    // Retrieves a single tool by its ID
     public function getToolDetails(int $id): array
     {
         $tool = $this->toolModel->findById($id);
@@ -177,6 +185,7 @@ final class ToolService
         return ['success' => true, 'data' => $tool];
     }
 
+    // Updates the status of a tool (pending, active, archived, deprecated)
     public function updateToolStatus(int $id, string $newStatus): array
     {
         $validStatuses = ['pending', 'active', 'archived', 'deprecated'];
@@ -193,6 +202,7 @@ final class ToolService
         return ['success' => false, 'error' => 'Erreur lors de la mise à jour du statut.'];
     }
 
+    // Deletes a tool and all its related data (models, features, favorites, reviews, etc.) in a transaction
     public function deleteTool(int $id): array
     {
         $db = db_connection();
@@ -216,6 +226,7 @@ final class ToolService
         }
     }
 
+    // Validates and updates an existing tool's data
     public function updateTool(int $id, array $payload): array
     {
         $errors = $this->validateToolData($payload);

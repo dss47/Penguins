@@ -1,0 +1,98 @@
+' ── Package: Controllers ──────────────────────────────────
+package "Controllers" as ctrl_pkg {
+
+  class AdminController {
+    {method} + dashboard(): array
+    {method} + users(): array
+    {method} + promoteUser(array $body): array
+    {method} + demoteUser(array $body): array
+    {method} + banUser(array $body): array
+    {method} + unbanUser(array $body): array
+    {method} + suggestions(): array
+    {method} + approveSuggestion(array $body): array
+    {method} + rejectSuggestion(array $body): array
+    {method} + deleteSuggestion(array $body): array
+    {method} + createSuggestion(array $body, ?array $logoFile): array
+    {method} + updateSuggestion(array $body, ?array $logoFile): array
+    {method} + suggestionHistory(): array
+    {method} + formData(): array
+    {method} + moderationReviews(): array
+    {method} + approveModerationReview(array $body): array
+    {method} + deleteModerationReview(array $body): array
+    {method} + tools(): array
+    {method} + updateToolStatus(array $body): array
+    {method} + deleteTool(array $body): array
+    {method} + createCategory|updateCategory|deleteCategory(array $body): array
+    {method} + createProvider|updateProvider|deleteProvider(array $body): array
+    {method} + createFeature|updateFeature|deleteFeature(array $body): array
+    {method} + createModel|updateModel|deleteModel(array $body): array
+  }
+
+  class AuthController {
+    {method} + register(array $payload): array
+    {method} + login(array $payload): array
+  }
+
+  class ExploreController {
+    {method} + home(): array
+    {method} + landingSummary(): array
+    {method} + search(array $query): array
+    {method} + recommend(array $body): array
+  }
+
+  class FavoriteController {
+    {method} + index(): array
+    {method} + toggle(array $payload): array
+  }
+
+  class ReviewController {
+    {method} + submit(array $payload): array
+    {method} + update(array $payload): array
+    {method} + list(): array
+    {method} + delete(array $payload): array
+  }
+
+  class SearchHistoryController {
+    {method} + list(): array
+    {method} + details(array $query): array
+  }
+
+  class ShelfController {
+    {method} + list(): array
+    {method} + show(array $query): array
+    {method} + create(array $payload): array
+    {method} + update(array $payload): array
+    {method} + delete(array $payload): array
+    {method} + toggleItem(array $payload): array
+  }
+
+  class SuggestionController {
+    {method} + create(array $body, ?array $logoFile): array
+    {method} + history(): array
+  }
+
+  class ToolController {
+    {method} + index(): array
+    {method} + reviews(): array
+    {method} + topReviews(): array
+  }
+
+  class UserController {
+    {method} + profile(): array
+    {method} + stats(): array
+    {method} + updateProfile(array $body, ?array $file): array
+    {method} + professions(): array
+    {method} + deleteAccount(int $userId): array
+  }
+
+  ' ── Hidden alignment links ───────────────────────────────
+  AdminController -[hidden]-> AuthController
+  AuthController -[hidden]-> ExploreController
+  ExploreController -[hidden]-> FavoriteController
+  FavoriteController -[hidden]-> ReviewController
+  ReviewController -[hidden]-> SearchHistoryController
+  SearchHistoryController -[hidden]-> ShelfController
+  ShelfController -[hidden]-> SuggestionController
+  SuggestionController -[hidden]-> ToolController
+  ToolController -[hidden]-> UserController
+}

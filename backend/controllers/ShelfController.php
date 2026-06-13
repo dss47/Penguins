@@ -9,12 +9,14 @@ final class ShelfController
         private readonly AuthMiddleware $authMiddleware = new AuthMiddleware()
     ) {}
 
+    // Authenticates the user via JWT and returns the user ID
     private function getUserId(): ?int
     {
         $payload = $this->authMiddleware->authenticate();
         return $payload ? (int) ($payload['user_id'] ?? 0) : null;
     }
 
+    // Lists all shelves for the authenticated user
     public function list(): array
     {
         $userId = $this->getUserId();
@@ -24,6 +26,7 @@ final class ShelfController
         return Response::success($this->shelfService->listUserShelves($userId));
     }
 
+    // Shows a specific shelf with its tools for the authenticated user
     public function show(array $query): array
     {
         $userId = $this->getUserId();
@@ -39,6 +42,7 @@ final class ShelfController
         return Response::success(['shelf' => $shelf, 'tools' => $tools]);
     }
 
+    // Creates a new empty shelf for the authenticated user
     public function create(array $payload): array
     {
         $userId = $this->getUserId();
@@ -48,6 +52,7 @@ final class ShelfController
         return $this->shelfService->createEmptyShelf($payload['name'] ?? '', $userId, $payload['description'] ?? null);
     }
 
+    // Updates a shelf's name and description
     public function update(array $payload): array
     {
         $userId = $this->getUserId();
@@ -62,6 +67,7 @@ final class ShelfController
         );
     }
 
+    // Deletes a shelf by its ID
     public function delete(array $payload): array
     {
         $userId = $this->getUserId();
@@ -71,6 +77,7 @@ final class ShelfController
         return $this->shelfService->deleteShelf((int) ($payload['id'] ?? 0), $userId);
     }
 
+    // Toggles a tool's membership in a shelf
     public function toggleItem(array $payload): array
     {
         $userId = $this->getUserId();

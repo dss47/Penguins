@@ -8,18 +8,13 @@ final class CategoryService
     {
     }
 
-    /**
-     * Récupère toutes les catégories.
-     * Idéalement triées par nom ou par date de création dans le modèle.
-     */
+    // Returns all categories, ideally sorted by name or creation date
     public function getAllCategories(): array
     {
         return $this->categoryModel->all();
     }
 
-    /**
-     * Récupère une catégorie spécifique par son ID.
-     */
+    // Returns a single category by its ID
     public function getCategoryById(int $id): ?array
     {
         if ($id <= 0) {
@@ -29,17 +24,13 @@ final class CategoryService
         return $this->categoryModel->findById($id);
     }
 
-    /**
-     * Crée une nouvelle catégorie après validation des données.
-     */
+    // Creates a new category after data validation
     public function createCategory(array $data): array
     {
-        // Validation basique : le nom est obligatoire
         if (empty(trim($data['name'] ?? ''))) {
             throw new InvalidArgumentException("Le nom de la catégorie est obligatoire.");
         }
 
-        // Préparation des données sécurisées pour le modèle
         $payload = [
             'name'        => trim($data['name']),
             'icon'        => !empty($data['icon']) ? trim($data['icon']) : null,
@@ -55,9 +46,7 @@ final class CategoryService
         ];
     }
 
-    /**
-     * Met à jour une catégorie existante.
-     */
+    // Updates an existing category
     public function updateCategory(int $id, array $data): array
     {
         if ($id <= 0) {
@@ -90,11 +79,7 @@ final class CategoryService
         ];
     }
 
-    /**
-     * Supprime une catégorie.
-     * Attention : Assurez-vous que le modèle gère bien les contraintes de clés étrangères 
-     * (par exemple, que faire des outils liés à cette catégorie ?).
-     */
+    // Deletes a category (ensure foreign key constraints are handled in the model)
     public function deleteCategory(int $id): array
     {
         if ($id <= 0) {

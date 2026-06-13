@@ -8,23 +8,16 @@ final class ModerationService
     {
     }
 
-    /**
-     * Liste noire locale de mots ou d'expressions interdites.
-     * Permet un filtrage ultra-rapide (0 milliseconde) avant même d'appeler une API.
-     */
+    // Local blacklist of banned keywords for ultra-fast filtering before calling the AI API
     private array $bannedKeywords = [
         'viagra', 'casino en ligne', 'hack', 'mot_interdit_1', 'mot_interdit_2'
     ];
 
-    /**
-     * Analyse un contenu (texte, avis, description) et détermine s'il est sûr.
-     * Retourne un tableau avec: flagged (bool), reason (string), confidence_score (int), categories (array)
-     */
+    // Analyzes content (text, review, description) and determines if it is safe and clean
     public function moderate(string $content): array
     {
         $cleanContent = trim($content);
 
-        // 1. Si c'est vide, pas besoin de flagger
         if (empty($cleanContent)) {
             return [
                 'flagged' => false,
@@ -34,7 +27,6 @@ final class ModerationService
             ];
         }
 
-        // 2. Vérification locale ultra-rapide (Expressions régulières ou mots-clés)
         $localCheck = $this->localKeywordCheck($cleanContent);
         if ($localCheck['flagged']) {
             return [
@@ -45,10 +37,8 @@ final class ModerationService
             ];
         }
 
-        // 3. Vérification avancée via IA (AgentRouter)
         return $this->aiModerationCheck($cleanContent);
 
-        // Si tout va bien, le contenu est approuvé
         return [
             'flagged' => false,
             'reason' => '',
@@ -57,9 +47,7 @@ final class ModerationService
         ];
     }
 
-    /**
-     * Vérifie si le texte contient des mots de la liste noire.
-     */
+    // Checks whether the text contains any locally banned keywords
     private function localKeywordCheck(string $content): array
     {
         $flaggedCategories = [];
@@ -68,7 +56,7 @@ final class ModerationService
         foreach ($this->bannedKeywords as $word) {
             if (strpos($contentLower, $word) !== false) {
                 $flaggedCategories[] = 'spam_or_profanity';
-                break; // On arrête à la première infraction pour gagner du temps
+                break;
             }
         }
 
@@ -78,9 +66,7 @@ final class ModerationService
         ];
     }
 
-    /**
-     * Vérification IA approfondie via AgentRouter.
-     */
+    // Performs an in-depth AI moderation check via OpenRouter
     private function aiModerationCheck(string $content): array
     {
         $result = $this->openRouter->moderateComment($content);

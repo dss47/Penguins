@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 final class ExploreService
 {
-    // On injecte le Tool Model, mais aussi le OpenRouterService pour la recherche intelligente !
     public function __construct(
         private readonly AiTool $toolModel = new AiTool(),
         private readonly OpenRouterService $openRouterService = new OpenRouterService(),
@@ -14,19 +13,17 @@ final class ExploreService
     ) {
     }
 
-    /**
-     * Données pour la page d'accueil (Accueil / Dashboard Utilisateur).
-     * Regroupe les nouveautés, les outils mis en avant, etc.
-     */
+    // Returns data for the home page: latest, featured, and trending tools
     public function home(): array
     {
         return [
-            'latest'   => $this->toolModel->getLatestTools(6),   // Les 6 derniers ajouts
-            'featured' => $this->toolModel->getFeaturedTools(6), // Outils sponsorisés/populaires
-            'trending' => $this->toolModel->getTrendingTools(6)  // Les plus vus/cliqués
+            'latest'   => $this->toolModel->getLatestTools(6),
+            'featured' => $this->toolModel->getFeaturedTools(6),
+            'trending' => $this->toolModel->getTrendingTools(6)
         ];
     }
 
+    // Returns landing page stats: tool count, category count, community members, and top categories
     public function landingSummary(): array
     {
         $db = db_connection();
@@ -42,10 +39,7 @@ final class ExploreService
         ];
     }
 
-    /**
-     * Recherche classique par mots-clés (ex: "générateur image", "chatgpt").
-     * Interroge directement la base de données (SQL LIKE ou Full-Text).
-     */
+    // Searches tools by keywords using SQL LIKE / full-text search
     public function searchByKeywords(string $query): array
     {
         $cleanQuery = trim($query);
@@ -57,11 +51,7 @@ final class ExploreService
         return $this->toolModel->searchByKeywords($cleanQuery);
     }
 
-    /**
-     * LA RECHERCHE MAGIQUE PAR IA 🪄
-     * L'utilisateur tape un problème (ex: "Je suis étudiant et je veux résumer des PDF").
-     * L'IA analyse, prend en compte sa profession, et renvoie une réponse ciblée.
-     */
+    // Performs an AI-powered search: user describes a problem, AI recommends matching tools
     public function searchByPrompt(string $prompt, ?int $userId = null): array
     {
         $cleanPrompt = trim($prompt);
@@ -131,13 +121,9 @@ final class ExploreService
         ];
     }
 
-    /**
-     * Filtrage avancé pour la page "Explorer".
-     * Permet à l'utilisateur de cliquer sur des tags (Catégories, Fournisseurs).
-     */
+    // Filters tools by category and/or provider for the Explore page
     public function filterTools(?int $categoryId = null, ?int $providerId = null): array
     {
-        // S'il n'y a aucun filtre, on renvoie tout (ou une pagination)
         if ($categoryId === null && $providerId === null) {
             return $this->toolModel->all();
         }
@@ -145,24 +131,19 @@ final class ExploreService
         return $this->toolModel->filter($categoryId, $providerId);
     }
 
-    /**
-     * Page de détail d'un outil spécifique (Vue complète).
-     * Ramène toutes les infos (Modèles, Fonctionnalités, Fournisseur) + Outils similaires.
-     */
+    // Returns full tool details including similar tools from the same category
     public function getToolDetails(int $toolId): ?array
     {
         if ($toolId <= 0) {
             return null;
         }
 
-        // Suppose que votre ToolModel a une méthode qui fait les JOIN SQL nécessaires
         $tool = $this->toolModel->findByIdWithDetails($toolId);
 
         if (!$tool) {
-            return null; // L'outil n'existe pas ou a été supprimé
+            return null;
         }
 
-        // Bonus UX : On ajoute automatiquement 3 outils similaires de la même catégorie !
         $tool['similar_tools'] = $this->toolModel->getSimilarTools($tool['category_id'], $toolId, 3);
 
         return $tool;

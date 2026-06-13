@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 final class SuggestionService
 {
-    /**
-     * Traite la soumission du formulaire, l'enregistre, l'envoie à l'IA, 
-     * et met à jour la base de données avec le verdict.
-     */
+    // Handles form submission, saves it, sends it to the AI, and updates the database with the verdict
     public function __construct(
         private readonly Suggestion $suggestionModel = new Suggestion(),
         private readonly OpenRouterService $openRouterService = new OpenRouterService(),
@@ -22,9 +19,10 @@ final class SuggestionService
     ) {
     }
 
+    // Creates a suggestion, uploads a logo if provided, sends it to AI for evaluation, and returns the result
     public function createSuggestion(array $payload, ?array $file = null): array
     {
-        // 0. Handle logo upload if present
+        // Handles logo upload if present
         if ($file && $file['error'] !== UPLOAD_ERR_NO_FILE) {
             $uploadResult = $this->uploadService->handleUpload($file, 'uploads/tools', $payload['name'] ?? null);
             if (!$uploadResult['success']) {
@@ -48,13 +46,10 @@ final class SuggestionService
             ];
         }
 
-        // 2. Préparation du contexte "Slim"
         $slimContext = $this->buildSlimDatabaseContext();
 
-        // 3. Appel de l'IA
         $aiResponseJson = $this->openRouterService->evaluateToolSubmission($payload, $slimContext);
 
-        // 4. Traitement de la réponse de l'IA
         if ($aiResponseJson) {
             $aiData = json_decode($aiResponseJson, true);
 
@@ -72,7 +67,6 @@ final class SuggestionService
             error_log('SuggestionService::createSuggestion invalid AI JSON: ' . json_last_error_msg() . ' | Response: ' . substr($aiResponseJson, 0, 500));
         }
 
-        // 5. FALLBACK
         $this->suggestionModel->updateStatus($suggestionId, 'waiting_manual_validation', 'Erreur API IA. Validation manuelle requise.');
         $fallbackSuggestion = $this->suggestionModel->findById($suggestionId);
 
@@ -82,11 +76,7 @@ final class SuggestionService
             'data'    => $fallbackSuggestion
         ];
     }
-    /**
-     * Récupère toutes les suggestions en attente de validation par un manager
-     * (Ce qui inclut les soumissions "approuvées" par l'IA mais qui attendent 
-     * le clic final de l'admin, ou celles tombées en fallback).
-     */
+    // Returns all suggestions awaiting manager validation (AI-approved or fallback)
     public function listPendingSuggestions(): array
     {
         return array_merge(
@@ -95,9 +85,7 @@ final class SuggestionService
         );
     }
 
-    /**
-     * Promeut une suggestion approuvée vers la table ai_tools principale.
-     */
+    // Promotes an approved suggestion into the main ai_tools table
     public function promoteToTool(int $suggestionId, int $adminId): array
     {
         $suggestion = $this->suggestionModel->findById($suggestionId);
@@ -105,7 +93,6 @@ final class SuggestionService
             return ['success' => false, 'message' => 'Suggestion introuvable'];
         }
 
-        // On utilise les ID corrigés par l'IA s'ils existent, sinon ceux suggérés
         $toolPayload = [
             'name' => $suggestion['fixed_name'] ?? $suggestion['name'],
             'category_id' => $suggestion['fixed_category_id'] ?? $suggestion['category_id'],
@@ -159,10 +146,7 @@ final class SuggestionService
         return ['success' => false, 'errors' => $result['errors'] ?? ['Erreur lors de la création de l\'outil']];
     }
 
-    /**
-     * Génère des listes optimisées [ID => Nom] pour ne pas gaspiller
-     * de tokens lors de l'appel à l'API OpenRouter.
-     */
+    // Builds slim [ID => Name] lists to minimize token usage in the OpenRouter API call
     private function buildSlimDatabaseContext(): array
     {
         $rawCategories = $this->categoryModel->all();

@@ -9,12 +9,14 @@ final class FavoriteController
         private readonly AuthMiddleware $authMiddleware = new AuthMiddleware()
     ) {}
 
+    // Authenticates the user via JWT and returns the user ID
     private function getUserId(): ?int
     {
         $payload = $this->authMiddleware->authenticate();
         return $payload ? (int) ($payload['user_id'] ?? 0) : null;
     }
 
+    // Returns all favorited tools for the authenticated user
     public function index(): array
     {
         $userId = $this->getUserId();
@@ -24,6 +26,7 @@ final class FavoriteController
         return Response::success($this->favoriteService->listUserFavorites($userId));
     }
 
+    // Toggles a tool as favorite for the authenticated user
     public function toggle(array $payload): array
     {
         $userId = $this->getUserId();

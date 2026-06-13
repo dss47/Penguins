@@ -6,6 +6,7 @@ final class FavoriteService
 {
     public function __construct(private readonly FavoriteItem $favoriteItemModel = new FavoriteItem()) {}
 
+    // Toggles a tool as favorite for the user: adds if not favorited, removes if already favorited
     public function toggleFavorite(int $userId, int $toolId): string
     {
         $isFavorited = $this->favoriteItemModel->isFavorited($userId, $toolId);
@@ -19,6 +20,7 @@ final class FavoriteService
         return 'added';
     }
 
+    // Returns all favorited tools for a given user
     public function listUserFavorites(int $userId): array
     {
         return $this->favoriteItemModel->allByUserId($userId) ?: [];

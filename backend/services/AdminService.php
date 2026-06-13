@@ -11,6 +11,7 @@ final class AdminService
         $this->db = db_connection();
     }
 
+    // Returns aggregated stats, recent activity, and category distribution for the admin dashboard
     public function getDashboardData(): array
     {
         $stats = [
@@ -43,23 +44,27 @@ final class AdminService
         ];
     }
 
+    // Returns all users with basic info, ordered by creation date
     public function getUsers(): array
     {
         return $this->db->query("SELECT id, name, email, role, status, DATE_FORMAT(created_at, '%d %b %Y') as joined FROM users ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Updates the role of a user (e.g., promote to admin, demote to user)
     public function updateUserRole(int $userId, string $role): bool
     {
         $stmt = $this->db->prepare("UPDATE users SET role = ? WHERE id = ?");
         return $stmt->execute([$role, $userId]);
     }
 
+    // Updates the status of a user (e.g., ban, unban, suspend)
     public function updateUserStatus(int $userId, string $status): bool
     {
         $stmt = $this->db->prepare("UPDATE users SET status = ? WHERE id = ?");
         return $stmt->execute([$status, $userId]);
     }
 
+    // Returns all suggestions with author and category/provider/model info, resolves feature names
     public function getSuggestions(): array
     {
         $features = $this->db->query("SELECT id, name FROM features")
@@ -116,12 +121,14 @@ final class AdminService
         return $suggestions;
     }
 
+    // Rejects a suggestion with a given reason, sets status to rejected_by_admin
     public function rejectSuggestion(int $id, string $reason): bool
     {
         $stmt = $this->db->prepare("UPDATE suggestions SET status = 'rejected_by_admin', rejection_reason = ? WHERE id = ?");
         return $stmt->execute([$reason, $id]);
     }
 
+    // Permanently deletes a suggestion by its ID
     public function deleteSuggestion(int $id): bool
     {
         $stmt = $this->db->prepare("DELETE FROM suggestions WHERE id = ?");

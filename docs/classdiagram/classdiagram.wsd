@@ -1,0 +1,27 @@
+@startuml Penguins_ClassDiagram
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FCFCFC
+skinparam defaultTextAlignment center
+skinparam linetype ortho
+skinparam nodeMargin 20
+skinparam packageMargin 40
+skinparam ranksep 60
+skinparam nodesep 50
+
+' ── Global Style ──────────────────────────────────────────
+skinparam class {
+  BorderColor #1A3A4A
+  BackgroundColor #E8F4F8
+  FontColor #0D2137
+}
+
+!include models.wsd
+!include services.wsd
+!include controllers.wsd
+!include middleware.wsd
+!include utils.wsd
+!include config.wsd
+!include relationships.wsd
+
+@enduml

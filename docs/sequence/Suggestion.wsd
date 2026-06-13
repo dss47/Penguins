@@ -3,8 +3,9 @@ skinparam maxMessageSize 200
 
 actor "User" as user
 participant "React UI\n(4-Step Wizard)" as react
-participant "ToolController" as controller
-participant "ToolService" as service
+participant "SuggestionController" as sug_ctrl
+participant "AdminController" as admin_ctrl
+participant "SuggestionService" as service
 participant "Suggestion (Model)" as model
 participant "AI Engine" as ai
 participant "Response.php" as res
@@ -14,41 +15,39 @@ actor "Manager" as manager
 
 == 0. Initial Check (The Spam Lock) ==
 
-
 user -> react : Navigates to "Proposer un outil" page
 activate react
-  react -> controller : GET /api/suggestions/current
-  activate controller
-    controller -> service : checkPendingSuggestion(user_id)
+  react -> sug_ctrl : GET /suggestions/history
+  activate sug_ctrl
+    sug_ctrl -> service : checkPendingSuggestion(user_id)
     activate service
       service -> model : findPendingByUser(user_id)
       model -> db : SELECT * FROM suggestions WHERE user_id=? AND status LIKE 'pending%'
       db --> model : Returns row (if exists)
       model --> service : Result
     deactivate service
-    controller -> res : formatSuccess(Result)
-    res --> controller : JSON String
+    sug_ctrl -> res : formatSuccess(Result)
+    res --> sug_ctrl : JSON String
     
     alt A pending suggestion exists
-        controller --> react : JSON: {has_pending: true}
+        sug_ctrl --> react : JSON: {has_pending: true}
         react --> user : Locks UI on Step 3 ("En attente"). Cannot submit new.
     else No pending suggestion
-        controller --> react : JSON: {has_pending: false}
+        sug_ctrl --> react : JSON: {has_pending: false}
         react --> user : Shows empty Step 1 Form
     end
-  deactivate controller
+  deactivate sug_ctrl
 deactivate react
 
 
 == 1. Submission & Duplicate URL Check ==
 
-
 user -> react : Submits Form
 note right of user: UI sends mixed arrays from CreatableSelect:\n{provider_id: null, proposed_provider: "New Co"}\n{features: [3, 7, "Voice Clone"]}
 activate react
-  react -> controller : POST /api/suggestions
-  activate controller
-    controller -> service : processSuggestion(url, data)
+  react -> sug_ctrl : POST /suggestions/create
+  activate sug_ctrl
+    sug_ctrl -> service : createSuggestion(url, data)
     activate service
     
       service -> model : checkUrlExists(url)
@@ -58,18 +57,16 @@ activate react
       alt URL Existe Déjà
           service -> model : save(status='rejected', reason='URL exists')
           model -> db : INSERT INTO suggestions...
-          service --> controller : Returns "Duplicate Error"
+          service --> sug_ctrl : Returns "Duplicate Error"
           
-          controller -> res : formatError("This tool is already in our catalog", 409)
-          res --> controller : JSON String
-          controller --> react : HTTP 409 Conflict
+          sug_ctrl -> res : formatError("This tool is already in our catalog", 409)
+          res --> sug_ctrl : JSON String
+          sug_ctrl --> react : HTTP 409 Conflict
           
           react -> react : UI jumps to Step 4 (Failed)
           react --> user : Shows "Déjà existant" reason
       else URL est Nouvelle
           
-
-
           service -> ai : POST /analyze (Verify this tool)
           activate ai
           
@@ -77,11 +74,11 @@ activate react
               ai --> service : {valid: false, reason: "Fake tool"}
               service -> model : save(status='rejected', reason='AI Blocked')
               model -> db : INSERT INTO suggestions...
-              service --> controller : Returns AI Error
+              service --> sug_ctrl : Returns AI Error
               
-              controller -> res : formatError("AI Validation Failed", 422)
-              res --> controller : JSON String
-              controller --> react : HTTP 422 Unprocessable\nJSON
+              sug_ctrl -> res : formatError("AI Validation Failed", 422)
+              res --> sug_ctrl : JSON String
+              sug_ctrl --> react : HTTP 422 Unprocessable\nJSON
               react -> react : UI jumps to Step 4
               
           else L'IA Accepte
@@ -91,28 +88,27 @@ activate react
               note right of service: Mixed arrays are saved safely as JSON strings\nin the suggestions holding table.
               service -> model : save(status='pending_manager', corrected_data)
               model -> db : INSERT INTO suggestions (..., features_json)
-              service --> controller : Returns Success
+              service --> sug_ctrl : Returns Success
               
-              controller -> res : formatCreated(corrected_data)
-              res --> controller : JSON String
-              controller --> react : HTTP 201 Created
+              sug_ctrl -> res : formatCreated(corrected_data)
+              res --> sug_ctrl : JSON String
+              sug_ctrl --> react : HTTP 201 Created
               react -> react : UI moves to Step 3
               react --> user : Shows "Waiting for Admin Approval"
           end
       end
     deactivate service
-  deactivate controller
+  deactivate sug_ctrl
 deactivate react
 
 
-== 3. Manager Dashboard (Load & Sort) ==
-
+== 2. Manager Dashboard (Load & Sort) ==
 
 manager -> react : Opens Admin Dashboard
 activate react
-  react -> controller : GET /api/manager/suggestions
-  activate controller
-    controller -> service : getAllSuggestionsSorted()
+  react -> admin_ctrl : GET /admin/suggestions
+  activate admin_ctrl
+    admin_ctrl -> service : getAllSuggestionsSorted()
     activate service
       service -> model : fetchAll()
       activate model
@@ -122,30 +118,30 @@ activate react
         deactivate db
         model --> service : Array of objects
       deactivate model
-      service --> controller : Returns Array
+      service --> admin_ctrl : Returns Array
     deactivate service
     
-    controller -> res : formatSuccess(Array)
+    admin_ctrl -> res : formatSuccess(Array)
     activate res
-      res --> controller : JSON String
+      res --> admin_ctrl : JSON String
     deactivate res
-    controller --> react : HTTP 200 OK
-  deactivate controller
+    admin_ctrl --> react : HTTP 200 OK
+  deactivate admin_ctrl
   
   react --> manager : Displays list (Pending at the very top!)
 deactivate react
 
 
-== 4. Manager Action (Approve & Resolve Creatables) ==
+== 3. Manager Action (Approve & Resolve Creatables) ==
 
 manager -> react : Reviews a pending suggestion
 activate react
 
   alt Manager Rejette la suggestion
       manager -> react : Clicks "Reject" + types reason
-      react -> controller : POST /api/manager/suggestions/12/reject\n{reason}
-      activate controller
-        controller -> service : rejectSuggestion(id, reason)
+      react -> admin_ctrl : POST /admin/suggestions/reject\n{id: 12, reason}
+      activate admin_ctrl
+        admin_ctrl -> service : rejectSuggestion(id, reason)
         activate service
           service -> model : updateStatus(id, 'rejected_manager', reason)
           activate model
@@ -155,22 +151,22 @@ activate react
             deactivate db
             model --> service : Success
           deactivate model
-          service --> controller : Returns Success
+          service --> admin_ctrl : Returns Success
         deactivate service
-        controller -> res : formatSuccess({status: "rejected"})
+        admin_ctrl -> res : formatSuccess({status: "rejected"})
         activate res
-          res --> controller : JSON String
+          res --> admin_ctrl : JSON String
         deactivate res
-        controller --> react : HTTP 200 OK
-      deactivate controller
+        admin_ctrl --> react : HTTP 200 OK
+      deactivate admin_ctrl
       
       react -> react : UI removes item from "Pending" list
       
   else Manager Accepte la suggestion
       manager -> react : Clicks "Approve"
-      react -> controller : POST /api/manager/suggestions/12/approve
-      activate controller
-        controller -> service : approveSuggestion(id)
+      react -> admin_ctrl : POST /admin/suggestions/approve\n{id: 12}
+      activate admin_ctrl
+        admin_ctrl -> service : approveSuggestion(id)
         activate service
           
           ' Step A: Mark as active in suggestions
@@ -180,7 +176,6 @@ activate react
             db --> model : Success
           deactivate model
           
-
           service -> model : resolveAndMoveToCatalog(id)
           activate model
             
@@ -206,15 +201,15 @@ activate react
             model --> service : Success
           deactivate model
           
-          service --> controller : Returns Success
+          service --> admin_ctrl : Returns Success
         deactivate service
         
-        controller -> res : formatSuccess({status: "active"})
+        admin_ctrl -> res : formatSuccess({status: "active"})
         activate res
-          res --> controller : JSON String
+          res --> admin_ctrl : JSON String
         deactivate res
-        controller --> react : HTTP 200 OK
-      deactivate controller
+        admin_ctrl --> react : HTTP 200 OK
+      deactivate admin_ctrl
       
       react -> react : UI moves item to "Active" list
   end

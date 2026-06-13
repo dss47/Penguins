@@ -8,6 +8,7 @@ final class AuthController
 	{
 	}
 
+	// Registers a new user with the provided payload data
 	public function register(array $payload): array
 	{
 		return $this->authService->registerUser(
@@ -18,6 +19,7 @@ final class AuthController
 		);
 	}
 
+	// Authenticates a user with email and password, returns JWT on success
 	public function login(array $payload): array
 	{
 		try {

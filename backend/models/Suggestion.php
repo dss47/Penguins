@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 final class Suggestion extends BaseModel
 {
+    // Returns all suggestions with a given status
     public function allByStatus(string $status): array
     {
         $sql = 'SELECT * FROM suggestions WHERE status = ? ORDER BY created_at DESC';
@@ -13,6 +14,7 @@ final class Suggestion extends BaseModel
         return $stmt->fetchAll();
     }
 
+    // Finds a suggestion by its ID
     public function findById(int $id): ?array
     {
         $sql = 'SELECT * FROM suggestions WHERE id = ? LIMIT 1';
@@ -23,6 +25,7 @@ final class Suggestion extends BaseModel
         return $suggestion ?: null;
     }
 
+    // Creates a new suggestion record and returns its ID
     public function create(array $data): int
     {
         $sql = 'INSERT INTO suggestions (
@@ -57,6 +60,7 @@ final class Suggestion extends BaseModel
         return (int) $this->db->lastInsertId();
     }
 
+    // Updates a suggestion's status, rejection reason, and optionally links it to a published tool
     public function updateStatus(int $id, string $status, ?string $rejectionReason = null, ?int $toolId = null): bool
     {
         $sql = 'UPDATE suggestions SET status = :status, rejection_reason = :rejection_reason, tool_id = :tool_id WHERE id = :id';
@@ -70,6 +74,7 @@ final class Suggestion extends BaseModel
         ]);
     }
 
+    // Updates a suggestion with AI validation results (corrected fields, rating, notes)
     public function updateFromAiValidation(int $id, array $aiData): bool
     {
         $sql = 'UPDATE suggestions SET 
@@ -106,6 +111,7 @@ final class Suggestion extends BaseModel
         ]);
     }
 
+    // Returns all suggestions submitted by a specific user
     public function allByUserId(int $userId): array
     {
         $sql = 'SELECT * FROM suggestions WHERE user_id = ? ORDER BY created_at DESC';
@@ -114,6 +120,7 @@ final class Suggestion extends BaseModel
         return $stmt->fetchAll();
     }
 
+    // Returns the suggestion history for a specific admin user
     public function getAdminHistory(int $adminUserId): array
     {
         $sql = 'SELECT * FROM suggestions 
@@ -126,6 +133,7 @@ final class Suggestion extends BaseModel
         return $stmt->fetchAll();
     }
 
+    // Updates allowed fields of a suggestion
     public function update(int $id, array $data): bool
     {
         $allowedFields = ['name', 'website_url', 'description', 'category_id', 'provider_id',
@@ -146,6 +154,7 @@ final class Suggestion extends BaseModel
         return $stmt->execute($params);
     }
 
+    // Deletes a suggestion by its ID
     public function delete(int $id): bool
     {
         $sql = 'DELETE FROM suggestions WHERE id = :id';

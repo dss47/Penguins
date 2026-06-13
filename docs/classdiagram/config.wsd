@@ -1,0 +1,7 @@
+' ── Functions (config/database.php) ───────────────────────
+package "Config" as cfg_pkg {
+  class "database functions" as db_funcs {
+    {method} {static} + db_config(): array
+    {method} {static} + db_connection(): PDO
+  }
+}

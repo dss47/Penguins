@@ -10,6 +10,7 @@ final class SearchHistoryController
     ) {
     }
 
+    // Lists all search history entries for the authenticated user
     public function list(): array
     {
         $user = $this->authMiddleware->authenticate();
@@ -23,6 +24,7 @@ final class SearchHistoryController
         return Response::success($history);
     }
 
+    // Returns detailed info for a specific search history entry, including recommended tools
     public function details(array $query): array
     {
         $user = $this->authMiddleware->authenticate();

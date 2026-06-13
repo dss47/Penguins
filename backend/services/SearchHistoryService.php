@@ -11,17 +11,13 @@ final class SearchHistoryService
     ) {
     }
 
-    /**
-     * Enregistre une nouvelle recherche magique (IA) dans l'historique de l'utilisateur.
-     * Cette méthode est appelée juste après que l'ExploreService ait obtenu une réponse d'OpenRouter.
-     */
+    // Logs a new AI-powered search into the user's history, called after ExploreService gets an OpenRouter response
     public function logSearch(int $userId, string $prompt, string $aiReasoning, array $recommendedToolIds, ?string $title = null): array
     {
         if ($userId <= 0 || empty(trim($prompt))) {
             return ['success' => false, 'message' => 'Données de recherche invalides.'];
         }
 
-        // 1. Sauvegarde de la recherche principale (Le prompt et le raisonnement de l'IA)
         $cleanPrompt = trim($prompt);
         $cleanTitle = trim((string) ($title ?? ''));
         if ($cleanTitle === '') {
@@ -36,7 +32,6 @@ final class SearchHistoryService
             'ai_reasoning' => trim($aiReasoning)
         ]);
 
-        // 2. Sauvegarde des outils recommandés dans la table pivot
         if ($searchId > 0 && !empty($recommendedToolIds)) {
             foreach ($recommendedToolIds as $toolId) {
                 $this->searchHistoryToolModel->linkTool($searchId, (int) $toolId);
@@ -50,9 +45,7 @@ final class SearchHistoryService
         ];
     }
 
-    /**
-     * Récupère l'historique complet d'un utilisateur (pour son profil / dashboard).
-     */
+    // Retrieves the full search history for a user (for profile/dashboard)
     public function listUserHistory(int $userId): array
     {
         if ($userId <= 0) {
@@ -62,24 +55,19 @@ final class SearchHistoryService
         return $this->searchHistoryModel->allByUserId($userId) ?: [];
     }
 
-    /**
-     * @deprecated Use listUserHistory() instead
-     */
+    // Deprecated alias for listUserHistory
     public function getUserHistory(int $userId): array
     {
         return $this->listUserHistory($userId);
     }
 
-    /**
-     * Récupère les détails d'une ancienne recherche, INCLUANT les outils qui avaient été recommandés.
-     */
+    // Returns details of a past search including the recommended tools, with ownership check
     public function getSearchDetails(int $searchId, int $userId): ?array
     {
         if ($searchId <= 0 || $userId <= 0) {
             return null;
         }
 
-        // 1. Vérifie que la recherche existe et appartient bien à cet utilisateur (Sécurité)
         $search = $this->searchHistoryModel->findById($searchId);
         
         if (!$search || (int)$search['user_id'] !== $userId) {
@@ -98,18 +86,13 @@ final class SearchHistoryService
         return $search;
     }
 
-    /**
-     * Permet à l'utilisateur de vider son historique (Fonctionnalité de confidentialité / RGPD).
-     */
+    // Clears all search history for a user (privacy / GDPR feature)
     public function clearUserHistory(int $userId): array
     {
         if ($userId <= 0) {
             return ['success' => false, 'message' => 'ID Utilisateur invalide.'];
         }
 
-        // Note: Assurez-vous que votre base de données utilise "ON DELETE CASCADE" 
-        // sur la clé étrangère de la table `search_history_tools`.
-        // Ainsi, supprimer l'historique principal supprimera automatiquement les liens avec les outils.
         $deleted = $this->searchHistoryModel->deleteAllByUserId($userId);
 
         return [

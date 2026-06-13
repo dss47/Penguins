@@ -1,0 +1,213 @@
+' ── Package: Services ─────────────────────────────────────
+package "Services" as svc_pkg {
+
+  ' ── Services referenced by AdminController ──────────────
+  class AdminService {
+    {field} - PDO $db
+    {method} + getDashboardData(): array
+    {method} + getUsers(): array
+    {method} + updateUserRole(int $userId, string $role): bool
+    {method} + updateUserStatus(int $userId, string $status): bool
+    {method} + getSuggestions(): array
+    {method} + rejectSuggestion(int $id, string $reason): bool
+    {method} + deleteSuggestion(int $id): bool
+  }
+
+  class ToolService {
+    {field} - AiTool $toolModel
+    {field} - ToolFeatures $toolFeatures
+    {method} + listTools(): array
+    {method} + listAllToolsWithDetails(): array
+    {method} + listPublicTools(): array
+    {method} + getPublicToolByName(string $name): array
+    {method} + getToolDetails(int $id): array
+    {method} + createTool(array $payload, int $userId): array
+    {method} + updateTool(int $id, array $payload): array
+    {method} + updateToolStatus(int $id, string $newStatus): array
+    {method} + deleteTool(int $id): array
+    {method} + validateToolData(array $payload): array
+  }
+
+  class SuggestionService {
+    {field} - Suggestion $suggestionModel
+    {field} - OpenRouterService $openRouterService
+    {field} - Category $categoryModel
+    {field} - Provider $providerModel
+    {field} - Model $modelModel
+    {field} - Feature $featureModel
+    {field} - ToolService $toolService
+    {field} - UploadService $uploadService
+    {field} - ToolModel $toolModelJunction
+    {field} - ToolFeatures $toolFeatures
+    {method} + createSuggestion(array $payload, ?array $file): array
+    {method} + listPendingSuggestions(): array
+    {method} + promoteToTool(int $suggestionId, int $adminId): array
+  }
+
+  class UploadService {
+    {field} - string $baseDir
+    {method} + handleUpload(array $file, string $destinationFolder, ?string $customName): array
+  }
+
+  ' ── Other services ────────────────────────────────────────
+  class AuthService {
+    {field} - User $userModel
+    {field} - JwtService $jwtService
+    {method} + registerUser(string $firstName, string $lastName, string $email, string $password): array
+    {method} + verifyCredentials(string $email, string $password): array|false
+    {method} + logout(): array
+  }
+
+  class CategoryService {
+    {field} - Category $categoryModel
+    {method} + getAllCategories(): array
+    {method} + getCategoryById(int $id): ?array
+    {method} + createCategory(array $data): array
+    {method} + updateCategory(int $id, array $data): array
+    {method} + deleteCategory(int $id): array
+  }
+
+  class FeatureService {
+    {field} - Feature $featureModel
+    {method} + getAllFeatures(): array
+    {method} + getGroupedFeatures(): array
+    {method} + getFeatureById(int $id): ?array
+    {method} + createFeature(array $data): array
+    {method} + updateFeature(int $id, array $data): array
+    {method} + deleteFeature(int $id): array
+  }
+
+  class ModelService {
+    {field} - Model $modelModel
+    {method} + getAllModels(): array
+    {method} + getModelsByProvider(int $providerId): array
+    {method} + getModelById(int $id): ?array
+    {method} + createModel(array $data): array
+    {method} + updateModel(int $id, array $data): array
+    {method} + deleteModel(int $id): array
+  }
+
+  class ProviderService {
+    {field} - Provider $providerModel
+    {method} + getAllProviders(): array
+    {method} + getProviderById(int $id): ?array
+    {method} + getProviderWithModels(int $id): ?array
+    {method} + createProvider(array $data): array
+    {method} + updateProvider(int $id, array $data): array
+    {method} + deleteProvider(int $id): array
+  }
+
+  class ReviewService {
+    {field} - Review $reviewModel
+    {field} - ModerationService $moderationService
+    {field} - User $userModel
+    {method} + submitReview(int $userId, array $payload): array
+    {method} + updateReview(int $userId, int $reviewId, array $payload): array
+    {method} + listUserReviews(int $userId): array
+    {method} + deleteReview(int $userId, int $reviewId): array
+    {method} + banUserAndCleanUp(int $userId, int $offensiveReviewId): array
+  }
+
+  class FavoriteService {
+    {field} - FavoriteItem $favoriteItemModel
+    {method} + toggleFavorite(int $userId, int $toolId): string
+    {method} + listUserFavorites(int $userId): array
+  }
+
+  class ShelfService {
+    {field} - Shelf $shelfModel
+    {field} - ShelfItem $shelfItemModel
+    {method} + listUserShelves(int $userId): array
+    {method} + createEmptyShelf(string $name, int $userId, ?string $description): array
+    {method} + updateShelf(int $shelfId, string $name, ?string $description, int $userId): array
+    {method} + deleteShelf(int $shelfId, int $userId): array
+    {method} + toggleShelfItem(int $shelfId, int $toolId): string
+    {method} + getShelfInfo(int $shelfId, int $userId): ?array
+    {method} + getToolsInShelf(int $shelfId, int $userId): array
+    {method} + getUserShelvesWithStatus(int $userId, int $toolId): array
+  }
+
+  class SearchHistoryService {
+    {field} - SearchHistory $searchHistoryModel
+    {field} - SearchHistoryTool $searchHistoryToolModel
+    {field} - ToolFeatures $toolFeatures
+    {method} + logSearch(int $userId, string $prompt, string $aiReasoning, array $recommendedToolIds, ?string $title): array
+    {method} + listUserHistory(int $userId): array
+    {method} + getSearchDetails(int $searchId, int $userId): ?array
+    {method} + clearUserHistory(int $userId): array
+  }
+
+  class ExploreService {
+    {field} - AiTool $toolModel
+    {field} - OpenRouterService $openRouterService
+    {field} - SearchHistoryService $searchHistoryService
+    {field} - AuthMiddleware $authMiddleware
+    {field} - ToolService $toolService
+    {method} + home(): array
+    {method} + landingSummary(): array
+    {method} + searchByKeywords(string $query): array
+    {method} + searchByPrompt(string $prompt, ?int $userId): array
+    {method} + filterTools(?int $categoryId, ?int $providerId): array
+    {method} + getToolDetails(int $toolId): ?array
+  }
+
+  class OpenRouterService {
+    {field} - string $apiKey
+    {field} - string $apiUrl
+    {field} - array $modelQueue
+    {method} + moderateComment(string $comment): array
+    {method} + evaluateToolSubmission(array $toolData, array $slimContext): ?string
+    {method} + getRecommendations(string $prompt, array $toolsData): ?array
+  }
+
+  class ModerationService {
+    {field} - OpenRouterService $openRouter
+    {field} - array $bannedKeywords
+    {method} + moderate(string $content): array
+  }
+
+  class RecommendationService {
+    {field} - AiTool $toolModel
+    {field} - OpenRouterService $openRouterService
+    {field} - SearchHistoryService $searchHistoryService
+    {method} + generateTop6Recommendations(int $userId, string $prompt, string $userProfession): array
+  }
+
+  class UserService {
+    {field} - User $userModel
+    {field} - UploadService $uploadService
+    {method} + updateProfile(int $userId, array $data, ?array $file): array
+    {method} + scheduleDeletion(int $userId): array
+    {method} + restoreAccount(int $userId): array
+    {method} + processPermanentDeletions(): int
+  }
+
+  class ProfessionService {
+    {field} - Profession $professionModel
+    {method} + getAllProfessions(): array
+    {method} + getProfessionById(int $id): ?array
+    {method} + createProfession(array $data): array
+    {method} + updateProfession(int $id, array $data): array
+    {method} + deleteProfession(int $id): array
+  }
+
+  ' ── Hidden alignment links ───────────────────────────────
+  AdminService -[hidden]-> ToolService
+  ToolService -[hidden]-> SuggestionService
+  SuggestionService -[hidden]-> UploadService
+  UploadService -[hidden]-> AuthService
+  AuthService -[hidden]-> CategoryService
+  CategoryService -[hidden]-> FeatureService
+  FeatureService -[hidden]-> ModelService
+  ModelService -[hidden]-> ProviderService
+  ProviderService -[hidden]-> ReviewService
+  ReviewService -[hidden]-> FavoriteService
+  FavoriteService -[hidden]-> ShelfService
+  ShelfService -[hidden]-> SearchHistoryService
+  SearchHistoryService -[hidden]-> ExploreService
+  ExploreService -[hidden]-> OpenRouterService
+  OpenRouterService -[hidden]-> ModerationService
+  ModerationService -[hidden]-> RecommendationService
+  RecommendationService -[hidden]-> UserService
+  UserService -[hidden]-> ProfessionService
+}

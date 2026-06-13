@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import styles from "../../style/toolDetails/similartools.module.css";
 
 export default function SimilarTools({ tools }) {
+    const navigate = useNavigate();
     if (!tools || tools.length === 0) {
         return null;
     }
@@ -15,7 +17,7 @@ export default function SimilarTools({ tools }) {
                             <img src={tool.logo_url} alt={tool.name} />
                         </div>
                         <span className={styles.miniCardName}>{tool.name}</span>
-                        <a href="#" className={styles.miniCardBtn}>View</a>
+                        <button className={styles.miniCardBtn} onClick={() => navigate("/tool/" + encodeURIComponent(tool.name))}>View</button>
                     </div>
                 ))}
             </div>

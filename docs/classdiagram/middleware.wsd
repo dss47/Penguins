@@ -1,0 +1,14 @@
+' ── Package: Middleware ────────────────────────────────────
+package "Middleware" as mw_pkg {
+  class AuthMiddleware {
+    {field} - JwtService $jwtService
+    {method} + authenticate(): ?array
+  }
+
+  class RoleMiddleware {
+    {method} + authorize(array $allowedRoles): bool
+  }
+
+  ' ── Hidden alignment links ───────────────────────────────
+  AuthMiddleware -[hidden]-> RoleMiddleware
+}

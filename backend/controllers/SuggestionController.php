@@ -15,12 +15,14 @@ final class SuggestionController
     ) {
     }
 
+    // Authenticates the user via JWT and returns the user ID
     private function getUserId(): ?int
     {
         $user = $this->authMiddleware->authenticate();
         return $user ? (int) ($user['user_id'] ?? 0) : null;
     }
 
+    // Creates a new suggestion with optional logo upload
     public function create(array $body, ?array $logoFile = null): array
     {
         $userId = $this->getUserId();
@@ -62,6 +64,7 @@ final class SuggestionController
         return Response::success($result['data'] ?? $result);
     }
 
+    // Returns the authenticated user's suggestion history with resolved names
     public function history(): array
     {
         $userId = $this->getUserId();
