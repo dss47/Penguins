@@ -109,8 +109,8 @@ const Shelves = () => {
                         </svg>
                     </div>
                     <div>
-                        <p className={style.newShelfLabel}>Create New Shelf</p>
-                        <p className={style.newShelfSub}>Organize tools into a workspace</p>
+                        <p className={style.newShelfLabel}>Nouvelle collection</p>
+                        <p className={style.newShelfSub}>Organisez vos outils dans un espace de travail</p>
                     </div>
                 </div>
                 {shelves.map((stack, index) => (

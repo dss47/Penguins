@@ -36,23 +36,23 @@ const Library = () => {
             <div className={styles.libraryContainer}>
                 <div className={`${styles.topSection} ${styles.pageEnter}`} style={{animationDelay: '0.05s'}}>
                     <div className={styles.titleArea}>
-                        <span className={styles.eyebrow}>PERSONAL SPACE</span>
-                        <h1 className={styles.title}>My Library</h1>
-                        <p className={styles.subtitle}>Your saved tools, organized the way you work.</p>
+                        <span className={styles.eyebrow}>ESPACE PERSONNEL</span>
+                        <h1 className={styles.title}>Ma Bibliothèque</h1>
+                        <p className={styles.subtitle}>Vos outils sauvegardés, organisés selon votre workflow.</p>
                     </div>
 
                     <div className={styles.statsStrip}>
                         <div className={styles.statBox} style={{animationDelay: '0.2s'}}>
                             <span className={styles.statValue} style={{color: '#c4b5fd'}}>{stats.favorites}</span>
-                            <span className={styles.statLabel}>Favorites</span>
+                            <span className={styles.statLabel}>Favoris</span>
                         </div>
                         <div className={styles.statBox} style={{animationDelay: '0.3s'}}>
                             <span className={styles.statValue} style={{color: '#93c5fd'}}>{stats.shelves}</span>
-                            <span className={styles.statLabel}>Shelves</span>
+                            <span className={styles.statLabel}>Étagères</span>
                         </div>
                         <div className={styles.statBox} style={{animationDelay: '0.4s'}}>
                             <span className={styles.statValue} style={{color: '#86efac'}}>{stats.totalTools}</span>
-                            <span className={styles.statLabel}>Total Tools</span>
+                            <span className={styles.statLabel}>Total Outils</span>
                         </div>
                     </div>
                 </div>
@@ -65,7 +65,7 @@ const Library = () => {
                         aria-selected={activeTab === 'favorites'}
                     >
                         <span className={styles.tabIcon}>❤️</span>
-                        Favorites
+                        Favoris
                         <span className={styles.tabBadge}>{stats.favorites}</span>
                     </button>
 
@@ -76,7 +76,7 @@ const Library = () => {
                         aria-selected={activeTab === 'shelves'}
                     >
                         <span className={styles.tabIcon}>📁</span>
-                        My Shelves
+                        Mes Étagères
                         <span className={styles.tabBadge}>{stats.shelves}</span>
                     </button>
                 </div>

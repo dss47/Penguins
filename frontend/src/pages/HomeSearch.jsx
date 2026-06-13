@@ -258,7 +258,7 @@ export default function HomeSearch() {
                 {view === "search" && (
                     <div className={styles.searchView}>
                         <h1 className={styles.glowHeading}>
-                            What do you want to build today?
+                            Que voulez-vous construire aujourd'hui ?
                         </h1>
                         <div className={styles.searchInputWrapper}>
                             <Search size={20} className={styles.searchInputIcon} />
@@ -266,13 +266,13 @@ export default function HomeSearch() {
                                 ref={inputRef}
                                 type="text"
                                 className={styles.searchInput}
-                                placeholder="Describe the tools you need..."
+                                placeholder="Décrivez les outils dont vous avez besoin..."
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                             />
                             <button className={styles.searchBtn} onClick={() => handleSubmit()}>
-                                Search
+                                Rechercher
                             </button>
                         </div>
                     </div>
@@ -282,7 +282,7 @@ export default function HomeSearch() {
                     <div className={styles.loadingView}>
                         <Loader2 size={48} className={styles.spinner} />
                         <p className={styles.loadingText}>
-                            Penguin is analyzing your request...
+                            Penguin analyse votre requête...
                         </p>
                     </div>
                 )}
@@ -300,7 +300,7 @@ export default function HomeSearch() {
                         <div className={styles.aiPovBox}>
                             <div className={styles.aiPovTitle}>
                                 <Sparkles size={16} style={{ marginRight: 6, verticalAlign: "middle" }} />
-                                AI Point of View
+                                Analyse IA
                             </div>
                             <p className={styles.aiPovText}>
                                 {result?.reasoning || recommendError || "Aucune recommandation disponible pour cette recherche."}

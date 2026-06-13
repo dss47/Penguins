@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import CommunityVoices from "../components/landing/CommunityVoices";
 import Features from "../components/landing/Features";
+import Footer from "../components/landing/Footer";
 import LandingHome from "../components/landing/LandingHome";
 import Marquee from "../components/landing/Marquee";
 import TopAI from "../components/landing/TopAI";
@@ -19,6 +20,7 @@ export default function LandingPage() {
             whyPenguin: refs.whyPenguinRef,
             topAi: refs.topAiRef,
             community: refs.communityVoicesRef,
+            contact: refs.contactRef,
         };
         setTimeout(() => {
             map[section]?.current?.scrollIntoView({ behavior: "smooth" });
@@ -34,6 +36,7 @@ export default function LandingPage() {
         <WhyPenguin scrollRef={refs.whyPenguinRef} />
         <CommunityVoices scrollRef={refs.communityVoicesRef}/>
         <TopAI scrollRef={refs.topAiRef} />
+        <Footer scrollRef={refs.contactRef} />
         </>
     );
 }

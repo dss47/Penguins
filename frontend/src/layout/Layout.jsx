@@ -11,8 +11,9 @@ const Layout = () => {
     const topAiRef = useRef(null);
     const landingHomeRef = useRef(null);
     const communityVoicesRef = useRef(null);
+    const contactRef = useRef(null);
 
-    const sectionRefs = { featuresRef, whyPenguinRef, topAiRef ,landingHomeRef ,communityVoicesRef};
+    const sectionRefs = { featuresRef, whyPenguinRef, topAiRef ,landingHomeRef ,communityVoicesRef, contactRef};
     const scrollToSection = (elementRef) => {
         if (elementRef && elementRef.current) {
             elementRef.current.scrollIntoView({ 

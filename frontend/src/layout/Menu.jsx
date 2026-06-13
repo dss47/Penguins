@@ -79,19 +79,25 @@ const Menu = ({ scrollToSection, refs }) => {
                                 {/* <li>Découvrir</li> */}
                                 <li onClick={() => {
                                     if (location.pathname === "/") {
-                                        scrollToSection(refs.topAiRef);
-                                    } else {
-                                        navigate("/", { state: { scrollTo: "topAi" } });
-                                    }
-                                }}>Meilleures IA</li>
-                                <li onClick={() => {
-                                    if (location.pathname === "/") {
                                         scrollToSection(refs.communityVoicesRef);
                                     } else {
                                         navigate("/", { state: { scrollTo: "community" } });
                                     }
                                 }}>Communauté</li>
-                                <li>contact</li>
+                                    <li onClick={() => {
+                                        if (location.pathname === "/") {
+                                            scrollToSection(refs.topAiRef);
+                                        } else {
+                                            navigate("/", { state: { scrollTo: "topAi" } });
+                                        }
+                                    }}>Meilleures IA</li>
+                                <li onClick={() => {
+                                    if (location.pathname === "/") {
+                                        scrollToSection(refs.contactRef);
+                                    } else {
+                                        navigate("/", { state: { scrollTo: "contact" } });
+                                    }
+                                }}>Contact</li>
                             </ul>
                             
                             <button onClick={onMainActivated} className={style.slideBtnRight}>

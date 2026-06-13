@@ -1,0 +1,155 @@
+.wrapper {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.inner {
+  padding: 5rem 4rem 2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.brand p {
+  color: var(--ts);
+  font-size: 0.9rem;
+  line-height: 1.75;
+  margin-top: 1rem;
+  font-weight: 300;
+}
+
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--tp);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logoIcon {
+  font-size: 1.5rem;
+}
+
+.colTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--tp);
+  margin-bottom: 1.25rem;
+}
+
+.colLinks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.colLinks li {
+  color: var(--ts);
+  font-size: 0.85rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.colLinks li:hover {
+  color: var(--tp);
+}
+
+.socialIcons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.socialBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--bd);
+  background: var(--bg-card);
+  color: var(--ts);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.socialBtn:hover {
+  border-color: var(--nv);
+  color: var(--tp);
+  background: var(--nv-soft);
+}
+
+.divider {
+  height: 1px;
+  background: var(--bd);
+  margin-bottom: 1.5rem;
+}
+
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.copyright {
+  color: var(--tm);
+  font-size: 0.8rem;
+}
+
+.legal {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.legal a {
+  color: var(--tm);
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.legal a:hover {
+  color: var(--ts);
+}
+
+@media (max-width: 768px) {
+  .inner {
+    padding: 3rem 1.5rem 2rem;
+  }
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .brand {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .brand {
+    grid-column: span 1;
+  }
+  .bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}
