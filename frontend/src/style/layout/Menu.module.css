@@ -302,6 +302,37 @@
     color: var(--tp);
 }
 
+/* --- Theme Toggle for Guest Layout --- */
+.themeBtnGuest {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid var(--bd);
+    color: var(--ts);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.themeBtnGuest:hover {
+    border-color: var(--nv);
+    color: var(--tp);
+    background: rgba(6, 182, 212, 0.08);
+}
+
+/* --- Avatar Initials Fallback --- */
+.avatarInitials {
+    font-family: var(--font-display, 'Inter', sans-serif);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ts);
+    line-height: 1;
+}
+
 /* ── Light Mode Overrides ───────────────────────────────────── */
 @media (prefers-color-scheme: light) {
   .navbar {
@@ -325,6 +356,12 @@
     background: #4338CA;
     box-shadow: 0 4px 14px rgba(6, 182, 212, 0.4);
     opacity: 1;
+  }
+  .themeBtnGuest {
+    color: var(--ts);
+  }
+  .themeBtnGuest:hover {
+    color: var(--nv);
   }
   .light .avatarBtn,
   :root[data-theme="light"] .avatarBtn {
@@ -375,6 +412,14 @@
     background: #4338CA;
     box-shadow: 0 4px 14px rgba(6, 182, 212, 0.4);
     opacity: 1;
+}
+:root[data-theme="light"] .themeBtnGuest,
+.light .themeBtnGuest {
+    color: var(--ts);
+}
+:root[data-theme="light"] .themeBtnGuest:hover,
+.light .themeBtnGuest:hover {
+    color: var(--nv);
 }
 :root[data-theme="light"] .avatarBtn,
 .light .avatarBtn {

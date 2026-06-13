@@ -4,9 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faArrowLeftLong, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 import style from "../style/layout/Menu.module.css";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE } from "../services/api";
 
 const Menu = ({ scrollToSection, refs }) => {
-    const { isAuthenticated, logout, role } = useAuth();
+    const { isAuthenticated, logout, role, user } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
     const isAuthPage = location.pathname === "/Auth";
@@ -127,35 +128,51 @@ const Menu = ({ scrollToSection, refs }) => {
                     </div>
                 </div>
                 <div className={style.authSection}>
-                    <div className={style.dropdownWrapper}>
-                        <button className={style.avatarBtn} onClick={() => setIsDropdownOpen(!isDropdownOpen)} aria-label="Menu utilisateur">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
-                                <circle cx="12" cy="8" r="4" />
-                                <path d="M20 21a8 8 0 1 0-16 0" />
-                            </svg>
-                        </button>
-                        {isDropdownOpen && (
-                            <div className={style.dropdownMenu}>
-                                <button onClick={() => { toggleTheme(); setIsDropdownOpen(false); }} className={style.dropdownItem}>
-                                    <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
-                                    <span>Mode {theme === 'light' ? 'sombre' : 'clair'}</span>
-                                </button>
-
-                                {!isAuthPage && (
-                                    isAuthenticated ? (
-                                        <button onClick={() => { logout(); setIsDropdownOpen(false); }} className={style.dropdownItem}>
-                                            Se déconnecter
-                                        </button>
-                                    ) : (
-                                        <>
-                                            <Link to="/Auth" onClick={() => setIsDropdownOpen(false)} className={style.dropdownItem}>Se connecter</Link>
-                                            <Link to="/Auth?mode=signup" onClick={() => setIsDropdownOpen(false)} className={style.dropdownItem}>Commencez gratuitement</Link>
-                                        </>
-                                    )
+                    {isAuthenticated ? (
+                        <div className={style.dropdownWrapper}>
+                            <button className={style.avatarBtn} onClick={() => setIsDropdownOpen(!isDropdownOpen)} aria-label="Menu utilisateur">
+                                {user?.profile_url ? (
+                                    <img
+                                        src={user.profile_url.startsWith("/") ? API_BASE + user.profile_url : user.profile_url}
+                                        alt=""
+                                        style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }}
+                                    />
+                                ) : (
+                                    <span className={style.avatarInitials}>
+                                        {user?.name
+                                            ?.split(" ")
+                                            .map((w) => w[0])
+                                            .join("")
+                                            .toUpperCase()
+                                            .slice(0, 2) || "?"}
+                                    </span>
                                 )}
-                            </div>
-                        )}
-                    </div>
+                            </button>
+                            {isDropdownOpen && (
+                                <div className={style.dropdownMenu}>
+                                    <button onClick={() => { toggleTheme(); setIsDropdownOpen(false); }} className={style.dropdownItem}>
+                                        <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
+                                        <span>Mode {theme === 'light' ? 'sombre' : 'clair'}</span>
+                                    </button>
+                                    <button onClick={() => { logout(); setIsDropdownOpen(false); }} className={style.dropdownItem}>
+                                        Se déconnecter
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <>
+                            <button onClick={toggleTheme} className={style.themeBtnGuest} aria-label="Basculer le thème">
+                                <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} size="lg" />
+                            </button>
+                            {!isAuthPage && (
+                                <>
+                                    <Link to="/Auth" className={style.textLink}>Se connecter</Link>
+                                    <Link to="/Auth?mode=signup" className={style.primaryBtn}>S'inscrire</Link>
+                                </>
+                            )}
+                        </>
+                    )}
                 </div>
                 
             </div>

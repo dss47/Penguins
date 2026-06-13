@@ -56,6 +56,7 @@ final class AuthService
 			'name' => $name,
 			'email' => $email,
 			'role' => 'user',
+			'profile_url' => null,
 		]);
 	}
 
@@ -85,6 +86,7 @@ final class AuthService
 				'name' => $user['name'],
 				'email' => $user['email'],
 				'role' => $user['role'],
+				'profile_url' => $user['profile_url'] ?? null,
 			],
 		];
 	}
