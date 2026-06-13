@@ -1,0 +1,37 @@
+@startuml provider_lifecycle
+skinparam backgroundColor #FEFEFE
+skinparam stateBackgroundColor #FFFFFF
+skinparam stateBorderColor #333333
+skinparam stateBorderThickness 2
+skinparam stateFontColor #111111
+skinparam stateFontSize 13
+skinparam arrowColor #666666
+skinparam arrowFontSize 11
+skinparam shadowing false
+
+state "En attente (pending)" as pending_state
+state "Actif (active)" as active_state
+state "Archivé (archived)" as archived_state
+
+[*] --> pending_state : Admin/Manager crée\nle fournisseur
+
+pending_state --> active_state : Admin/Manager valide
+pending_state --> [*] : Admin/Manager supprime
+
+active_state --> archived_state : Admin/Manager archive
+archived_state --> active_state : Admin/Manager réactive
+
+active_state --> [*] : Admin/Manager supprime
+archived_state --> [*] : Admin/Manager supprime
+
+note top of active_state
+  Fournisseur disponible
+  pour associer aux outils
+end note
+
+note left of archived_state
+  Masqué des formulaires,
+  données conservées
+end note
+
+@enduml

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Loader2, Check, X } from "lucide-react";
+import { Loader2, Check, X, AlertTriangle, Trash2 } from "lucide-react";
 import api from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 import style from "../../style/profile/AccountDetails.module.css"
 
 const inputStyle = {
@@ -12,12 +13,16 @@ const inputStyle = {
 const selectStyle = { ...inputStyle, cursor: "pointer" };
 
 const AccountDetails = () =>{
+    const { logout } = useAuth();
     const [profile, setProfile] = useState(null);
     const [professions, setProfessions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [saving, setSaving] = useState(false);
     const [editError, setEditError] = useState("");
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState("");
 
     const [editName, setEditName] = useState("");
     const [editEmail, setEditEmail] = useState("");
@@ -213,6 +218,43 @@ const AccountDetails = () =>{
             </div>
           )}
         </div>
+
+        <div className={style.dangerZone}>
+          <div className={style.dangerHead}><AlertTriangle size={16} /> Zone dangereuse</div>
+          <p className={style.dangerDesc}>La suppression de votre compte est irréversible après 30 jours. Vous pouvez annuler en vous reconnectant pendant cette période.</p>
+          <button className={style.deleteBtn} onClick={() => { setShowDeleteConfirm(true); setDeleteError(""); }}>
+            <Trash2 size={14} /> Supprimer mon compte
+          </button>
+        </div>
+
+        {showDeleteConfirm && (
+          <div className={style.confirmOverlay} onClick={() => !deleting && setShowDeleteConfirm(false)}>
+            <div className={style.confirmDialog} onClick={(e) => e.stopPropagation()}>
+              <h3 className={style.confirmTitle}><AlertTriangle size={18} /> Confirmer la suppression</h3>
+              <p className={style.confirmText}>
+                Êtes-vous sûr de vouloir supprimer votre compte ? Vous avez 30 jours pour annuler cette action en vous reconnectant.
+              </p>
+              {deleteError && <p className={style.confirmError}>{deleteError}</p>}
+              <div className={style.confirmActions}>
+                <button className={style.confirmCancel} disabled={deleting} onClick={() => setShowDeleteConfirm(false)}>
+                  Annuler
+                </button>
+                <button className={style.confirmDelete} disabled={deleting} onClick={() => {
+                  setDeleting(true);
+                  setDeleteError("");
+                  api.post("/user/delete")
+                    .then(() => { logout(); })
+                    .catch((err) => {
+                      setDeleteError(err?.response?.data?.message || err?.message || "Erreur lors de la suppression");
+                    })
+                    .finally(() => setDeleting(false));
+                }}>
+                  {deleting ? <><Loader2 size={14} className="animate-spin" /> Suppression...</> : "Oui, supprimer mon compte"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     )
 }

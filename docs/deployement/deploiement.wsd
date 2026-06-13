@@ -1,0 +1,133 @@
+@startuml Penguins_Deploiement_Tables
+!pragma layout smetana
+
+skinparam backgroundColor #FEFEFE
+skinparam nodeBackgroundColor #FFFFFF
+skinparam nodeBorderColor #333333
+skinparam nodeBorderThickness 2
+skinparam nodeFontColor #111111
+skinparam nodeFontSize 12
+skinparam artifactBackgroundColor #FFFFFF
+skinparam artifactBorderColor #333333
+skinparam artifactFontColor #111111
+skinparam packageBackgroundColor #FEFEFE
+skinparam packageBorderColor #333333
+skinparam packageFontColor #111111
+skinparam cloudBackgroundColor #FFFFFF
+skinparam cloudBorderColor #333333
+skinparam cloudFontColor #111111
+skinparam arrowColor #555555
+skinparam shadowing false
+skinparam defaultTextAlignment left
+
+title Penguins — Diagramme de Déploiement (16 tables)
+
+' ─── ORDINATEUR DE L'UTILISATEUR ───────────────
+node "Ordinateur de l'utilisateur" {
+  node "Navigateur Web" {
+    artifact "Site Web React\n(pages, boutons, formulaires)" as site
+    artifact "Token JWT\n(clé de connexion)" as jwt
+  }
+}
+
+' ─── SERVEUR PRINCIPAL ─────────────────────────
+node "Serveur Principal" {
+
+  node "Serveur Web Apache + PHP" {
+    artifact "Router\n(reçoit toutes les requêtes)" as router
+    artifact "Controllers\n(AuthController, AdminController,\nExploreController...)" as controllers
+    artifact "Services\n(AuthService, ReviewService,\nOpenRouterService...)" as services
+    artifact "Modèles PHP\n(User, AiTool, Review...)" as models
+  }
+
+  folder "Images stockées\n(logos outils + photos profil)" as uploads
+}
+
+' ─── BASE DE DONNÉES ───────────────────────────
+package "MySQL (penguin_db)" {
+
+  package "Données principales" as db_row1 {
+    package "Utilisateurs" {
+      artifact "users\nid | email | password_hash\nname | profile_url | role\nstatus | scheduled_deletion\nsuspended_until\nprofession_id\ncreated_at" as t_users
+
+      artifact "professions\nid | name\ncreated_at" as t_professions
+    }
+
+    package "Catalogue des Outils IA" {
+      artifact "ai_tools\nid | name | description\nlogo_url | website_url\nglobal_rating | status\ncategory_id | provider_id\ncreated_by | validated_by\nrelease_date" as t_aitools
+
+      artifact "categories\nid | name | icon\ndescription" as t_categories
+
+      artifact "providers\nid | name\nwebsite_url\ndescription | status" as t_providers
+
+      artifact "models\nid | name\ndescription | status\nprovider_id" as t_models
+
+      artifact "features\nid | name\ndescription | type\nstatus" as t_features
+    }
+
+    package "Liaisons Outils" {
+      artifact "tool_features\nid | tool_id\nfeature_id" as t_tool_features
+
+      artifact "tool_models\nid | tool_id\nmodel_id" as t_tool_models
+    }
+  }
+
+  package "Données utilisateur" as db_row2 {
+    package "Espace Personnel Utilisateur" {
+      artifact "favorite_items\nid | user_id\ntool_id\ncreated_at" as t_favorites
+
+      artifact "shelves\nid | user_id\nname | description" as t_shelves
+
+      artifact "shelf_items\nid | shelf_id\ntool_id\ncreated_at" as t_shelf_items
+    }
+
+    package "Avis & Suggestions" {
+      artifact "reviews\nid | user_id\ntool_id | rating\ncomment | status\nai_flag_reason" as t_reviews
+
+      artifact "suggestions\nid | user_id | name\nwebsite_url | description\nstatus | logo_url\ncategory_id | provider_id\nmodel_ids | fixed_name\nfixed_url | fixed_category_id\nai_moderation_notes\nrejection_reason\nai_global_rating\ntool_id" as t_suggestions
+    }
+
+    package "Historique de Recherche IA" {
+      artifact "search_histories\nid | user_id\nprompt_text\nsearch_type | title\nai_reasoning" as t_search_hist
+
+      artifact "search_history_tools\nid | search_history_id\ntool_id" as t_search_hist_tools
+    }
+  }
+}
+
+' ─── SERVICE IA EXTERNE ────────────────────────
+cloud "Intelligence Artificielle\n(agentrouter.org)" {
+  artifact "claude-opus-4-6\n(modèle principal)" as llm1
+  artifact "glm-5.1\n(modèle de secours)" as llm2
+}
+
+' ─── CONNEXIONS ────────────────────────────────
+
+site --> router : requête HTTP + JWT
+router --> controllers
+controllers --> services
+services --> models
+
+models --> t_users
+models --> t_professions
+models --> t_aitools
+models --> t_categories
+models --> t_providers
+models --> t_models
+models --> t_features
+models --> t_tool_features
+models --> t_tool_models
+models --> t_favorites
+models --> t_shelves
+models --> t_shelf_items
+models --> t_reviews
+models --> t_suggestions
+models --> t_search_hist
+models --> t_search_hist_tools
+
+services --> uploads : sauvegarde images
+
+services --> llm1 : recherche IA\nmodération\nvalidation suggestion
+llm1 --> llm2 : si llm1 ne répond pas
+
+@enduml

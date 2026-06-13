@@ -1,43 +1,44 @@
 @startuml quick_manage_modal_activity
-skinparam activityBackgroundColor #F4F4F4
+skinparam backgroundColor #FEFEFE
+skinparam activityBackgroundColor #FFFFFF
 skinparam activityBorderColor #333333
-skinparam decisionBackgroundColor #FFF7D6
-skinparam decisionBorderColor #F57C00
-skinparam startColor #43A047
-skinparam endColor #E53935
-skinparam swimlaneTitleBackgroundColor #90CAF9
+skinparam activityBorderThickness 2
+skinparam activityFontColor #111111
+skinparam activityFontSize 11
+skinparam decisionBackgroundColor #FEFEFE
+skinparam decisionBorderColor #333333
+skinparam decisionFontColor #111111
+skinparam startColor #333333
+skinparam endColor #333333
+skinparam swimlaneTitleBackgroundColor #FEFEFE
 skinparam swimlaneBorderColor #333333
-skinparam activityBorderRadius 15
-skinparam arrowColor #333333
-skinparam activityFontSize 13
-
+skinparam swimlaneTitleFontColor #111111
+skinparam arrowColor #555555
+skinparam shadowing false
+skinparam activityBorderRadius 6
+skinparam defaultTextAlignment left
 |Utilisateur|
 start
 :Clique sur "Ajouter à une étagère" (AI Tool Card);
-
 |React UI (Modal)|
-:Envoie GET /api/shelves?tool_id=12;
-
+:Envoie GET /shelves/items?tool_id=12;
 |AuthMiddleware|
 :Injecte l'user_id dans la requête;
-
 |Backend - ShelfController & Service|
 :Exécute getUserShelvesWithStatus(user_id, tool_id);
 :SELECT * FROM Shelves WHERE user_id = ?;
 :Vérifie la présence du tool_id dans shelf_items;
 :Formate le tableau d'objets hydratés;
 :Retourne HTTP 200 OK avec le JSON;
-
 |React UI (Modal)|
 :Ouvre la modale et affiche la liste des étagères;
-
 |Utilisateur|
 if (Action de l'utilisateur ?) then (Créer une nouvelle étagère)
   :Saisit le nom (ex: "Audio Editing");
   :Clique sur "Créer l'étagère";
   
   |React UI (Modal)|
-  :Envoie POST /api/shelves {name: "Audio Editing"};
+  :Envoie POST /shelves/create {name: "Audio Editing"};
   
   |Backend - ShelfController & Service|
   :Exécute createEmptyShelf(name, user_id);
@@ -51,17 +52,13 @@ if (Action de l'utilisateur ?) then (Créer une nouvelle étagère)
   
 else (Bascule d'un outil dans une étagère)
 endif
-
 |Utilisateur|
 :Clique sur "+" (ou "Retirer") d'une étagère spécifique;
-
 |React UI (Modal)|
-:Envoie POST /api/shelves/toggle {shelf_id, tool_id};
-
+:Envoie POST /shelves/toggle {shelf_id, tool_id};
 |Backend - ShelfController & Service|
 :Exécute toggleShelfItem(shelf_id, tool_id);
 :SELECT id FROM shelf_items WHERE shelf_id=? AND tool_id=?;
-
 if (L'outil est déjà présent dans l'étagère ?) then (oui)
   :DELETE FROM shelf_items;
   :Définit l'action à "removed";
@@ -69,13 +66,10 @@ else (non)
   :INSERT INTO shelf_items (shelf_id, tool_id);
   :Définit l'action à "added";
 endif
-
 :Retourne HTTP 200 OK avec {action: "added/removed"};
-
 |React UI (Modal)|
 :Met à jour l'état visuel du bouton (ex: coche verte ou "+");
 |Utilisateur|
 :Voit la confirmation visuelle du changement;
-
 stop
 @enduml

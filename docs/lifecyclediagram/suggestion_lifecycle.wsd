@@ -1,0 +1,54 @@
+@startuml suggestion_lifecycle
+skinparam backgroundColor #FEFEFE
+skinparam stateBackgroundColor #FFFFFF
+skinparam stateBorderColor #333333
+skinparam stateBorderThickness 2
+skinparam stateFontColor #111111
+skinparam stateFontSize 13
+skinparam arrowColor #666666
+skinparam arrowFontSize 11
+skinparam shadowing false
+
+state "En attente IA\n(waiting_ai_analysis)" as waiting_ai
+state "Approuvé par IA\n(ai_approved_pending_review)" as ai_approved
+state "Rejeté par IA\n(ai_rejected)" as ai_rejected
+state "Validation manuelle\n(waiting_manual_validation)" as manual
+state "Rejeté par admin\n(rejected_by_admin)" as rejected_admin
+state "Publié au catalogue\n(published_to_catalog)" as published
+
+[*] --> waiting_ai : Utilisateur soumet\nune suggestion
+
+waiting_ai --> ai_approved : IA valide l'outil\n(OpenRouter API)
+waiting_ai --> ai_rejected : IA rejette\n(fake/spam)
+waiting_ai --> manual : IA incertaine\n(fallback manuel)
+
+ai_approved --> published : Admin/Manager\napprouve
+ai_approved --> rejected_admin : Admin/Manager\nrejette
+manual --> published : Admin/Manager\nvalide manuellement
+manual --> rejected_admin : Admin/Manager\nrejette
+
+ai_rejected --> [*] : Rejet définitif
+rejected_admin --> [*] : Rejet définitif
+published --> [*] : Suggestion consommée,\noutil créé
+
+note top of waiting_ai
+  IA analyse la suggestion
+  via OpenRouter API
+end note
+
+note right of ai_approved
+  En attente de décision
+  du Manager/Admin
+end note
+
+note right of published
+  Données transférées vers la
+  table ai_tools (statut 'active')
+end note
+
+note left of rejected_admin
+  Rejet définitif
+  avec motif
+end note
+
+@enduml

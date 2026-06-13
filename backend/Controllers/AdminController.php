@@ -68,18 +68,19 @@ final class AdminController
         return $success ? Response::success(['message' => 'Utilisateur rétrogradé']) : Response::error('Erreur');
     }
 
-    // Bans (suspends) a user
+    // Suspends a user with a specific duration
     public function banUser(array $body): array
     {
         $userId = (int) ($body['id'] ?? 0);
         if ($userId <= 0) {
             return Response::error('ID invalide');
         }
-        $success = $this->adminService->updateUserStatus($userId, 'suspended');
-        return $success ? Response::success(['message' => 'Utilisateur banni']) : Response::error('Erreur');
+        $duration = (string) ($body['duration'] ?? 'forever');
+        $success = $this->adminService->suspendUser($userId, $duration);
+        return $success ? Response::success(['message' => 'Utilisateur suspendu']) : Response::error('Erreur');
     }
 
-    // Unbans a user by setting status back to active
+    // Unbans a user by setting status back to active and clearing suspension
     public function unbanUser(array $body): array
     {
         $userId = (int) ($body['id'] ?? 0);
@@ -88,6 +89,17 @@ final class AdminController
         }
         $success = $this->adminService->updateUserStatus($userId, 'active');
         return $success ? Response::success(['message' => 'Utilisateur débanni']) : Response::error('Erreur');
+    }
+
+    // Permanently deletes a user account (status = deleted, no grace period)
+    public function deleteUser(array $body): array
+    {
+        $userId = (int) ($body['id'] ?? 0);
+        if ($userId <= 0) {
+            return Response::error('ID invalide');
+        }
+        $success = $this->adminService->deleteUser($userId);
+        return $success ? Response::success(['message' => 'Utilisateur supprimé']) : Response::error('Erreur');
     }
 
     // Returns all suggestions for the admin suggestion management panel

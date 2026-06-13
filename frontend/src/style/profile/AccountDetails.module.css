@@ -18,4 +18,122 @@
   @media (max-width: 860px) {
     .settings_grid { grid-template-columns: 1fr; }
   }
+
+  .dangerZone {
+    grid-column: 1 / -1;
+    margin-top: 20px;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    background: rgba(239, 68, 68, 0.04);
+  }
+  .dangerHead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .82rem;
+    font-weight: 700;
+    color: #f87171;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 6px;
+  }
+  .dangerDesc {
+    font-size: .78rem;
+    color: var(--muted);
+    margin: 0 0 14px 0;
+    line-height: 1.5;
+  }
+  .deleteBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 8px;
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    font-size: .82rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .deleteBtn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #f87171;
+  }
+
+  .confirmOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+  }
+  .confirmDialog {
+    background: var(--bg-card);
+    border: 1px solid var(--bd);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 420px;
+    width: 90%;
+  }
+  .confirmTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    color: #f87171;
+    margin: 0 0 12px 0;
+  }
+  .confirmText {
+    font-size: .85rem;
+    color: var(--text);
+    line-height: 1.5;
+    margin: 0 0 18px 0;
+  }
+  .confirmError {
+    font-size: .8rem;
+    color: #f87171;
+    margin: 0 0 12px 0;
+    padding: 8px 10px;
+    background: rgba(239, 68, 68, 0.08);
+    border-radius: 6px;
+  }
+  .confirmActions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  .confirmCancel {
+    padding: 8px 16px;
+    border: 1px solid var(--bd);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-size: .82rem;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .confirmDelete {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #dc2626;
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .confirmDelete:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
   

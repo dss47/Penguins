@@ -80,4 +80,40 @@ public function create(array $data): int
             ':id'            => $id,
         ]);
     }
+
+    // Sets a user's status to deleted and records the scheduled permanent deletion date
+    public function scheduleDeletion(int $userId, string $scheduledDate): bool
+    {
+        $stmt = $this->db->prepare('UPDATE users SET status = :status, scheduled_deletion = :scheduled_deletion, updated_at = NOW() WHERE id = :id');
+        return $stmt->execute([
+            ':status'             => 'deleted',
+            ':scheduled_deletion' => $scheduledDate,
+            ':id'                 => $userId,
+        ]);
+    }
+
+    // Restores a deleted user account back to active during the grace period
+    public function restoreAccount(int $userId): bool
+    {
+        $stmt = $this->db->prepare('UPDATE users SET status = :status, scheduled_deletion = NULL, updated_at = NOW() WHERE id = :id');
+        return $stmt->execute([
+            ':status' => 'active',
+            ':id'     => $userId,
+        ]);
+    }
+
+    // Returns all users whose grace period has expired, ready for hard deletion
+    public function getUsersReadyForPermanentDeletion(): array
+    {
+        $stmt = $this->db->prepare("SELECT id FROM users WHERE status = 'deleted' AND scheduled_deletion IS NOT NULL AND scheduled_deletion <= NOW()");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    // Permanently removes a user record from the database
+    public function deletePermanently(int $userId): bool
+    {
+        $stmt = $this->db->prepare('DELETE FROM users WHERE id = ?');
+        return $stmt->execute([$userId]);
+    }
 }

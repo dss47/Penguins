@@ -1,0 +1,33 @@
+@startuml feature_lifecycle
+skinparam backgroundColor #FEFEFE
+skinparam stateBackgroundColor #FFFFFF
+skinparam stateBorderColor #333333
+skinparam stateBorderThickness 2
+skinparam stateFontColor #111111
+skinparam stateFontSize 13
+skinparam arrowColor #666666
+skinparam arrowFontSize 11
+skinparam shadowing false
+
+state "Actif (active)" as active_state
+state "Désactivé (disabled)" as disabled_state
+
+[*] --> active_state : Admin/Manager crée
+
+active_state --> disabled_state : Admin/Manager désactive
+disabled_state --> active_state : Admin/Manager réactive
+
+active_state --> [*] : Admin/Manager supprime
+disabled_state --> [*] : Admin/Manager supprime
+
+note top of active_state
+  Fonctionnalité disponible
+  pour étiqueter les outils
+end note
+
+note left of disabled_state
+  Masquée des formulaires,
+  données conservées
+end note
+
+@enduml

@@ -1,7 +1,19 @@
 @startuml Penguins_Database
 left to right direction
 
-
+skinparam backgroundColor #FEFEFE
+skinparam useCaseBackgroundColor #FFFFFF
+skinparam useCaseBorderColor #333333
+skinparam useCaseFontColor #111111
+skinparam useCaseFontSize 12
+skinparam actorBackgroundColor #FFFFFF
+skinparam actorBorderColor #333333
+skinparam actorFontColor #111111
+skinparam arrowColor #555555
+skinparam rectangleBackgroundColor #FEFEFE
+skinparam rectangleBorderColor #333333
+skinparam rectangleFontColor #111111
+skinparam shadowing false
 skinparam nodesep 50
 skinparam ranksep 60
 
@@ -39,6 +51,7 @@ rectangle "Penguins"{
         usecase "Rédiger un avis et une note" as avis_note
         usecase "Suggérer un nouvel outil d'IA" as suggerer_AI
         usecase "Modifier son profil" as modifier_profil
+        usecase "Supprimer son compte\n(preriode de grace 30 jours)" as auto_supprimer
     }
 
     rectangle "Administration & Configuration" {
@@ -50,8 +63,10 @@ rectangle "Penguins"{
         usecase "Gérer les outils (activer/désactiver)" as gerer_outils
         usecase "examiner le contenu signalé" as examiner_contenu
 
-        usecase "bannir ou suspendre l'utilisateur" as suspend
-        usecase "Gerer les roles (Promouvoir Manager)" as gerer_roles
+        usecase "Suspendre l'utilisateur\n(24h, 7j, 30j, 1 an, definitif)" as suspend
+        usecase "Supprimer definitivement\nun utilisateur" as supprimer_user
+        usecase "Restaurer un compte\n(debannir)" as debannir
+        usecase "Gerer les reles\n(Promouvoir Manager)" as gerer_roles
         usecase "Consulter les statistiques globales" as stats_globales
     }
 
@@ -88,6 +103,7 @@ user --> historique
 user --> avis_note
 user --> suggerer_AI
 user --> modifier_profil
+user --> auto_supprimer
 
 
 manager --> dashboard
@@ -98,6 +114,8 @@ manager --> examiner_contenu
 
 
 admin --> suspend
+admin --> supprimer_user
+admin --> debannir
 admin --> gerer_roles
 admin --> stats_globales
 admin --> gerer_outils

@@ -8,6 +8,8 @@ package "Services" as svc_pkg {
     {method} + getUsers(): array
     {method} + updateUserRole(int $userId, string $role): bool
     {method} + updateUserStatus(int $userId, string $status): bool
+    {method} + suspendUser(int $userId, string $duration): bool
+    {method} + deleteUser(int $userId): bool
     {method} + getSuggestions(): array
     {method} + rejectSuggestion(int $id, string $reason): bool
     {method} + deleteSuggestion(int $id): bool

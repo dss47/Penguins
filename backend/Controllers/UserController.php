@@ -132,8 +132,12 @@ final class UserController
 	}
 
 	// Schedules the authenticated user's account for deletion
-	public function deleteAccount(int $userId): array
+	public function deleteAccount(): array
 	{
+		$userId = $this->authenticate();
+		if (!$userId) {
+			return Response::error('Non authentifié', 401);
+		}
 		return Response::success($this->userService->scheduleDeletion($userId));
 	}
 }

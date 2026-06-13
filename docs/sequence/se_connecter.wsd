@@ -1,5 +1,16 @@
 @startuml se_connecter
-skinparam maxMessageSize 150
+skinparam backgroundColor #FEFEFE
+skinparam participantBackgroundColor #FFFFFF
+skinparam participantBorderColor #333333
+skinparam participantFontColor #111111
+skinparam participantFontSize 12
+skinparam actorBackgroundColor #FFFFFF
+skinparam actorBorderColor #333333
+skinparam actorFontColor #111111
+skinparam arrowColor #555555
+skinparam lifeLineBackgroundColor #FEFEFE
+skinparam shadowing false
+skinparam maxMessageSize 200
 
 actor "User" as user
 participant "Login Form" as log_in

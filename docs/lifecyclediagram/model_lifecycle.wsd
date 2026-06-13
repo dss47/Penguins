@@ -1,0 +1,44 @@
+@startuml model_lifecycle
+skinparam backgroundColor #FEFEFE
+skinparam stateBackgroundColor #FFFFFF
+skinparam stateBorderColor #333333
+skinparam stateBorderThickness 2
+skinparam stateFontColor #111111
+skinparam stateFontSize 13
+skinparam arrowColor #666666
+skinparam arrowFontSize 11
+skinparam shadowing false
+
+state "Actif (active)" as active_state
+state "Bêta (beta)" as beta_state
+state "Obsolète (deprecated)" as deprecated_state
+
+[*] --> active_state : Admin/Manager crée
+[*] --> beta_state : Admin/Manager crée en bêta
+
+active_state --> beta_state : Admin/Manager\nmet en bêta
+beta_state --> active_state : Admin/Manager\npromeut en stable
+active_state --> deprecated_state : Admin/Manager\nmarque obsolète
+beta_state --> deprecated_state : Admin/Manager\nabandonne
+deprecated_state --> active_state : Admin/Manager\nréactive
+
+active_state --> [*] : Admin/Manager supprime
+beta_state --> [*] : Admin/Manager supprime
+deprecated_state --> [*] : Admin/Manager supprime
+
+note right of active_state
+  Modèle stable,
+  disponible pour les outils
+end note
+
+note right of beta_state
+  En test,
+  pas encore stable
+end note
+
+note left of deprecated_state
+  Remplacé par
+  une version récente
+end note
+
+@enduml

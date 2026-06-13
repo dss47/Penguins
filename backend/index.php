@@ -62,6 +62,7 @@ $routes = [
 	'GET /user/profile'   => static fn() => json_response($userController->profile()),
 	'GET /user/stats' => static fn() => json_response($userController->stats()),
 	'POST /user/profile/update' => static fn() => json_response($userController->updateProfile($body, $_FILES['avatar'] ?? null)),
+	'POST /user/delete' => static fn() => json_response($userController->deleteAccount()),
 	'GET /professions' => static fn() => json_response($userController->professions()),
 
 	// ── Explore ──────────────────────────────────────────────
@@ -75,6 +76,7 @@ $routes = [
 	'POST /admin/users/demote'  => static fn() => json_response($adminController->demoteUser($body)),
 	'POST /admin/users/ban'     => static fn() => json_response($adminController->banUser($body)),
 	'POST /admin/users/unban'   => static fn() => json_response($adminController->unbanUser($body)),
+	'POST /admin/users/delete'  => static fn() => json_response($adminController->deleteUser($body)),
 
 	// ── Admin Suggestions ───────────────────────────────────
 	'GET /admin/suggestions'    => static fn() => json_response($adminController->suggestions()),

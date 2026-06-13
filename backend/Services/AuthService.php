@@ -69,10 +69,24 @@ final class AuthService
 			return false;
 		}
 
-		if (($user['status'] ?? 'active') !== 'active') {
-            $statusMsg = $user['status'] === 'suspended' ? 'Ce compte a été suspendu par un administrateur.' : 'Ce compte n\'est plus actif.';
-            throw new Exception($statusMsg);
-		}
+		if ($user['status'] === 'deleted') {
+            if ($user['scheduled_deletion'] !== null && strtotime($user['scheduled_deletion']) > time()) {
+                $this->userModel->restoreAccount((int) $user['id']);
+            } else {
+                throw new Exception('Ce compte a été définitivement supprimé.');
+            }
+        } elseif ($user['status'] === 'suspended') {
+            if ($user['suspended_until'] !== null && strtotime($user['suspended_until']) <= time()) {
+                $this->userModel->restoreAccount((int) $user['id']);
+            } elseif ($user['suspended_until'] !== null) {
+                $date = date('d/m/Y H:i', strtotime($user['suspended_until']));
+                throw new Exception("Compte suspendu jusqu'au $date.");
+            } else {
+                throw new Exception('Ce compte a été suspendu par un administrateur.');
+            }
+        } elseif ($user['status'] !== 'active') {
+            throw new Exception('Ce compte n\'est plus actif.');
+        }
 
 		$token = $this->jwtService->generateToken([
 			'user_id' => (int) $user['id'],

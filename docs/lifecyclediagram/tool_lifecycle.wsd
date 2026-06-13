@@ -1,0 +1,47 @@
+@startuml tool_lifecycle
+skinparam backgroundColor #FEFEFE
+skinparam stateBackgroundColor #FFFFFF
+skinparam stateBorderColor #333333
+skinparam stateBorderThickness 2
+skinparam stateFontColor #111111
+skinparam stateFontSize 13
+skinparam arrowColor #666666
+skinparam arrowFontSize 11
+skinparam shadowing false
+
+state "En attente\n(pending)" as pending_tool
+state "Actif\n(active)" as active_state
+state "Archivé\n(archived)" as archived_state
+state "Obsolète\n(deprecated)" as deprecated_state
+
+[*] --> pending_tool : Admin crée\nmanuellement
+[*] --> active_state : Suggestion approuvée\n(published_to_catalog)
+
+pending_tool --> active_state : Admin/Manager valide
+pending_tool --> [*] : Admin/Manager supprime
+
+active_state --> archived_state : Admin/Manager\narchive
+archived_state --> active_state : Admin/Manager\nréactive
+active_state --> deprecated_state : Admin/Manager\ndéprécie
+deprecated_state --> active_state : Admin/Manager\nréactive
+
+active_state --> [*] : Admin/Manager supprime
+archived_state --> [*] : Admin/Manager supprime
+deprecated_state --> [*] : Admin/Manager supprime
+
+note top of active_state
+  Visible publiquement,
+  recommandé par l'IA
+end note
+
+note left of archived_state
+  Masqué du catalogue,
+  données conservées
+end note
+
+note right of deprecated_state
+  Encore visible
+  avec avertissement
+end note
+
+@enduml

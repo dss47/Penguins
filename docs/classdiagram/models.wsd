@@ -90,7 +90,12 @@ package "Models" as models_pkg {
     {method} + findById(int $userId): ?array
     {method} + create(array $data): int
     {method} + update(int $id, array $data): bool
+    {method} + updateStatus(int $id, string $status): bool
     {method} + updatePassword(int $id, string $passwordHash): bool
+    {method} + scheduleDeletion(int $userId, string $scheduledDate): bool
+    {method} + restoreAccount(int $userId): bool
+    {method} + getUsersReadyForPermanentDeletion(): array
+    {method} + deletePermanently(int $userId): bool
   }
 
   class FavoriteItem extends BaseModel {

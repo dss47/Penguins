@@ -1,21 +1,26 @@
 @startuml auth_flow
-skinparam activityBackgroundColor #F4F4F4
+skinparam backgroundColor #FEFEFE
+skinparam activityBackgroundColor #FFFFFF
 skinparam activityBorderColor #333333
-skinparam decisionBackgroundColor #FFF7D6
-skinparam decisionBorderColor #F57C00
-skinparam startColor #43A047
-skinparam endColor #E53935
-skinparam swimlaneTitleBackgroundColor #90CAF9
+skinparam activityBorderThickness 2
+skinparam activityFontColor #111111
+skinparam activityFontSize 11
+skinparam decisionBackgroundColor #FEFEFE
+skinparam decisionBorderColor #333333
+skinparam decisionFontColor #111111
+skinparam startColor #333333
+skinparam endColor #333333
+skinparam swimlaneTitleBackgroundColor #FEFEFE
 skinparam swimlaneBorderColor #333333
-skinparam activityBorderRadius 15
-skinparam arrowColor #333333
-skinparam activityFontSize 13
-
+skinparam swimlaneTitleFontColor #111111
+skinparam arrowColor #555555
+skinparam shadowing false
+skinparam activityBorderRadius 6
+skinparam defaultTextAlignment left
 |Utilisateur|
 start
 :Visite /Auth;
 :Voit LoginForm ou SignupForm;
-
 if (Mode d'authentification ?) then (Login)
   :Tape email + password;
   :Click "Se connecter";
@@ -24,10 +29,8 @@ else (Signup)
   :Tape email + password;
   :Click "S'inscrire";
 endif
-
 |Frontend (AuthPage.jsx)|
 :Toggle mode (Login/Signup);
-
 if (Clique Login ?) then (oui)
   |Frontend (LoginForm Component)|
   :Collecte email + password;
@@ -49,7 +52,6 @@ else (Clique Signup)
     :Envoie POST /auth/register\navec { firstName, lastName, email, password };
   endif
 endif
-
 |Backend - AuthController|
 if (Route POST /auth/register ?) then (oui)
   :Reçoit register payload;
@@ -116,11 +118,36 @@ else (Clique Login)
   else (oui)
   endif
   
-  if (User status = active ?) then (non)
-    :Throw Exception\n(suspended/deleted);
-    :Retourne erreur 403;
-    stop
-  else (oui)
+  if (status == 'deleted' ?) then (oui)
+    if (scheduled_deletion != NULL AND scheduled_deletion > NOW()) then (oui)
+      :Restore le compte via\nrestoreAccount(user_id);
+      :UPDATE users SET status='active',\nscheduled_deletion=NULL;
+      :Continue login normal;
+    else (non)
+      :Throw Exception\n"définitivement supprimé";
+      :Retourne erreur 403;
+      stop
+    endif
+  else (non)
+    if (status == 'suspended' ?) then (oui)
+      if (suspended_until != NULL AND suspended_until <= NOW()) then (oui)
+        :Restore le compte via\nrestoreAccount(user_id);
+        :UPDATE users SET status='active',\nsuspended_until=NULL;
+        :Continue login normal;
+      else (non)
+        if (suspended_until != NULL) then (oui)
+          :Throw Exception\n"suspendu jusqu'au {date}";
+        else (non)
+          :Throw Exception\n"suspendu par administrateur";
+        endif
+        :Retourne erreur 403;
+        stop
+      endif
+    elseif (status != 'active') then (oui)
+      :Throw Exception\n"compte non actif";
+      :Retourne erreur 403;
+      stop
+    endif
   endif
   
   :Appelle JwtService\n::generateToken();
@@ -138,10 +165,8 @@ else (Clique Login)
   |Backend - AuthController|
   :Retourne Response 200 avec token;
 endif
-
 |Frontend (AuthContext.jsx)|
 :Reçoit API response;
-
 if (Statut success ?) then (oui)
   :Stocke token en localStorage;
   :Stocke user en localStorage;
@@ -151,17 +176,14 @@ else (non)
   :Affiche message erreur;
   :Reste sur AuthPage;
 endif
-
 |Utilisateur|
 :Connecté / Inscription réussie;
 :Token stocké localement;
-
 note right
 Désormais, pour les requêtes suivantes :
 Authorization: Bearer <token>
 ↓ Middleware valide le token
 end note
-
 if (Visite page protégée ?) then (oui)
   |Frontend|
   :Lit token depuis localStorage;
@@ -184,6 +206,5 @@ else (Logout)
   :Clear state;
   :Redirect /Auth;
 endif
-
 stop
 @enduml

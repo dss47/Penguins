@@ -1,20 +1,23 @@
 @startuml Penguins_ClassDiagram
-skinparam packageStyle rectangle
+skinparam backgroundColor #FFFFFF
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam classBorderThickness 2
+skinparam classFontColor #111111
+skinparam classFontSize 12
 skinparam classAttributeIconSize 0
-skinparam backgroundColor #FCFCFC
-skinparam defaultTextAlignment center
+skinparam packageStyle rectangle
+skinparam packageBackgroundColor #FFFFFF
+skinparam packageBorderColor #333333
+skinparam packageFontColor #111111
+skinparam arrowColor #555555
+skinparam shadowing false
 skinparam linetype ortho
 skinparam nodeMargin 20
 skinparam packageMargin 40
 skinparam ranksep 60
 skinparam nodesep 50
-
-' ── Global Style ──────────────────────────────────────────
-skinparam class {
-  BorderColor #1A3A4A
-  BackgroundColor #E8F4F8
-  FontColor #0D2137
-}
+skinparam defaultTextAlignment left
 
 !include models.wsd
 !include services.wsd

@@ -1,36 +1,37 @@
 @startuml review_moderation_pipeline_activity
-skinparam activityBackgroundColor #F4F4F4
+skinparam backgroundColor #FEFEFE
+skinparam activityBackgroundColor #FFFFFF
 skinparam activityBorderColor #333333
-skinparam decisionBackgroundColor #FFF7D6
-skinparam decisionBorderColor #F57C00
-skinparam startColor #43A047
-skinparam endColor #E53935
-skinparam swimlaneTitleBackgroundColor #90CAF9
+skinparam activityBorderThickness 2
+skinparam activityFontColor #111111
+skinparam activityFontSize 11
+skinparam decisionBackgroundColor #FEFEFE
+skinparam decisionBorderColor #333333
+skinparam decisionFontColor #111111
+skinparam startColor #333333
+skinparam endColor #333333
+skinparam swimlaneTitleBackgroundColor #FEFEFE
 skinparam swimlaneBorderColor #333333
-skinparam activityBorderRadius 15
-skinparam arrowColor #333333
-skinparam activityFontSize 13
-
+skinparam swimlaneTitleFontColor #111111
+skinparam arrowColor #555555
+skinparam shadowing false
+skinparam activityBorderRadius 6
+skinparam defaultTextAlignment left
 |Regular User / Admin|
 start
 :Remplit la note (5) et le commentaire;
 :Soumet l'avis;
-
 |React UI|
-:Envoie POST /api/reviews;
-
+:Envoie POST /reviews/submit;
 |Auth & Role Middleware|
 :Injecte l'user_id dans la requête;
 :Transmet la requête au contrôleur;
-
 |Backend - ReviewController & Service|
 :Exécute submitReview(user_id, data);
-
 |Backend - AI Moderation|
 :Envoie POST /v1/moderations {input: comment};
 :Analyse le contenu du commentaire;
 :Retourne le résultat JSON;
-
 |Backend - ReviewController & Service|
 if (Le commentaire est toxique/spam (Flagged) ?) then (oui)
   :Définit le statut à 'flagged';
@@ -55,19 +56,14 @@ else (non (Commentaire propre))
   |Regular User / Admin|
   stop
 endif
-
 ---
-
 |Regular User / Admin|
 :L'Admin ouvre l'onglet "Flagged" du Dashboard;
 :L'Admin clique sur "Ban User & Delete";
-
 |React UI|
-:Envoie POST /api/admin/users/:id/ban {review_id};
-
+:Envoie POST /admin/users/ban {id, duration='forever', review_id};
 |Auth & Role Middleware|
 :Vérifie le rôle de l'utilisateur;
-
 if (User Role == 'admin' ?) then (non)
   |React UI|
   :Retourne HTTP 403 Forbidden;
@@ -75,17 +71,22 @@ if (User Role == 'admin' ?) then (non)
   :Voit une erreur d'accès refusé;
   stop
 else (oui)
-  |Backend - ReviewController & Service|
-  :Exécute banUserAndCleanUp(user_id, review_id);
-  :UPDATE users SET status = 'suspended' WHERE id = ?;
+  |Backend - AdminController|
+  :Exécute banUser({id, duration:'forever'});
+  
+  |Backend - ReviewService|
   :DELETE FROM reviews WHERE id = ?;
+  
+  |Backend - AdminService|
+  :suspendUser(userId, 'forever');
+  :UPDATE users \nSET status = 'suspended', \nsuspended_until = NULL \nWHERE id = ?;
   :Retourne le message de confirmation;
   
   |React UI|
   :Retourne HTTP 200 OK;
-  :Retire l'avis de la liste affichée;
+  :Retire l'avis et l'utilisateur de la liste;
   |Regular User / Admin|
-  :Voit l'alerte "Utilisateur banni avec succès";
+  :Voit l'alerte "Utilisateur suspendu définitivement et avis supprimé";
   stop
 endif
 @enduml

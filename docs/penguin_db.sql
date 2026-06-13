@@ -378,6 +378,8 @@ CREATE TABLE `users` (
   `profile_url` varchar(2083) DEFAULT NULL,
   `role` enum('admin','user','manager','guest') NOT NULL DEFAULT 'user',
   `status` enum('active','suspended','deleted') NOT NULL DEFAULT 'active',
+  `scheduled_deletion` datetime DEFAULT NULL,
+  `suspended_until` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),

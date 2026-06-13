@@ -1,0 +1,55 @@
+@startuml user_lifecycle
+skinparam backgroundColor #FEFEFE
+skinparam stateBackgroundColor #FFFFFF
+skinparam stateBorderColor #333333
+skinparam stateBorderThickness 2
+skinparam stateFontColor #111111
+skinparam stateFontSize 13
+skinparam arrowColor #666666
+skinparam arrowFontSize 11
+skinparam shadowing false
+
+state "Visiteur (non-inscrit)" as visitor
+state "Actif (active)" as active_state
+state "Suspendu (suspended)" as suspended_state
+state "Supprimé (deleted)" as deleted_state
+
+[*] --> visitor : Navigation sur le site
+visitor --> active_state : S'inscrit (register)
+
+active_state --> suspended_state : Admin suspend (durée :\n24h, 7j, 30j, 1 an, définitif)
+suspended_state --> active_state : Admin débannir\nou auto-restauration à l'expiration
+active_state --> deleted_state : Admin supprime définitivement
+active_state --> deleted_state : Utilisateur auto-suppression\n(grâce 30 jours)
+deleted_state --> active_state : Admin débannir\n(restaure le compte)
+deleted_state --> active_state : Utilisateur se reconnecte\n(pendant la période de grâce)
+
+deleted_state --> [*] : CRON après 30 jours\n(pour auto-suppressions uniquement)
+
+note top of visitor
+  Personne non identifiée.
+  Accès limité (lecture seule).
+end note
+
+note top of active_state
+  Utilisateur authentifié.
+  Accès complet (favoris,
+  étagères, avis).
+end note
+
+note right of suspended_state
+  Utilisateur suspendu.
+  Connexion impossible pendant
+  la durée définie par l'admin.
+  Peut être restauré automatiquement
+  à l'expiration du délai.
+end note
+
+note left of deleted_state
+  Compte marqué comme supprimé.
+  Grace de 30 jours pour
+  auto-suppression utilisateur.
+  Admin peut restaurer à tout moment.
+end note
+
+@enduml

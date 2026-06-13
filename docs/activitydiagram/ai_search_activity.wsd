@@ -1,135 +1,114 @@
 @startuml ai_search_activity
-skinparam activityBackgroundColor #F4F4F4
+skinparam backgroundColor #FEFEFE
+skinparam activityBackgroundColor #FFFFFF
 skinparam activityBorderColor #333333
-skinparam decisionBackgroundColor #FFF7D6
-skinparam decisionBorderColor #F57C00
-skinparam startColor #43A047
-skinparam endColor #E53935
-skinparam swimlaneTitleBackgroundColor #90CAF9
+skinparam activityBorderThickness 2
+skinparam activityFontColor #111111
+skinparam activityFontSize 11
+skinparam decisionBackgroundColor #FEFEFE
+skinparam decisionBorderColor #333333
+skinparam decisionFontColor #111111
+skinparam startColor #333333
+skinparam endColor #333333
+skinparam swimlaneTitleBackgroundColor #FEFEFE
 skinparam swimlaneBorderColor #333333
-skinparam activityBorderRadius 15
-skinparam arrowColor #333333
-skinparam activityFontSize 13
-
+skinparam swimlaneTitleFontColor #111111
+skinparam arrowColor #555555
+skinparam shadowing false
+skinparam activityBorderRadius 6
+skinparam defaultTextAlignment left
 |Utilisateur|
 start
 :Ouvre HomeSearch;
 :Tape un prompt / question;
-
 |Frontend (HomeSearch.jsx)|
 :handleSubmit(prompt);
 :Affiche "loading" view;
 :Envoie POST /explore/recommend\navec { prompt };
-
 |Backend - ExploreController|
 :Reçoit la requête;
 :Extrait le prompt;
 :Authentifie l'utilisateur\n(AuthMiddleware);
 :Appelle ExploreService\n::searchByPrompt(prompt, userId);
-
 |Backend - ExploreService|
 :Valide le prompt;
-
 if (Prompt empty ?) then (oui)
   :Retourne erreur "requête vide";
   stop
 else (non)
 endif
-
 :Appelle AiTool\n::recommendationCandidates();
-
 |Backend - AiTool Model|
 :SELECT id, name\nFROM ai_tools\nWHERE status='active';
 :Retourne liste des candidats;
-
 |Backend - ExploreService|
-
 if (Candidats trouvés ?) then (non)
   :Retourne erreur "Aucun outil actif";
   stop
 else (oui)
 endif
-
 :Appelle OpenRouterService\n::getRecommendations\n(prompt, candidates);
-
 |External - OpenRouter API|
 :Reçoit prompt + candidats;
 :Analyse avec Claude/GLM;
 :Retourne { tool_ids, title, reasoning };
-
 |Backend - ExploreService|
 :Filtre tool_ids\n(valide et limite à 6);
 :Crée array selectedIds;
 :Appelle AiTool\n::findActiveByIds(selectedIds);
-
 |Backend - AiTool Model|
 :SELECT tools avec category, provider\nWHERE id IN (selectedIds);
 :Ordonne par selectedIds;
 :Retourne tools avec détails;
-
 |Backend - ExploreService|
 :Pour chaque tool\nAppelle ToolFeatures\n::findFeaturesByToolId();
 :Enrichit tools avec features;
 :Prépare response data;
-
 if (Utilisateur authentifié ?) then (oui)
   |Backend - SearchHistoryService|
   :Appelle logSearch();
   :INSERT search_histories record;
   :INSERT search_history_tools records;
   :Retourne search_id;
-
   |Backend - ExploreService|
   :Ajoute history_id à response;
 else (non)
   :Pas de logging;
 endif
-
 :Retourne { success, data:\n  { history_id, prompt,\n    title, reasoning, tools } };
-
 |Frontend (HomeSearch.jsx)|
 :Reçoit API response;
 :Stocke result dans state;
 :Cache history details;
 :Met à jour view="results";
-
 :Affiche ResultView;
 :Affiche ToolCards;
 :Affiche title + reasoning;
-
 |Utilisateur|
 :Voit outils recommandés;
 :Peut cliquer sur "Détails";
 :Peut voir "Clock" historique;
-
 if (Clique sur historique ?) then (oui)
   :Sélectionne un item;
-
   |Frontend (HomeSearch.jsx)|
   if (Données en cache ?) then (oui)
     :Utilise cache;
   else (non)
     :Appelle GET\n/user/search-history/details?id=ID;
-
     |Backend - SearchHistoryController|
     :Reçoit searchId;
-
     |Backend - SearchHistoryService|
     :Appelle getSearchDetails(searchId, userId);
     :SELECT search_histories + tools;
     :Retourne { tools, prompt };
-
     |Backend|
     :Retourne response;
-
     |Frontend (HomeSearch.jsx)|
     :Cache le résultat;
   endif
-
   :Affiche historique;
 else (non)
 endif
-
 :Fin de flux;
 stop
 @enduml

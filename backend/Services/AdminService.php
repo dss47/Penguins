@@ -50,10 +50,10 @@ final class AdminService
         ];
     }
 
-    // Returns all users with basic info, ordered by creation date
+    // Returns all users with basic info and suspension expiry, ordered by creation date
     public function getUsers(): array
     {
-        return $this->db->query("SELECT id, name, email, role, status, DATE_FORMAT(created_at, '%d %b %Y') as joined FROM users ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
+        return $this->db->query("SELECT id, name, email, role, status, suspended_until, DATE_FORMAT(created_at, '%d %b %Y') as joined FROM users ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Updates the role of a user (e.g., promote to admin, demote to user)
@@ -66,8 +66,30 @@ final class AdminService
     // Updates the status of a user (e.g., ban, unban, suspend)
     public function updateUserStatus(int $userId, string $status): bool
     {
-        $stmt = $this->db->prepare("UPDATE users SET status = ? WHERE id = ?");
+        $stmt = $this->db->prepare("UPDATE users SET status = ?, suspended_until = NULL, scheduled_deletion = NULL WHERE id = ?");
         return $stmt->execute([$status, $userId]);
+    }
+
+    // Suspends a user with a specific duration, setting suspended_until
+    public function suspendUser(int $userId, string $duration): bool
+    {
+        $suspendedUntil = match ($duration) {
+            '24h' => date('Y-m-d H:i:s', strtotime('+24 hours')),
+            '7d'  => date('Y-m-d H:i:s', strtotime('+7 days')),
+            '30d' => date('Y-m-d H:i:s', strtotime('+30 days')),
+            '1y'  => date('Y-m-d H:i:s', strtotime('+1 year')),
+            default => null, // 'forever' or unknown → indefinite
+        };
+
+        $stmt = $this->db->prepare("UPDATE users SET status = 'suspended', suspended_until = ? WHERE id = ?");
+        return $stmt->execute([$suspendedUntil, $userId]);
+    }
+
+    // Permanently deletes (bans) a user by setting status to deleted
+    public function deleteUser(int $userId): bool
+    {
+        $stmt = $this->db->prepare("UPDATE users SET status = 'deleted', suspended_until = NULL WHERE id = ?");
+        return $stmt->execute([$userId]);
     }
 
     // Returns all suggestions with author and category/provider/model info, resolves feature names

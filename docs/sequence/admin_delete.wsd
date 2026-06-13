@@ -1,0 +1,69 @@
+@startuml admin_delete
+skinparam backgroundColor #FEFEFE
+skinparam participantBackgroundColor #FFFFFF
+skinparam participantBorderColor #333333
+skinparam participantFontColor #111111
+skinparam participantFontSize 12
+skinparam actorBackgroundColor #FFFFFF
+skinparam actorBorderColor #333333
+skinparam actorFontColor #111111
+skinparam arrowColor #555555
+skinparam lifeLineBackgroundColor #FEFEFE
+skinparam shadowing false
+skinparam maxMessageSize 200
+
+actor "Admin" as admin
+participant "React UI\n(AdminUsers)" as react
+participant "Auth & Role\nMiddleware" as auth
+participant "AdminController" as ctrl
+participant "AdminService" as service
+participant "Response.php" as res
+database "MySQL (users)" as db
+
+== Supprimer définitivement un utilisateur ==
+
+admin -> react : Clic "Supprimer" sur un utilisateur
+activate react
+
+  react -> react : Affiche la confirmation\n"Supprimer définitivement ?"
+  admin -> react : Confirme "Oui, supprimer"
+
+  react -> auth : POST /admin/users/delete\n{id}
+  activate auth
+
+    alt Rôle != 'admin'
+        auth --> react : HTTP 403 Forbidden
+    else Rôle == 'admin'
+
+        auth -> ctrl : Forward Request
+        activate ctrl
+        deactivate auth
+
+          ctrl -> service : deleteUser(userId)
+          activate service
+
+            service -> db : UPDATE users\nSET status = 'deleted',\n    suspended_until = NULL\nWHERE id = ?
+            activate db
+              db --> service : Success
+            deactivate db
+
+            service --> ctrl : true
+          deactivate service
+
+          ctrl -> res : success({message: "Utilisateur supprimé"})
+          activate res
+            res --> ctrl : JSON String
+          deactivate res
+
+          ctrl --> react : HTTP 200 OK
+        deactivate ctrl
+    end
+
+  deactivate auth
+
+  react -> react : Met à jour l'UI :\nbadge passe en rouge foncé "Supprimé"
+  react --> admin : Affiche "Utilisateur supprimé"
+
+deactivate react
+
+@enduml

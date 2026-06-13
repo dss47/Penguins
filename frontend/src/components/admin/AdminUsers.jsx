@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "../../style/admin/adminUsers.module.css";
-import BanConfirmForm from "../forms/BanConfirmForm";
+import SuspendForm from "../forms/SuspendForm";
 import PromoteConfirmForm from "../forms/PromoteConfirmForm";
 import DemoteConfirmForm from "../forms/DemoteConfirmForm";
 import UnbanConfirmForm from "../forms/UnbanConfirmForm";
@@ -29,6 +29,7 @@ export default function AdminUsers() {
   const [roleFilter, setRoleFilter] = useState("all");
   
   const [confirmBan, setConfirmBan]         = useState(null);
+  const [confirmDelete, setConfirmDelete]   = useState(null);
   const [confirmPromote, setConfirmPromote] = useState(null);
   const [confirmDemote, setConfirmDemote]   = useState(null);
   const [confirmUnban, setConfirmUnban]     = useState(null);
@@ -67,11 +68,20 @@ export default function AdminUsers() {
     currentPage * itemsPerPage
   );
 
-  const handleBan = (userId) => {
-    api.post("/admin/users/ban", { id: userId })
+  const handleBan = (userId, duration) => {
+    api.post("/admin/users/ban", { id: userId, duration })
       .then(() => {
         setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, status: "suspended" } : u));
         setConfirmBan(null);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const handleDelete = (userId) => {
+    api.post("/admin/users/delete", { id: userId })
+      .then(() => {
+        setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, status: "deleted" } : u));
+        setConfirmDelete(null);
       })
       .catch((err) => console.error(err));
   };
@@ -105,6 +115,7 @@ export default function AdminUsers() {
 
   const resetConfirms = () => {
     setConfirmBan(null);
+    setConfirmDelete(null);
     setConfirmPromote(null);
     setConfirmDemote(null);
     setConfirmUnban(null);
@@ -181,8 +192,14 @@ export default function AdminUsers() {
                     </td>
                     {/* Statut */}
                     <td>
-                      <span className={`${styles.badge} ${user.status === "active" ? styles.badgeActive : styles.badgeBanned}`}>
-                        {user.status === "active" ? "Actif" : "Banni"}
+                      <span className={`${styles.badge} ${
+                        user.status === "active" ? styles.badgeActive :
+                        user.status === "suspended" ? styles.badgeSuspended :
+                        styles.badgeDeleted
+                      }`}>
+                        {user.status === "active" ? "Actif" :
+                         user.status === "suspended" ? (user.suspended_until ? "Suspendu" : "Suspendu (définitif)") :
+                         "Supprimé"}
                       </span>
                     </td>
                     {/* Date */}
@@ -221,10 +238,21 @@ export default function AdminUsers() {
                               setConfirmBan(user.id);
                             }}
                           >
-                            ✕ Bannir
+                            ✕ Suspendre
                           </button>
                         )}
-                        {(user.status === "suspended" || user.status === "banned" || user.status === "deleted") && user.role !== "admin" && (
+                        {user.status === "active" && user.role !== "admin" && (
+                          <button
+                            className={`${styles.btnAction} ${styles.btnDelete}`}
+                            onClick={() => {
+                              resetConfirms();
+                              setConfirmDelete(user.id);
+                            }}
+                          >
+                            ✕ Supprimer
+                          </button>
+                        )}
+                        {(user.status === "suspended" || user.status === "deleted") && user.role !== "admin" && (
                           <button
                             className={`${styles.btnAction} ${styles.btnPromote}`}
                             style={{ color: "var(--success)", backgroundColor: "color-mix(in srgb, var(--success) 15%, transparent)" }}
@@ -240,15 +268,40 @@ export default function AdminUsers() {
                     </td>
                   </tr>
 
-                  {/* ── Formulaire confirm ban inline ── */}
+                  {/* ── Formulaire confirm suspension inline ── */}
                   {confirmBan === user.id && (
                     <tr key={`ban-${user.id}`}>
                       <td colSpan={5} style={{ padding: "0 16px 12px" }}>
-                        <BanConfirmForm
+                        <SuspendForm
                           userName={user.name}
-                          onConfirm={() => handleBan(user.id)}
+                          onConfirm={(duration) => handleBan(user.id, duration)}
                           onCancel={() => setConfirmBan(null)}
                         />
+                      </td>
+                    </tr>
+                  )}
+
+                  {/* ── Formulaire confirm suppression inline ── */}
+                  {confirmDelete === user.id && (
+                    <tr key={`delete-${user.id}`}>
+                      <td colSpan={5} style={{ padding: "0 16px 12px" }}>
+                        <div className={styles.confirmBox}>
+                          <p className={styles.confirmText}>
+                            Supprimer définitivement <strong>{user.name}</strong> ?
+                            <br />
+                            <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+                              L'utilisateur ne pourra plus jamais accéder à la plateforme. Action irréversible.
+                            </span>
+                          </p>
+                          <div className={styles.confirmActions}>
+                            <button className={`${styles.btnConfirm} ${styles.btnYes}`} onClick={() => handleDelete(user.id)}>
+                              Oui, supprimer
+                            </button>
+                            <button className={`${styles.btnConfirm} ${styles.btnNo}`} onClick={() => setConfirmDelete(null)}>
+                              Annuler
+                            </button>
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   )}

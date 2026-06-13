@@ -1,27 +1,30 @@
 @startuml advanced_ai_wizard_activity
-skinparam activityBackgroundColor #F4F4F4
+skinparam backgroundColor #FEFEFE
+skinparam activityBackgroundColor #FFFFFF
 skinparam activityBorderColor #333333
-skinparam decisionBackgroundColor #FFF7D6
-skinparam decisionBorderColor #F57C00
-skinparam startColor #43A047
-skinparam endColor #E53935
-skinparam swimlaneTitleBackgroundColor #90CAF9
+skinparam activityBorderThickness 2
+skinparam activityFontColor #111111
+skinparam activityFontSize 11
+skinparam decisionBackgroundColor #FEFEFE
+skinparam decisionBorderColor #333333
+skinparam decisionFontColor #111111
+skinparam startColor #333333
+skinparam endColor #333333
+skinparam swimlaneTitleBackgroundColor #FEFEFE
 skinparam swimlaneBorderColor #333333
-skinparam activityBorderRadius 15
-skinparam arrowColor #333333
-skinparam activityFontSize 13
-
+skinparam swimlaneTitleFontColor #111111
+skinparam arrowColor #555555
+skinparam shadowing false
+skinparam activityBorderRadius 6
+skinparam defaultTextAlignment left
 |Utilisateur / Manager|
 start
 :Navigue vers la page "Proposer un outil";
-
 |React UI (4-Step Wizard)|
-:Envoie GET /api/suggestions/current;
-
-|Backend - ToolController & Service|
-:Exécute checkPendingSuggestion(user_id);
-:SELECT * FROM suggestions WHERE user_id=? AND status LIKE 'pending%';
-
+:GET /suggestions/history;
+|Backend - SuggestionController & SuggestionService|
+:listPendingSuggestions(user_id);
+:SELECT * FROM suggestions WHERE user_id=? AND status LIKE 'waiting%';
 |React UI (4-Step Wizard)|
 if (Une suggestion en attente existe ?) then (oui)
   :Verrouille l'interface sur l'étape 3 ("En attente");
@@ -32,7 +35,6 @@ else (non)
   |React UI (4-Step Wizard)|
   :Affiche le formulaire vide de l'étape 1;
 endif
-
 |Utilisateur / Manager|
 :Remplit et soumet le formulaire;
 note right
@@ -40,14 +42,11 @@ note right
   - {provider_id: null, proposed_provider: "New Co"}
   - {features: [3, 7, "Voice Clone"]}
 end note
-
 |React UI (4-Step Wizard)|
-:Envoie POST /api/suggestions;
-
-|Backend - ToolController & Service|
+:Envoie POST /suggestions/create;
+|Backend - SuggestionController & SuggestionService|
 :Vérifie la duplication de l'URL;
 :SELECT id FROM ai_tools WHERE url = ?;
-
 if (L'URL existe déjà ?) then (oui)
   :Met le statut à 'rejected' (Reason: 'URL exists');
   :INSERT INTO suggestions...;
@@ -61,7 +60,7 @@ else (non)
   |Backend - AI Engine|
   :Envoie POST /analyze pour vérification;
   if (L'IA rejette l'outil ?) then (oui)
-    |Backend - ToolController & Service|
+    |Backend - SuggestionController & SuggestionService|
     :Met le statut à 'rejected' (Reason: 'AI Blocked');
     :INSERT INTO suggestions...;
     :Retourne HTTP 422 Unprocessable;
@@ -69,57 +68,51 @@ else (non)
     :Saute à l'étape 4 (Échec);
     stop
   else (oui (L'IA accepte))
-    |Backend - ToolController & Service|
+    |Backend - SuggestionController & SuggestionService|
     note right
       Les tableaux mixtes sont stockés en toute 
       sécurité sous forme de chaînes JSON 
       dans la table temporaire.
     end note
-    :Sauvegarde avec le statut 'pending_manager';
+    :Sauvegarde avec le statut 'waiting_ai_analysis';
     :INSERT INTO suggestions (..., features_json);
     :Retourne HTTP 201 Created;
     |React UI (4-Step Wizard)|
     :Passe à l'étape 3;
     |Utilisateur / Manager|
-    :Voit l'écran "En attente d'approbation du Manager";
+    :Voit l'écran "En attente d'analyse IA";
   endif
 endif
-
 ---
-
-|Utilisateur / Manager|
+|Administrateur / Manager|
 :Le Manager ouvre le Dashboard Admin;
-
-|React UI (4-Step Wizard)|
-:Envoie GET /api/manager/suggestions;
-
-|Backend - ToolController & Service|
-:Exécute getAllSuggestionsSorted();
-:SELECT * FROM suggestions \nORDER BY FIELD(status, 'pending_manager', 'active', 'rejected');
-
-|React UI (4-Step Wizard)|
+|React UI|
+:Envoie GET /admin/suggestions;
+|Backend - AdminController & AdminService|
+:Exécute getSuggestions();
+:SELECT * FROM suggestions ORDER BY created_at DESC;
+|React UI|
 :Affiche la liste au Manager (En attente tout en haut);
-
-|Utilisateur / Manager|
-:Le Manager examine une suggestion 'pending_manager';
-
+|Administrateur / Manager|
+:Le Manager examine une suggestion 'waiting_ai_analysis';
 if (Action du Manager ?) then (Rejeter)
   :Le Manager clique sur "Reject" et saisit un motif;
-  |React UI (4-Step Wizard)|
-  :Envoie POST /api/manager/suggestions/:id/reject;
-  |Backend - ToolController & Service|
-  :UPDATE suggestions SET status='rejected_manager', reason=?;
+  |React UI|
+  :Envoie POST /admin/suggestions/reject {id, reason};
+  |Backend - AdminController & AdminService|
+  :rejectSuggestion(id, reason);
+  :UPDATE suggestions SET status='rejected_by_admin', rejection_reason=?;
   :Retourne HTTP 200 OK;
-  |React UI (4-Step Wizard)|
+  |React UI|
   :Retire l'élément de la liste "En attente";
   stop
 else (Approuver)
-  |Utilisateur / Manager|
+  |Administrateur / Manager|
   :Le Manager clique sur "Approve";
-  |React UI (4-Step Wizard)|
-  :Envoie POST /api/manager/suggestions/:id/approve;
-  |Backend - ToolController & Service|
-  :UPDATE suggestions SET status='active';
+  |React UI|
+  :Envoie POST /admin/suggestions/approve {id};
+  |Backend - AdminController & SuggestionService|
+  :promoteToTool(suggestionId, adminId);
   
   note right
     Le Backend boucle sur les tableaux JSON mixtes.
@@ -141,7 +134,7 @@ else (Approuver)
   :INSERT INTO tool_features (tool_id, feature_id) VALUES (...);
   :Retourne HTTP 200 OK;
   
-  |React UI (4-Step Wizard)|
+  |React UI|
   :Déplace l'élément vers la liste "Active";
   stop
 endif

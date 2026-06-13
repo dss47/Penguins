@@ -179,7 +179,9 @@
 .badgeManager { background-color: rgba(245, 158, 11, 0.1);  border: 1px solid rgba(245, 158, 11, 0.2);  color: #f59e0b; }
 .badgeUser    { background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); color: #94A3B8; }
 .badgeActive  { background-color: rgba(34, 197, 94, 0.1);    border: 1px solid rgba(34, 197, 94, 0.2);    color: #22c55e; }
+.badgeSuspended  { background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); color: #f59e0b; }
 .badgeBanned  { background-color: rgba(239, 68, 68, 0.1);    border: 1px solid rgba(239, 68, 68, 0.2);    color: #ef4444; }
+.badgeDeleted  { background-color: rgba(185, 28, 28, 0.15);  border: 1px solid rgba(185, 28, 28, 0.25);  color: #b91c1c; }
 
 /* ── Actions ──────────────────────────────────────────────── */
 .actions {
@@ -224,6 +226,17 @@
 .btnBan:hover {
   border-color: var(--danger);
   color: var(--danger);
+}
+
+.btnDelete {
+  border-color: rgba(185, 28, 28, 0.3);
+  color: #b91c1c;
+}
+
+.btnDelete:hover {
+  border-color: #b91c1c;
+  background: rgba(185, 28, 28, 0.1);
+  color: #ef4444;
 }
 
 /* ── Formulaire inline confirm ────────────────────────────── */

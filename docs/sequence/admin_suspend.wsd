@@ -1,0 +1,71 @@
+@startuml admin_suspend
+skinparam backgroundColor #FEFEFE
+skinparam participantBackgroundColor #FFFFFF
+skinparam participantBorderColor #333333
+skinparam participantFontColor #111111
+skinparam participantFontSize 12
+skinparam actorBackgroundColor #FFFFFF
+skinparam actorBorderColor #333333
+skinparam actorFontColor #111111
+skinparam arrowColor #555555
+skinparam lifeLineBackgroundColor #FEFEFE
+skinparam shadowing false
+skinparam maxMessageSize 200
+
+actor "Admin" as admin
+participant "React UI\n(AdminUsers)" as react
+participant "Auth & Role\nMiddleware" as auth
+participant "AdminController" as ctrl
+participant "AdminService" as service
+participant "Response.php" as res
+database "MySQL (users)" as db
+
+== Suspendre un utilisateur avec durée ==
+
+admin -> react : Clic "Suspendre" sur un utilisateur
+activate react
+
+  react -> react : Affiche SuspendForm\navec dropdown durée (24h, 7j, 30j, 1 an, définitif)
+  admin -> react : Sélectionne la durée + "Oui, suspendre"
+  
+  react -> auth : POST /admin/users/ban\n{id, duration}
+  activate auth
+
+    alt Rôle != 'admin'
+        auth --> react : HTTP 403 Forbidden
+    else Rôle == 'admin'
+
+        auth -> ctrl : Forward Request
+        activate ctrl
+        deactivate auth
+
+          ctrl -> service : suspendUser(userId, duration)
+          activate service
+
+            note right of service: Calcule suspended_until selon la durée :\n24h → NOW + 24 hours\n7d  → NOW + 7 days\n30d → NOW + 30 days\n1y  → NOW + 1 year\nforever → NULL
+
+            service -> db : UPDATE users\nSET status = 'suspended',\n    suspended_until = ?\nWHERE id = ?
+            activate db
+              db --> service : Success
+            deactivate db
+
+            service --> ctrl : true
+          deactivate service
+
+          ctrl -> res : success({message: "Utilisateur suspendu"})
+          activate res
+            res --> ctrl : JSON String
+          deactivate res
+
+          ctrl --> react : HTTP 200 OK
+        deactivate ctrl
+    end
+
+  deactivate auth
+
+  react -> react : Met à jour l'UI :\nbadge passe en orange "Suspendu"
+  react --> admin : Affiche "Utilisateur suspendu"
+
+deactivate react
+
+@enduml
