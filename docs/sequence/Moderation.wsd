@@ -6,7 +6,8 @@ actor "Regular User" as user
 actor "Admin" as admin
 participant "React UI" as react
 participant "Auth & Role\nMiddleware" as auth
-participant "ReviewController" as controller
+participant "ReviewController" as review_ctrl
+participant "AdminController" as admin_ctrl
 participant "ReviewService" as service
 participant "AI Moderatio" as ai
 participant "Models\n(Review & User)" as model
@@ -19,15 +20,15 @@ database "MySQL" as db
 user -> react : Submits Rating (5) & Comment
 activate react
   
-  react -> auth : POST /api/reviews\n{tool_id, rating, comment}
+  react -> auth : POST /reviews/submit\n{tool_id, rating, comment}
   activate auth
-    auth -> controller : Forward Request (Inject user_id)
-    activate controller
+    auth -> review_ctrl : Forward Request (Inject user_id)
+    activate review_ctrl
       
-      controller -> service : submitReview(user_id, data)
+      review_ctrl -> service : submitReview(user_id, data)
       activate service
         
-        service -> ai : POST /v1/moderations\n{input: comment}
+        service -> ai : moderateComment(comment)
         activate ai
           ai --> service : Returns JSON {flagged: true, categories: ["profanity"]}
         deactivate ai
@@ -40,14 +41,14 @@ activate react
               db --> model : Returns new_review_id
             deactivate model
             
-            service --> controller : Returns "Held for moderation"
+            service --> review_ctrl : Returns "Held for moderation"
             
-            controller -> res : formatCreated({message: "En attente de modération"})
+            review_ctrl -> res : created({message: "En attente de modération"})
             activate res
-              res --> controller : JSON String
+              res --> review_ctrl : JSON String
             deactivate res
             
-            controller --> react : HTTP 201 Created (Pending Warning)
+            review_ctrl --> react : HTTP 201 Created (Pending Warning)
             react --> user : Shows "Votre avis est en cours de vérification"
             
         else Commentaire est Propre (Approved)
@@ -57,7 +58,7 @@ activate react
         end
         
       deactivate service
-    deactivate controller
+    deactivate review_ctrl
   deactivate auth
 deactivate react
 
@@ -67,42 +68,36 @@ deactivate react
 admin -> react : Reviews "Flagged" tab in Dashboard
 activate react
   
-  admin -> react : Clicks "Ban User & Delete" on a toxic review
-  react -> auth : POST /api/admin/users/12/ban\n{review_id: 88}
+  admin -> react : Clicks "Ban User" on an offending user
+  react -> auth : POST /admin/users/ban\n{id: 12}
   activate auth
     
     alt User Role != 'admin'
         auth --> react : HTTP 403 Forbidden
     else User Role == 'admin'
         
-        auth -> controller : Forward Request
-        activate controller
+        auth -> admin_ctrl : Forward Request
+        activate admin_ctrl
           
-          controller -> service : banUserAndCleanUp(user_id, review_id)
+          admin_ctrl -> service : updateUserStatus(id, 'suspended')
           activate service
             
-            service -> model : suspendUser(user_id)
+            service -> model : updateStatus(user_id, 'suspended')
             activate model
               model -> db : UPDATE users SET status = 'suspended' WHERE id = ?
               db --> model : Success
             deactivate model
             
-            service -> model : deleteReview(review_id)
-            activate model
-              model -> db : DELETE FROM reviews WHERE id = ?
-              db --> model : Success
-            deactivate model
-            
-            service --> controller : Returns Success
+            service --> admin_ctrl : Returns Success
           deactivate service
           
-          controller -> res : formatSuccess({action: "user_suspended"})
+          admin_ctrl -> res : success({action: "user_suspended"})
           activate res
-            res --> controller : JSON String
+            res --> admin_ctrl : JSON String
           deactivate res
           
-          controller --> react : HTTP 200 OK
-        deactivate controller
+          admin_ctrl --> react : HTTP 200 OK
+        deactivate admin_ctrl
         
     end ' End of RBAC Check
   deactivate auth

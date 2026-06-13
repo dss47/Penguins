@@ -68,7 +68,7 @@ const Menu = ({ scrollToSection, refs }) => {
                                         navigate("/", { state: { scrollTo: "features" } });
                                     }
                                 }}>Caractéristiques</li>
-                                <li>Comment ça marche</li>
+                                {/* <li>Comment ça marche</li> */}
                                 <li onClick={() => {
                                     if (location.pathname === "/") {
                                         scrollToSection(refs.whyPenguinRef);
@@ -76,7 +76,7 @@ const Menu = ({ scrollToSection, refs }) => {
                                         navigate("/", { state: { scrollTo: "whyPenguin" } });
                                     }
                                 }}>Pourquoi Penguin</li>
-                                <li>Découvrir</li>
+                                {/* <li>Découvrir</li> */}
                                 <li onClick={() => {
                                     if (location.pathname === "/") {
                                         scrollToSection(refs.topAiRef);

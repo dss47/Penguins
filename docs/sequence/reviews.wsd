@@ -34,7 +34,7 @@ activate react
         
         alt Review already exists
             service --> controller : Returns "Already reviewed" error
-            controller -> res : formatError("You already reviewed this tool", 409)
+            controller -> res : error("You already reviewed this tool", 409)
             activate res
               res --> controller : JSON String
             deactivate res
@@ -58,7 +58,7 @@ activate react
                 deactivate model
                 
                 service --> controller : Returns "En attente de modération"
-                controller -> res : formatCreated({message: "En attente de modération"})
+                controller -> res : created({message: "En attente de modération"})
                 activate res
                   res --> controller : JSON String
                 deactivate res
@@ -76,7 +76,7 @@ activate react
                 deactivate model
                 
                 service --> controller : Returns "Publié immédiatement"
-                controller -> res : formatCreated({message: "Merci pour votre avis !"})
+                controller -> res : created({message: "Merci pour votre avis !"})
                 activate res
                   res --> controller : JSON String
                 deactivate res
@@ -111,7 +111,7 @@ activate react
         service --> controller : Reviews with tool info
       deactivate service
       
-      controller -> res : formatSuccess(reviews)
+      controller -> res : success(reviews)
       activate res
         res --> controller : JSON String
       deactivate res
@@ -144,7 +144,7 @@ activate react
           alt Review not found or not owned by user
               model --> service : null
               service --> controller : Returns error
-              controller -> res : formatError("Review not found", 404)
+              controller -> res : error("Review not found", 404)
               controller --> react : HTTP 404
               react --> user : Shows error message
           else Review belongs to user
@@ -171,7 +171,7 @@ activate react
         deactivate model
         
         service --> controller : Returns "Updated successfully"
-        controller -> res : formatSuccess({message: "Avis modifié"})
+        controller -> res : success({message: "Avis modifié"})
         activate res
           res --> controller : JSON String
         deactivate res
@@ -205,7 +205,7 @@ activate react
           alt Review not found or not owned by user
               model --> service : null
               service --> controller : Returns error
-              controller -> res : formatError("Not found", 404)
+              controller -> res : error("Not found", 404)
               controller --> react : HTTP 404
           else Owned by user
               model --> service : Review exists
@@ -224,7 +224,7 @@ activate react
         service --> controller : Returns success
       deactivate service
       
-      controller -> res : formatSuccess({deleted: true})
+      controller -> res : success({deleted: true})
       activate res
         res --> controller : JSON String
       deactivate res

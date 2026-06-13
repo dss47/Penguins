@@ -13,7 +13,7 @@ database "MySQL" as db
 
 admin -> react : Navigates to "Gérer les données" tab
 activate react
-  react -> controller : GET /admin/suggestions\n(formData includes categories/providers/features/models)
+  react -> controller : GET /admin/data/lists
   activate controller
     controller -> model : fetchAll() for each entity type
     activate model
@@ -24,7 +24,7 @@ activate react
       model --> controller : Grouped data arrays
     deactivate model
     
-    controller -> res : formatSuccess({categories, providers, features, models})
+    controller -> res : success({categories, providers, features, models})
     activate res
       res --> controller : JSON String
     deactivate res
@@ -43,7 +43,7 @@ activate react
   react -> react : Opens modal with empty form
   admin -> react : Fills name, status, clicks "Enregistrer"
   
-  react -> controller : POST /admin/data/category/create\n{name: "Audio Editing", status: "active"}
+  react -> controller : POST /admin/data/categories/create\n{name: "Audio Editing", status: "active"}
   activate controller
     controller -> model : create(data)
     activate model
@@ -54,7 +54,7 @@ activate react
       model --> controller : Returns created entity
     deactivate model
     
-    controller -> res : formatCreated(entity)
+    controller -> res : created(entity)
     activate res
       res --> controller : JSON String
     deactivate res
@@ -74,7 +74,7 @@ activate react
   react -> react : Opens modal with pre-filled form
   admin -> react : Edits name/status, clicks "Enregistrer"
   
-  react -> controller : POST /admin/data/category/update\n{id: 5, name: "Audio Prod", status: "inactive"}
+  react -> controller : POST /admin/data/categories/update\n{id: 5, name: "Audio Prod", status: "inactive"}
   activate controller
     controller -> model : update(id, data)
     activate model
@@ -85,7 +85,7 @@ activate react
       model --> controller : Returns updated entity
     deactivate model
     
-    controller -> res : formatSuccess(entity)
+    controller -> res : success(entity)
     activate res
       res --> controller : JSON String
     deactivate res
@@ -102,8 +102,8 @@ deactivate react
 
 admin -> react : Clicks "Supprimer" on a row, confirms dialog
 activate react
-  
-  react -> controller : POST /admin/data/category/delete\n{id: 5}
+
+  react -> controller : POST /admin/data/categories/delete\n{id: 5}
   activate controller
     controller -> model : delete(id)
     activate model
@@ -114,7 +114,7 @@ activate react
       model --> controller : Returns success
     deactivate model
     
-    controller -> res : formatSuccess({deleted: true})
+    controller -> res : success({deleted: true})
     activate res
       res --> controller : JSON String
     deactivate res

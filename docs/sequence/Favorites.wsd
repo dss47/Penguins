@@ -27,34 +27,39 @@ activate react
         
         controller -> service : toggleFavorite(user_id, tool_id)
         activate service
-          service -> model : toggleItem(user_id, tool_id)
+          service -> model : isFavorited(user_id, tool_id)
           activate model
-            
-            model -> db : SELECT id FROM favorite_items\nWHERE user_id = ? AND tool_id = ?
+            model -> db : SELECT 1 FROM favorite_items\nWHERE user_id = ? AND tool_id = ?
             activate db
-              db --> model : Returns Result
+              db --> model : true/false
             deactivate db
-            
-            alt Outil est déjà dans les favoris
-                model -> db : DELETE FROM favorite_items
+            model --> service : boolean
+          deactivate model
+          
+          alt Outil est déjà dans les favoris
+              service -> model : remove(user_id, tool_id)
+              activate model
+                model -> db : DELETE FROM favorite_items\nWHERE user_id = ? AND tool_id = ?
                 activate db
                   db --> model : Deleted
                 deactivate db
-                model --> service : Returns action: "removed"
-                
-            else Outil n'est pas dans les favoris
-                model -> db : INSERT INTO favorite_items
+                model --> service : action: "removed"
+              deactivate model
+              
+          else Outil n'est pas dans les favoris
+              service -> model : add(user_id, tool_id)
+              activate model
+                model -> db : INSERT INTO favorite_items (user_id, tool_id)\nVALUES (?, ?)
                 activate db
                   db --> model : Inserted
                 deactivate db
-                model --> service : Returns action: "added"
-            end
-            
-          deactivate model
+                model --> service : action: "added"
+              deactivate model
+          end
           
           service --> controller : Returns action ("added/removed")
         deactivate service
-        controller -> res : formatSuccess({action})
+        controller -> res : success({action})
         activate res
           res --> controller : Standardized JSON String
         deactivate res

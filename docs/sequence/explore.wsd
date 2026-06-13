@@ -41,7 +41,7 @@ activate react
       explore_svc --> explore_ctrl : Returns stats + top tools
     deactivate explore_svc
     
-    explore_ctrl -> res : formatSuccess(data)
+    explore_ctrl -> res : success(data)
     activate res
       res --> explore_ctrl : JSON String
     deactivate res
@@ -53,30 +53,40 @@ activate react
 deactivate react
 
 
-== 2. Browse Tools by Category ==
+== 2. Browse All Tools ==
 
-user -> react : Clicks a category card (e.g., "Audio Editing")
+user -> react : Clicks "Explorer" in navigation
 activate react
-  react -> explore_ctrl : GET /explore?category_id=3
-  activate explore_ctrl
-    explore_ctrl -> explore_svc : filterTools(categoryId=3)
-    activate explore_svc
-      explore_svc -> model : findByCategoryId(3)
+  react -> tool_ctrl : GET /tools
+  activate tool_ctrl
+    tool_ctrl -> tool_svc : listPublicTools()
+    activate tool_svc
+      tool_svc -> model : all()
       activate model
-        model -> db : SELECT * FROM ai_tools\nWHERE category_id = 3 AND status = 'active'
+        model -> db : SELECT t.*, c.name, p.name\nFROM ai_tools t\nLEFT JOIN categories c ON t.category_id = c.id\nLEFT JOIN providers p ON t.provider_id = p.id\nWHERE t.status = 'active'
         activate db
           db --> model : Array of tools
         deactivate db
-        model --> explore_svc : Tools array
+        model --> tool_svc : Tools array
       deactivate model
-      explore_svc --> explore_ctrl : Filtered tools
-    deactivate explore_svc
+      
+      tool_svc -> model : findFeaturesByToolId()\n(loops each tool)
+      activate model
+        model -> db : SELECT f.name FROM features f\nJOIN tool_features tf ON f.id = tf.feature_id\nWHERE tf.tool_id = ?
+        activate db
+          db --> model : Feature names per tool
+        deactivate db
+        model --> tool_svc : Features per tool
+      deactivate model
+      
+      tool_svc --> tool_ctrl : Tools with features
+    deactivate tool_svc
     
-    explore_ctrl -> res : formatSuccess(tools)
-    explore_ctrl --> react : HTTP 200 OK
-  deactivate explore_ctrl
+    tool_ctrl -> res : success(tools)
+    tool_ctrl --> react : HTTP 200 OK
+  deactivate tool_ctrl
   
-  react --> user : Shows filtered tool cards
+  react --> user : Shows all active tool cards\n(default explore view)
 deactivate react
 
 
@@ -84,63 +94,47 @@ deactivate react
 
 user -> react : Clicks on a tool card
 activate react
-  react -> explore_ctrl : GET /explore/tool?id=12
-  activate explore_ctrl
-    explore_ctrl -> explore_svc : getToolDetails(12)
-    activate explore_svc
-      explore_svc -> model : findById(12)
+  react -> tool_ctrl : GET /tools?name=ToolName
+  activate tool_ctrl
+    tool_ctrl -> tool_svc : getPublicToolByName("ToolName")
+    activate tool_svc
+      tool_svc -> model : findByName("ToolName")
       activate model
-        model -> db : SELECT * FROM ai_tools WHERE id = 12
+        model -> db : SELECT t.* FROM ai_tools t\nWHERE t.name = ? AND t.status = 'active'
         activate db
           db --> model : Tool row
         deactivate db
-        model --> explore_svc : Tool object
+        model --> tool_svc : Tool object
       deactivate model
       
-      explore_svc -> model : findFeaturesByToolId(12)
+      tool_svc -> model : findFeaturesByToolId(tool_id)
       activate model
-        model -> db : SELECT f.* FROM features f\nJOIN tool_features tf ON f.id = tf.feature_id\nWHERE tf.tool_id = 12
+        model -> db : SELECT f.name FROM features f\nJOIN tool_features tf ON f.id = tf.feature_id\nWHERE tf.tool_id = ?
         activate db
           db --> model : Feature list
         deactivate db
-        model --> explore_svc : Features array
+        model --> tool_svc : Features array
       deactivate model
       
-      explore_svc --> explore_ctrl : Tool details + features
-    deactivate explore_svc
-    
-    explore_ctrl -> res : formatSuccess(details)
-    explore_ctrl --> react : HTTP 200 OK
-  deactivate explore_ctrl
-  
-  react --> user : Shows full tool page\n(description, features, reviews, fav button)
-deactivate react
-
-
-== 4. Keyword Search ==
-
-user -> react : Types "transcription" in search bar
-activate react
-  react -> explore_ctrl : GET /explore/search?q=transcription
-  activate explore_ctrl
-    explore_ctrl -> explore_svc : searchByKeywords("transcription")
-    activate explore_svc
-      explore_svc -> model : searchByNameOrDescription("transcription")
+      tool_svc -> model : findModelsByToolId(tool_id)
       activate model
-        model -> db : SELECT * FROM ai_tools\nWHERE (name LIKE '%transcription%' OR description LIKE '%transcription%')\nAND status = 'active'
+        model -> db : SELECT m.name FROM models m\nJOIN tool_models tm ON m.id = tm.model_id\nWHERE tm.tool_id = ?
         activate db
-          db --> model : Matching tools
+          db --> model : Model list
         deactivate db
-        model --> explore_svc : Results array
+        model --> tool_svc : Models array
       deactivate model
-      explore_svc --> explore_ctrl : Search results
-    deactivate explore_svc
+      
+      tool_svc -> tool_svc : findSimilarTools(category_id, tool_id)
+      
+      tool_svc --> tool_ctrl : Tool details + features + models + similar
+    deactivate tool_svc
     
-    explore_ctrl -> res : formatSuccess(results)
-    explore_ctrl --> react : HTTP 200 OK
-  deactivate explore_ctrl
+    tool_ctrl -> res : success({data: tool})
+    tool_ctrl --> react : HTTP 200 OK
+  deactivate tool_ctrl
   
-  react --> user : Shows search results
+  react --> user : Shows full tool page\n(description, features, models, similar tools)
 deactivate react
 
 @enduml

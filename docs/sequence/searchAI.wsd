@@ -58,7 +58,7 @@ activate react
       service --> explore_ctrl : Returns {history_item, tools}
     deactivate service
     
-    explore_ctrl -> res : formatSuccess(data)
+    explore_ctrl -> res : success(data)
     activate res
       res --> explore_ctrl : JSON String
     deactivate res
@@ -76,7 +76,7 @@ deactivate react
 user -> react : Clicks "Podcast Creation" from Sidebar History
 activate react
   
-  react -> history_ctrl : GET /search/history/details?id=55
+  react -> history_ctrl : GET /user/search-history/details?id=55
   activate history_ctrl
     history_ctrl -> history_svc : getSearchDetails(search_id=55, user_id)
     activate history_svc
@@ -95,7 +95,7 @@ activate react
       history_svc --> history_ctrl : Returns Tools Array
     deactivate history_svc
     
-    history_ctrl -> res : formatSuccess(Tools Array)
+    history_ctrl -> res : success(Tools Array)
     activate res
       res --> history_ctrl : JSON String
     deactivate res

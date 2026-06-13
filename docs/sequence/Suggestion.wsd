@@ -26,7 +26,7 @@ activate react
       db --> model : Returns row (if exists)
       model --> service : Result
     deactivate service
-    sug_ctrl -> res : formatSuccess(Result)
+    sug_ctrl -> res : success(Result)
     res --> sug_ctrl : JSON String
     
     alt A pending suggestion exists
@@ -59,7 +59,7 @@ activate react
           model -> db : INSERT INTO suggestions...
           service --> sug_ctrl : Returns "Duplicate Error"
           
-          sug_ctrl -> res : formatError("This tool is already in our catalog", 409)
+          sug_ctrl -> res : error("This tool is already in our catalog", 409)
           res --> sug_ctrl : JSON String
           sug_ctrl --> react : HTTP 409 Conflict
           
@@ -76,7 +76,7 @@ activate react
               model -> db : INSERT INTO suggestions...
               service --> sug_ctrl : Returns AI Error
               
-              sug_ctrl -> res : formatError("AI Validation Failed", 422)
+               sug_ctrl -> res : error("AI Validation Failed", 422)
               res --> sug_ctrl : JSON String
               sug_ctrl --> react : HTTP 422 Unprocessable\nJSON
               react -> react : UI jumps to Step 4
@@ -90,7 +90,7 @@ activate react
               model -> db : INSERT INTO suggestions (..., features_json)
               service --> sug_ctrl : Returns Success
               
-              sug_ctrl -> res : formatCreated(corrected_data)
+               sug_ctrl -> res : created(corrected_data)
               res --> sug_ctrl : JSON String
               sug_ctrl --> react : HTTP 201 Created
               react -> react : UI moves to Step 3
@@ -120,11 +120,11 @@ activate react
       deactivate model
       service --> admin_ctrl : Returns Array
     deactivate service
-    
-    admin_ctrl -> res : formatSuccess(Array)
+    admin_ctrl -> res : success(Array)
     activate res
       res --> admin_ctrl : JSON String
     deactivate res
+    
     admin_ctrl --> react : HTTP 200 OK
   deactivate admin_ctrl
   
@@ -153,7 +153,7 @@ activate react
           deactivate model
           service --> admin_ctrl : Returns Success
         deactivate service
-        admin_ctrl -> res : formatSuccess({status: "rejected"})
+        admin_ctrl -> res : success({status: "rejected"})
         activate res
           res --> admin_ctrl : JSON String
         deactivate res
@@ -204,7 +204,7 @@ activate react
           service --> admin_ctrl : Returns Success
         deactivate service
         
-        admin_ctrl -> res : formatSuccess({status: "active"})
+        admin_ctrl -> res : success({status: "active"})
         activate res
           res --> admin_ctrl : JSON String
         deactivate res

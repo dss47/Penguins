@@ -20,7 +20,7 @@ database "shelf_items" as shelf_items
 
 user -> react : Clicks "Add to Shelf" on an AI Tool Card
 activate react
-  react -> auth : GET /api/shelves?tool_id=12
+  react -> auth : GET /shelves?tool_id=12
   activate auth
     auth -> controller : Forward Request (Inject user_id)
     activate controller
@@ -44,7 +44,7 @@ activate react
       deactivate service
       
 
-      controller -> res : formatSuccess(array of shelves)
+      controller -> res : success(array of shelves)
       activate res
         res --> controller : Standardized JSON String
       deactivate res
@@ -62,7 +62,7 @@ deactivate react
 user -> react : Types "Audio Editing", clicks "Create Shelf"
 activate react
   
-  react -> auth : POST /api/shelves\n{name: "Audio Editing"}
+  react -> auth : POST /shelves/create\n{name: "Audio Editing"}
   activate auth
     auth -> controller : Forward Request
     activate controller
@@ -84,7 +84,7 @@ activate react
       deactivate service
       
 
-      controller -> res : formatCreated(Shelf Object)
+      controller -> res : success(Shelf Object)
       activate res
         res --> controller : Standardized JSON String
       deactivate res
@@ -103,7 +103,7 @@ deactivate react
 user -> react : Clicks "+" (or "Remove") on a specific shelf
 activate react
   
-  react -> auth : POST /api/shelves/toggle\n{shelf_id, tool_id}
+  react -> auth : POST /shelves/toggle\n{shelf_id, tool_id}
   activate auth
     auth -> controller : Forward Request
     activate controller
@@ -129,7 +129,7 @@ activate react
       deactivate service
       
 
-      controller -> res : formatSuccess({action})
+      controller -> res : success({action})
       activate res
         res --> controller : Standardized JSON String
       deactivate res

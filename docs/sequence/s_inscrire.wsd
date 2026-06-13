@@ -11,25 +11,25 @@ database "MySQL (users)" as db
 
 guest -> sign_up : Types infos, clicks "S'inscrire"
 activate sign_up
-sign_up -> auth_controller : POST /api/register\n{name, email, password}
+sign_up -> auth_controller : POST /auth/register\n{firstName, lastName, email, password}
 activate auth_controller
 auth_controller -> auth_service : registerUser(name, email, password)
 activate auth_service
 
-auth_service -> model : checkEmailExists(email)
+auth_service -> model : findByEmail(email)
 activate model
-model -> db : SELECT id FROM users WHERE email = ?
+model -> db : SELECT * FROM users WHERE email = ?
 activate db
-db --> model : Returns result
+db --> model : Returns row (or empty)
 deactivate db
-model --> auth_service : Returns boolean
+model --> auth_service : Returns User object (or null)
 deactivate model
 
 alt Email n'existe pas (Succès)
     
-    auth_service -> model : new User(name, email, hashed_pw, 'user')
+    auth_service -> model : new User(firstName, lastName, email, hashed_pw, 'user')
     activate model
-    model -> db : INSERT INTO users (name, email, password_hash, role)\nVALUES (?, ?, ?, 'user')
+    model -> db : INSERT INTO users (first_name, last_name, email, password_hash, role)\nVALUES (?, ?, ?, ?, 'user')
     activate db
     db --> model : Returns new user_id
     deactivate db
@@ -39,7 +39,7 @@ alt Email n'existe pas (Succès)
     auth_service -> auth_service : Generates JWT Token
     auth_service --> auth_controller : Returns Token & User object
     
-    auth_controller -> res : formatCreated({token, user})
+    auth_controller -> res : created({token, user})
     activate res
     res --> auth_controller : JSON String
     deactivate res
@@ -52,7 +52,7 @@ else Email existe déjà (Échec)
     
     auth_service --> auth_controller : Returns Error
     
-    auth_controller -> res : formatError("Email already in use", 409)
+    auth_controller -> res : error("Email already in use", 409)
     activate res
     res --> auth_controller : JSON String
     deactivate res

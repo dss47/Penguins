@@ -12,7 +12,7 @@ database "MySQL (users)" as db
 user -> log_in: Types email & mot de passe, clicks "Login"
 activate log_in
 
-  log_in -> auth_controller : POST /api/login\n{email, password}
+  log_in -> auth_controller : POST /auth/login\n{email, password}
   activate auth_controller
   
     auth_controller -> auth_service : verifyCredentials(email, password)
@@ -32,7 +32,7 @@ activate log_in
           
           auth_service -> auth_service : Generates JWT token
           auth_service --> auth_controller : Returns Token & User Role
-          auth_controller -> res : formatSuccess({token, role})
+          auth_controller -> res : success({token, role})
           activate res
             res --> auth_controller : JSON String
           deactivate res
@@ -44,7 +44,7 @@ activate log_in
       else Mot de passe est incorrect
           
           auth_service --> auth_controller : Returns false / Exception
-          auth_controller -> res : formatError("Invalid credentials", 401)
+          auth_controller -> res : error("Invalid credentials", 401)
           activate res
             res --> auth_controller : JSON String
           deactivate res
