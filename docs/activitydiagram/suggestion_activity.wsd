@@ -1,0 +1,148 @@
+@startuml advanced_ai_wizard_activity
+skinparam activityBackgroundColor #F4F4F4
+skinparam activityBorderColor #333333
+skinparam decisionBackgroundColor #FFF7D6
+skinparam decisionBorderColor #F57C00
+skinparam startColor #43A047
+skinparam endColor #E53935
+skinparam swimlaneTitleBackgroundColor #90CAF9
+skinparam swimlaneBorderColor #333333
+skinparam activityBorderRadius 15
+skinparam arrowColor #333333
+skinparam activityFontSize 13
+
+|Utilisateur / Manager|
+start
+:Navigue vers la page "Proposer un outil";
+
+|React UI (4-Step Wizard)|
+:Envoie GET /api/suggestions/current;
+
+|Backend - ToolController & Service|
+:Exécute checkPendingSuggestion(user_id);
+:SELECT * FROM suggestions WHERE user_id=? AND status LIKE 'pending%';
+
+|React UI (4-Step Wizard)|
+if (Une suggestion en attente existe ?) then (oui)
+  :Verrouille l'interface sur l'étape 3 ("En attente");
+  |Utilisateur / Manager|
+  :Ne peut pas soumettre de nouvelle suggestion;
+  stop
+else (non)
+  |React UI (4-Step Wizard)|
+  :Affiche le formulaire vide de l'étape 1;
+endif
+
+|Utilisateur / Manager|
+:Remplit et soumet le formulaire;
+note right
+  Envoie des tableaux mixtes (CreatableSelect) :
+  - {provider_id: null, proposed_provider: "New Co"}
+  - {features: [3, 7, "Voice Clone"]}
+end note
+
+|React UI (4-Step Wizard)|
+:Envoie POST /api/suggestions;
+
+|Backend - ToolController & Service|
+:Vérifie la duplication de l'URL;
+:SELECT id FROM ai_tools WHERE url = ?;
+
+if (L'URL existe déjà ?) then (oui)
+  :Met le statut à 'rejected' (Reason: 'URL exists');
+  :INSERT INTO suggestions...;
+  :Retourne HTTP 409 Conflict;
+  |React UI (4-Step Wizard)|
+  :Saute à l'étape 4 (Échec);
+  |Utilisateur / Manager|
+  :Voit le message d'erreur "Déjà existant";
+  stop
+else (non)
+  |Backend - AI Engine|
+  :Envoie POST /analyze pour vérification;
+  if (L'IA rejette l'outil ?) then (oui)
+    |Backend - ToolController & Service|
+    :Met le statut à 'rejected' (Reason: 'AI Blocked');
+    :INSERT INTO suggestions...;
+    :Retourne HTTP 422 Unprocessable;
+    |React UI (4-Step Wizard)|
+    :Saute à l'étape 4 (Échec);
+    stop
+  else (oui (L'IA accepte))
+    |Backend - ToolController & Service|
+    note right
+      Les tableaux mixtes sont stockés en toute 
+      sécurité sous forme de chaînes JSON 
+      dans la table temporaire.
+    end note
+    :Sauvegarde avec le statut 'pending_manager';
+    :INSERT INTO suggestions (..., features_json);
+    :Retourne HTTP 201 Created;
+    |React UI (4-Step Wizard)|
+    :Passe à l'étape 3;
+    |Utilisateur / Manager|
+    :Voit l'écran "En attente d'approbation du Manager";
+  endif
+endif
+
+---
+
+|Utilisateur / Manager|
+:Le Manager ouvre le Dashboard Admin;
+
+|React UI (4-Step Wizard)|
+:Envoie GET /api/manager/suggestions;
+
+|Backend - ToolController & Service|
+:Exécute getAllSuggestionsSorted();
+:SELECT * FROM suggestions \nORDER BY FIELD(status, 'pending_manager', 'active', 'rejected');
+
+|React UI (4-Step Wizard)|
+:Affiche la liste au Manager (En attente tout en haut);
+
+|Utilisateur / Manager|
+:Le Manager examine une suggestion 'pending_manager';
+
+if (Action du Manager ?) then (Rejeter)
+  :Le Manager clique sur "Reject" et saisit un motif;
+  |React UI (4-Step Wizard)|
+  :Envoie POST /api/manager/suggestions/:id/reject;
+  |Backend - ToolController & Service|
+  :UPDATE suggestions SET status='rejected_manager', reason=?;
+  :Retourne HTTP 200 OK;
+  |React UI (4-Step Wizard)|
+  :Retire l'élément de la liste "En attente";
+  stop
+else (Approuver)
+  |Utilisateur / Manager|
+  :Le Manager clique sur "Approve";
+  |React UI (4-Step Wizard)|
+  :Envoie POST /api/manager/suggestions/:id/approve;
+  |Backend - ToolController & Service|
+  :UPDATE suggestions SET status='active';
+  
+  note right
+    Le Backend boucle sur les tableaux JSON mixtes.
+    Si une chaîne de caractères (String) est trouvée,
+    une nouvelle ligne est créée en base de données.
+  end note
+  
+  if (Contient de nouveaux textes (Providers/Features) ?) then (oui)
+    :INSERT INTO features/providers (name) VALUES (?);
+    :Récupère les nouveaux IDs générés;
+  else (non)
+  endif
+  
+  :INSERT INTO ai_tools (name, provider_id...) VALUES (resolved_ids);
+  note right
+    Associe l'outil et ses fonctionnalités
+    dans la table de liaison (Pivot Table)
+  end note
+  :INSERT INTO tool_features (tool_id, feature_id) VALUES (...);
+  :Retourne HTTP 200 OK;
+  
+  |React UI (4-Step Wizard)|
+  :Déplace l'élément vers la liste "Active";
+  stop
+endif
+@enduml

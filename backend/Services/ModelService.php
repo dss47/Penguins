@@ -28,7 +28,7 @@ final class ModelService
             return [];
         }
 
-        return $this->modelModel->findByProviderId($providerId);
+        return $this->modelModel->allByProviderId($providerId);
     }
 
     // Returns a single model by its ID

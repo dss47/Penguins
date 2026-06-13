@@ -1,0 +1,103 @@
+@startuml account_deletion_flow_activity
+skinparam activityBackgroundColor #F4F4F4
+skinparam activityBorderColor #333333
+skinparam decisionBackgroundColor #FFF7D6
+skinparam decisionBorderColor #F57C00
+skinparam startColor #43A047
+skinparam endColor #E53935
+skinparam swimlaneTitleBackgroundColor #90CAF9
+skinparam swimlaneBorderColor #333333
+skinparam activityBorderRadius 15
+skinparam arrowColor #333333
+skinparam activityFontSize 13
+
+|Utilisateur / Serveur (Cron)|
+start
+
+if (Type d'événement ?) then (L'utilisateur interagit)
+  
+  if (Quelle action effectue l'utilisateur ?) then (Demander la suppression)
+    :Clique sur "Supprimer mon compte";
+    
+    |React UI|
+    :Envoie POST /api/user/delete;
+    
+    |Backend - UserController & Service|
+    :Exécute scheduleDeletion(user_id);
+    
+    |MySQL (users)|
+    :UPDATE users \nSET status = 'suspended', \ndeletion_scheduled_at = DATE_ADD(NOW(), INTERVAL 30 DAY) \nWHERE id = ?;
+    
+    |Backend - UserController & Service|
+    :Formate la réponse de succès (HTTP 200 OK);
+    
+    |React UI|
+    :Nettoie le localStorage (Supprime le Token JWT);
+    :Redirige vers la page de Login;
+    
+    |Utilisateur / Serveur (Cron)|
+    :Voit le message "Compte désactivé pour 30 jours.";
+    stop
+
+  else (Se reconnecter (Annulation))
+    |Utilisateur / Serveur (Cron)|
+    :Saisit ses identifiants et clique sur Connexion;
+    
+    |React UI|
+    :Envoie POST /api/login {email, password};
+    
+    |Backend - AuthController & Service|
+    :Exécute verifyCredentials(email, password);
+    
+    |MySQL (users)|
+    :SELECT * FROM users WHERE email = ?;
+    
+    |Backend - AuthController & Service|
+    note right
+      Le système détecte que le compte est suspendu
+      mais possède une date de suppression planifiée.
+    end note
+    
+    if (status == 'suspended' AND deletion_scheduled_at != NULL ?) then (oui)
+      |MySQL (users)|
+      :UPDATE users \nSET status = 'active', \ndeletion_scheduled_at = NULL \nWHERE id = ?;
+      |Backend - AuthController & Service|
+      :Restaure le compte;
+    else (non)
+    endif
+    
+    |Backend - AuthController & Service|
+    :Génère un nouveau Token JWT;
+    :Retourne HTTP 200 OK avec le Token;
+    
+    |React UI|
+    :Stocke le Token;
+    
+    |Utilisateur / Serveur (Cron)|
+    :Accède au site et voit "Bon retour ! Suppression annulée.";
+    stop
+  endif
+
+else (Le Cron Job se déclenche à minuit)
+  |Utilisateur / Serveur (Cron)|
+  :Lancement automatique du Cron Job (00:00);
+  
+  |Backend - UserController & Service|
+  :Exécute la commande CLI executeDailyCleanup();
+  :Appelle processPermanentDeletions();
+  
+  |MySQL (users)|
+  note right
+    Identifie tous les utilisateurs dont
+    la période de sursis de 30 jours est expirée.
+  end note
+  :UPDATE users \nSET status = 'deleted' \nWHERE status = 'suspended' \nAND deletion_scheduled_at <= NOW();
+  
+  |Backend - UserController & Service|
+  :Enregistre les logs : "Cleanup complete: X accounts deleted.";
+  
+  |Utilisateur / Serveur (Cron)|
+  stop
+endif
+
+@enduml

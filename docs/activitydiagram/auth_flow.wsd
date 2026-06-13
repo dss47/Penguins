@@ -1,0 +1,189 @@
+@startuml auth_flow
+skinparam activityBackgroundColor #F4F4F4
+skinparam activityBorderColor #333333
+skinparam decisionBackgroundColor #FFF7D6
+skinparam decisionBorderColor #F57C00
+skinparam startColor #43A047
+skinparam endColor #E53935
+skinparam swimlaneTitleBackgroundColor #90CAF9
+skinparam swimlaneBorderColor #333333
+skinparam activityBorderRadius 15
+skinparam arrowColor #333333
+skinparam activityFontSize 13
+
+|Utilisateur|
+start
+:Visite /Auth;
+:Voit LoginForm ou SignupForm;
+
+if (Mode d'authentification ?) then (Login)
+  :Tape email + password;
+  :Click "Se connecter";
+else (Signup)
+  :Tape firstName + lastName;
+  :Tape email + password;
+  :Click "S'inscrire";
+endif
+
+|Frontend (AuthPage.jsx)|
+:Toggle mode (Login/Signup);
+
+if (Clique Login ?) then (oui)
+  |Frontend (LoginForm Component)|
+  :Collecte email + password;
+  :Valide champs (client-side);
+  
+  if (Validation client OK ?) then (non)
+    :Affiche erreur;
+  else (oui)
+    :Envoie POST /auth/login\navec { email, password };
+  endif
+else (Clique Signup)
+  |Frontend (SignupForm Component)|
+  :Collecte firstName, lastName, email, password;
+  :Valide champs (client-side);
+  
+  if (Validation client OK ?) then (non)
+    :Affiche erreur;
+  else (oui)
+    :Envoie POST /auth/register\navec { firstName, lastName, email, password };
+  endif
+endif
+
+|Backend - AuthController|
+if (Route POST /auth/register ?) then (oui)
+  :Reçoit register payload;
+  :Appelle AuthService\n::registerUser();
+  
+  |Backend - AuthService|
+  :Valide email format;
+  :Valide password (min 8 chars);
+  :Sanitize firstName/lastName (htmlspecialchars);
+  
+  if (Email invalide ?) then (oui)
+    :Retourne erreur 400;
+    stop
+  else (non)
+  endif
+  
+  if (Password trop court ?) then (oui)
+    :Retourne erreur 400;
+    stop
+  else (non)
+  endif
+  
+  :Cherche user par email;
+  
+  if (Email déjà existe ?) then (oui)
+    :Retourne erreur 409;
+    stop
+  else (non)
+  endif
+  
+  :Hash password (BCRYPT);
+  :Call User Model\n::create();
+  
+  |Backend - User Model|
+  :INSERT users\n(name, email, password_hash, role, status);
+  :Retourne user_id;
+  
+  |Backend - AuthService|
+  :Retourne { id, name, email, role };
+  
+  |Backend - AuthController|
+  :Retourne Response 201 Created;
+  
+else (Clique Login)
+  :Reçoit login payload;
+  :Appelle AuthService\n::verifyCredentials();
+  
+  |Backend - AuthService|
+  :Cherche user par email;
+  
+  if (User existe ?) then (non)
+    :Retourne false;
+    :Retourne erreur 401;
+    stop
+  else (oui)
+  endif
+  
+  :Vérifie password\n(password_verify);
+  
+  if (Password correct ?) then (non)
+    :Retourne false;
+    :Retourne erreur 401;
+    stop
+  else (oui)
+  endif
+  
+  if (User status = active ?) then (non)
+    :Throw Exception\n(suspended/deleted);
+    :Retourne erreur 403;
+    stop
+  else (oui)
+  endif
+  
+  :Appelle JwtService\n::generateToken();
+  
+  |Backend - JwtService|
+  :Crée payload { user_id, role, iat, exp };
+  :Encode header (base64url);
+  :Encode payload (base64url);
+  :Signe avec HMAC-SHA256;
+  :Retourne JWT token;
+  
+  |Backend - AuthService|
+  :Retourne { token, user };
+  
+  |Backend - AuthController|
+  :Retourne Response 200 avec token;
+endif
+
+|Frontend (AuthContext.jsx)|
+:Reçoit API response;
+
+if (Statut success ?) then (oui)
+  :Stocke token en localStorage;
+  :Stocke user en localStorage;
+  :Update state (isAuthenticated=true);
+  :Redirect vers /;
+else (non)
+  :Affiche message erreur;
+  :Reste sur AuthPage;
+endif
+
+|Utilisateur|
+:Connecté / Inscription réussie;
+:Token stocké localement;
+
+note right
+Désormais, pour les requêtes suivantes :
+Authorization: Bearer <token>
+↓ Middleware valide le token
+end note
+
+if (Visite page protégée ?) then (oui)
+  |Frontend|
+  :Lit token depuis localStorage;
+  :Ajoute Authorization header;
+  
+  |Backend - AuthMiddleware|
+  :Lit Authorization header;
+  :Decode JWT avec JwtService;
+  
+  if (Token valide ?) then (non)
+    :Retourne null;
+    :Request échoue (401);
+  else (oui)
+    :Retourne { user_id, role };
+    :Request autorisée;
+  endif
+else (Logout)
+  |Frontend|
+  :Clear localStorage;
+  :Clear state;
+  :Redirect /Auth;
+endif
+
+stop
+@enduml

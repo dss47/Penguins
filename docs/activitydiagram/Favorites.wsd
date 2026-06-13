@@ -1,0 +1,64 @@
+@startuml favorites_activity
+skinparam activityBackgroundColor #F4F4F4
+skinparam activityBorderColor #333333
+skinparam decisionBackgroundColor #FFF7D6
+skinparam decisionBorderColor #F57C00
+skinparam startColor #43A047
+skinparam endColor #E53935
+skinparam swimlaneTitleBackgroundColor #90CAF9
+skinparam swimlaneBorderColor #333333
+skinparam activityBorderRadius 15
+skinparam arrowColor #333333
+skinparam activityFontSize 13
+
+|Utilisateur|
+start
+:Clique sur l'icône "Cœur/Favori" d'un outil;
+
+|UI_favorite (React)|
+:Envoie POST /api/favorites {tool_id} avec le Token JWT;
+
+|AuthMiddleware|
+:Vérifie la validité du Token JWT;
+
+if (Token valide ou présent ?) then (non)
+  |UI_favorite (React)|
+  :Retourne HTTP 401 Unauthorized;
+  :Redirige l'utilisateur vers la page de connexion;
+  |Utilisateur|
+  stop
+else (oui)
+  |AuthMiddleware|
+  :Injecte l'user_id dans la requête;
+  :Transmet la requête au contrôleur;
+endif
+
+|Backend - FavoriteController & Service|
+:Exécute toggleFavorite(user_id, tool_id);
+
+|MySQL (favorite_items)|
+:SELECT id FROM favorite_items WHERE user_id = ? AND tool_id = ?;
+
+|Backend - FavoriteController & Service|
+if (L'outil est déjà dans les favoris ?) then (oui)
+  |MySQL (favorite_items)|
+  :DELETE FROM favorite_items;
+  |Backend - FavoriteController & Service|
+  :Définit l'action à "removed";
+else (non)
+  |MySQL (favorite_items)|
+  :INSERT INTO favorite_items;
+  |Backend - FavoriteController & Service|
+  :Définit l'action à "added";
+endif
+
+:Formate la réponse via Response.php (Util);
+:Retourne HTTP 200 OK avec {action: "added/removed"};
+
+|UI_favorite (React)|
+:Met à jour l'état de l'interface (Cœur rouge ou vide);
+|Utilisateur|
+:Voit la confirmation visuelle du changement d'état;
+
+stop
+@enduml

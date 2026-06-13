@@ -39,6 +39,14 @@ final class Profession extends BaseModel
         return $stmt->fetchAll();
     }
 
+    // Updates a profession's name
+    public function update(int $id, array $data): bool
+    {
+        $sql = 'UPDATE professions SET name = :name WHERE id = :id';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':name' => $data['name'], ':id' => $id]);
+    }
+
     // Deletes a profession by its ID
     public function delete(int $id): bool
     {

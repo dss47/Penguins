@@ -44,7 +44,7 @@ final class ProviderService
             return null;
         }
 
-        $provider['models'] = $this->providerModel->getModelsByProviderId($id) ?? [];
+        $provider['models'] = [];
 
         return $provider;
     }

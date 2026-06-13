@@ -65,6 +65,7 @@ final class UserController
 			'role'            => $user['role'],
 			'profile_url'     => $user['profile_url'] ?? null,
 			'status'          => $user['status'] ?? 'active',
+			'profession_id'   => $user['profession_id'] ?? null,
 			'profession_name' => $professionName,
 			'created_at'      => $user['created_at'] ?? null,
 			'updated_at'      => $user['updated_at'] ?? null,
@@ -107,7 +108,7 @@ final class UserController
 		$data = [];
 		if (isset($body['name'])) $data['name'] = trim($body['name']);
 		if (isset($body['email'])) $data['email'] = trim($body['email']);
-		if (isset($body['profession_id'])) $data['profession_id'] = (int) $body['profession_id'];
+		if (array_key_exists('profession_id', $body)) $data['profession_id'] = $body['profession_id'] !== null ? (int) $body['profession_id'] : null;
 		if (isset($body['current_password'])) $data['current_password'] = $body['current_password'];
 		if (isset($body['new_password'])) $data['new_password'] = $body['new_password'];
 		if (isset($body['new_password_confirmation'])) $data['new_password_confirmation'] = $body['new_password_confirmation'];

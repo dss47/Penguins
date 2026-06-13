@@ -1,0 +1,175 @@
+@startuml 06_Penguins_Deploiement_API_DataFlow
+
+title Penguins — Cartographie Complète des Endpoints REST
+
+skinparam backgroundColor #FCFCFC
+skinparam defaultTextAlignment center
+
+skinparam node {
+  BorderColor #1A3A4A
+  BackgroundColor #E8F4F8
+  FontColor #0D2137
+  FontStyle bold
+}
+skinparam package {
+  BorderColor #2C6E8A
+  BackgroundColor #F0F8FF
+  FontColor #0D2137
+}
+skinparam component {
+  BorderColor #1A3A4A
+  BackgroundColor #FFFDE7
+  FontColor #0D2137
+}
+skinparam artifact {
+  BorderColor #6A2A8A
+  BackgroundColor #F3E5F5
+  FontColor #0D2137
+}
+skinparam database {
+  BorderColor #2A6A3A
+  BackgroundColor #C8E6C9
+  FontColor #0D2137
+}
+
+' ─── CLIENT REACT ───────────────────────────────────────────
+node "React SPA\n<<localhost:5173>>" as frontend {
+  component "Axios (api.js)\nbaseURL: http://localhost:8000\nBearer JWT auto-injected" as axios
+}
+
+' ─── ROUTER PHP ─────────────────────────────────────────────
+node "Backend PHP\n<<localhost:8000>>" as backend {
+
+  ' ── AUTHENTIFICATION ────────────────────────────────
+  package "Authentification\n(public)" as auth_grp {
+    artifact "POST /auth/register\n{firstName, lastName, email, password}" as ep_register
+    artifact "POST /auth/login\n{email, password}\n← {token, role, user}" as ep_login
+  }
+
+  ' ── UTILISATEUR ─────────────────────────────────────
+  package "Utilisateur\n(user+)" as user_grp {
+    artifact "GET /user/profile\n← {user object}" as ep_profile
+    artifact "GET /user/stats\n← {stats object}" as ep_stats
+    artifact "POST /user/profile/update\nmultipart: {fields} + avatar file\n← {user object}" as ep_update_profile
+    artifact "GET /professions\n← [{id, name}]" as ep_professions
+  }
+
+  ' ── EXPLORATION ─────────────────────────────────────
+  package "Exploration\n(public + optionnel auth)" as explore_grp {
+    artifact "GET /landing/summary\n← {top_tools, top_reviews}" as ep_landing
+    artifact "POST /explore/recommend\n{prompt, user_id?}\n← {history_item, tools[]}\n⚡ appel IA" as ep_recommend
+    artifact "GET /tools\n← [{tool}] tous actifs" as ep_tools
+    artifact "GET /tools/reviews?tool_id=X\n← [{review}]" as ep_tool_reviews
+    artifact "GET /reviews/top\n← top 3 avis approuvés" as ep_top_reviews
+  }
+
+  ' ── FAVORIS ─────────────────────────────────────────
+  package "Favoris\n(user+)" as fav_grp {
+    artifact "GET /favorites\n← [{tool}]" as ep_fav_list
+    artifact "POST /favorites/toggle\n{tool_id}\n← 'added'|'removed'" as ep_fav_toggle
+  }
+
+  ' ── RAYONS ──────────────────────────────────────────
+  package "Rayons (Shelves)\n(user+)" as shelf_grp {
+    artifact "GET /shelves\n← [{shelf}]" as ep_shelves
+    artifact "GET /shelves/items?shelf_id=X\n← {shelf, tools[]}" as ep_shelf_items
+    artifact "POST /shelves/create\n{name, description?}" as ep_shelf_create
+    artifact "POST /shelves/update\n{shelf_id, name, description?}" as ep_shelf_update
+    artifact "POST /shelves/delete\n{shelf_id}" as ep_shelf_delete
+    artifact "POST /shelves/toggle\n{shelf_id, tool_id}\n← 'added'|'removed'" as ep_shelf_toggle
+  }
+
+  ' ── AVIS ────────────────────────────────────────────
+  package "Avis (Reviews)\n(user+)" as review_grp {
+    artifact "POST /reviews/submit\n{tool_id, rating, comment}\n⚡ modération IA\n← {review}" as ep_review_submit
+    artifact "POST /reviews/update\n{review_id, rating, comment}\n⚡ modération IA" as ep_review_update
+    artifact "POST /reviews/delete\n{review_id}" as ep_review_delete
+    artifact "GET /user/reviews\n← [{review}]" as ep_user_reviews
+  }
+
+  ' ── SUGGESTIONS ─────────────────────────────────────
+  package "Suggestions\n(user+)" as sug_grp {
+    artifact "POST /suggestions/create\nmultipart: {name, url, description,\n  category_id, provider_id,\n  model_ids[], release_date} + logo\n⚡ validation IA\n← {suggestion}" as ep_sug_create
+    artifact "GET /suggestions/history\n← [{suggestion}] de l'utilisateur" as ep_sug_history
+  }
+
+  ' ── HISTORIQUE RECHERCHE ────────────────────────────
+  package "Historique de Recherche\n(user+)" as history_grp {
+    artifact "GET /user/search-history\n← [{search_history}]" as ep_hist_list
+    artifact "GET /user/search-history/details?id=X\n← {tools[]}" as ep_hist_detail
+  }
+
+  ' ── ADMIN — DASHBOARD & USERS ───────────────────────
+  package "Admin — Dashboard & Users\n(admin)" as adm_users_grp {
+    artifact "GET /admin/dashboard\n← {stats, users…}" as ep_adm_dash
+    artifact "GET /admin/users\n← [{user}]" as ep_adm_users
+    artifact "POST /admin/users/promote|demote|ban|unban\n{user_id}" as ep_adm_user_actions
+  }
+
+  ' ── ADMIN — SUGGESTIONS ─────────────────────────────
+  package "Admin — Suggestions\n(manager+)" as adm_sug_grp {
+    artifact "GET /admin/suggestions\n← [{suggestion} pending]" as ep_adm_sug_list
+    artifact "POST /admin/suggestions/approve\n{suggestion_id}\n→ crée l'outil en DB" as ep_adm_sug_approve
+    artifact "POST /admin/suggestions/reject\n{suggestion_id, reason}" as ep_adm_sug_reject
+    artifact "POST /admin/suggestions/create|update\nmultipart\n⚡ validation IA" as ep_adm_sug_create
+    artifact "POST /admin/suggestions/delete\n{suggestion_id}" as ep_adm_sug_delete
+    artifact "GET /admin/suggestions/history\n← [{suggestion} traitées par admin]" as ep_adm_sug_hist
+  }
+
+  ' ── ADMIN — MODERATION ──────────────────────────────
+  package "Admin — Modération\n(manager+)" as adm_mod_grp {
+    artifact "GET /admin/moderation/reviews\n← [{review} flagged]" as ep_adm_mod_list
+    artifact "POST /admin/moderation/reviews/approve\n{review_id}" as ep_adm_mod_approve
+    artifact "POST /admin/moderation/reviews/delete\n{review_id}" as ep_adm_mod_delete
+  }
+
+  ' ── ADMIN — TOOLS ───────────────────────────────────
+  package "Admin — Outils\n(manager+)" as adm_tools_grp {
+    artifact "GET /admin/tools\n← [{tool} all statuses]" as ep_adm_tools
+    artifact "POST /admin/tools/update-status\n{tool_id, status}\n(active/inactive)" as ep_adm_tool_status
+    artifact "POST /admin/tools/delete\n{tool_id}" as ep_adm_tool_delete
+  }
+
+  ' ── ADMIN — DATA ────────────────────────────────────
+  package "Admin — Données de référence\n(manager+)" as adm_data_grp {
+    artifact "GET /admin/data/lists\n← {categories, providers, features, models}" as ep_adm_data_lists
+    artifact "POST /admin/data/categories/create|update|delete" as ep_adm_cats
+    artifact "POST /admin/data/providers/create|update|delete" as ep_adm_provs
+    artifact "POST /admin/data/features/create|update|delete" as ep_adm_feats
+    artifact "POST /admin/data/models/create|update|delete" as ep_adm_models
+  }
+}
+
+' ─── BASE DE DONNÉES ────────────────────────────────────────
+database "MySQL\npenguin_db" as db
+
+' ─── RELATIONS ──────────────────────────────────────────────
+axios --> auth_grp
+axios --> user_grp
+axios --> explore_grp
+axios --> fav_grp
+axios --> shelf_grp
+axios --> review_grp
+axios --> sug_grp
+axios --> history_grp
+axios --> adm_users_grp
+axios --> adm_sug_grp
+axios --> adm_mod_grp
+axios --> adm_tools_grp
+axios --> adm_data_grp
+
+auth_grp --> db
+user_grp --> db
+explore_grp --> db
+fav_grp --> db
+shelf_grp --> db
+review_grp --> db
+sug_grp --> db
+history_grp --> db
+adm_users_grp --> db
+adm_sug_grp --> db
+adm_mod_grp --> db
+adm_tools_grp --> db
+adm_data_grp --> db
+
+@enduml

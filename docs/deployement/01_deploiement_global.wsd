@@ -1,0 +1,115 @@
+@startuml 01_Penguins_Deploiement_Global
+
+title Penguins — Vue Globale de Déploiement
+
+skinparam backgroundColor #FCFCFC
+skinparam defaultTextAlignment center
+
+skinparam node {
+  BorderColor #1A3A4A
+  BackgroundColor #E8F4F8
+  FontColor #0D2137
+  FontStyle bold
+  FontSize 13
+}
+skinparam artifact {
+  BorderColor #2C6E8A
+  BackgroundColor #D0E8F0
+  FontColor #0D2137
+}
+skinparam database {
+  BorderColor #2A6A3A
+  BackgroundColor #C8E6C9
+  FontColor #0D2137
+}
+skinparam cloud {
+  BorderColor #4A90D9
+  BackgroundColor #E3F2FD
+  FontColor #0D2137
+}
+skinparam component {
+  BorderColor #8A6A2A
+  BackgroundColor #FFF9C4
+  FontColor #0D2137
+}
+skinparam interface {
+  BorderColor #1A3A4A
+}
+
+' ─── COUCHE CLIENT ───────────────────────────────────────────
+node "Machine Utilisateur\n<<Client>>" as client_node {
+  node "Navigateur Web\n<<Chrome / Firefox / Safari>>" as browser {
+    artifact "React SPA\n(Vite build)" as react_spa
+    note right of react_spa
+      Port dev : 5173
+      Build prod : dist/
+      JWT → localStorage
+      Axios → Bearer Token
+    end note
+  }
+}
+
+' ─── COUCHE SERVEUR ──────────────────────────────────────────
+node "Serveur d'Application\n<<Linux / Apache ou Nginx>>" as app_server {
+
+  node "Runtime PHP 8.x\n<<PHP-FPM>>" as php_runtime {
+    artifact "index.php\n(Router / Point d'entrée)" as router
+    artifact "Controllers\n(Auth, Admin, Explore,\nTool, Review, Shelf…)" as controllers
+    artifact "Services\n(AuthService, ExploreService,\nOpenRouterService, UploadService…)" as services
+    artifact "Models (PDO)\n(User, AiTool, Review,\nSuggestion, Shelf…)" as models
+    artifact "Middleware\n(AuthMiddleware + JwtService\nRoleMiddleware)" as middleware
+    artifact "Utils\n(JwtService, Response)" as utils
+  }
+
+  folder "Stockage Fichiers\n(Système de fichiers local)" as fs {
+    artifact "public/uploads/tools/\n(logos .webp)" as uploads_tools
+    artifact "public/uploads/userProfile/\n(avatars .jpg)" as uploads_profiles
+  }
+}
+
+' ─── COUCHE BASE DE DONNÉES ──────────────────────────────────
+node "Serveur Base de Données\n<<MySQL 8.x>>" as db_server {
+  database "penguin_db\n(MySQL)" as mysql {
+    artifact "users\nprofessions" as t_users
+    artifact "ai_tools\ncategories\nproviders\nfeatures\nmodels" as t_catalog
+    artifact "reviews\nsuggestions\nfavorite_items" as t_social
+    artifact "shelves\nshelf_items\nsearch_histories\nsearch_history_tools" as t_personal
+  }
+}
+
+' ─── SERVICE EXTERNE IA ──────────────────────────────────────
+cloud "AgentRouter / LLM\n<<External AI API>>" as ai_cloud {
+  component "claude-opus-4-6\n(modèle prioritaire)" as llm_1
+  component "glm-5.1\n(modèle de secours)" as llm_2
+  note right of ai_cloud
+    URL : agentrouter.org/v1/chat/completions
+    Auth : Bearer sk-GN7Z…
+    3 usages :
+    • Recommandation IA (prompt → tool_ids)
+    • Validation de suggestion (ai_approved / ai_rejected)
+    • Modération de commentaire (flagged / reason)
+    Timeout cURL : 90s
+    Fallback : modelQueue[0] → [1]
+  end note
+}
+
+' ─── RELATIONS ───────────────────────────────────────────────
+
+react_spa -[#2C6E8A,thickness=2]-> router : HTTP/HTTPS\nREST JSON\n**POST/GET** /auth /explore\n/admin /tools /user…\nCORS : localhost:5173\nAuthorization: Bearer <JWT>
+
+router -[#8A6A2A]-> middleware : vérifie JWT\n(AuthMiddleware)
+router -[#8A6A2A]-> controllers : dispatch route
+
+controllers -[#8A6A2A]-> services : appels métier
+services -[#8A6A2A]-> models : accès données
+
+models -[#2A6A3A,thickness=2]-> mysql : PDO\nTCP 127.0.0.1:3306\nutf8mb4\nPDO::ERRMODE_EXCEPTION
+
+services -[#4A90D9,thickness=2]-> ai_cloud : cURL HTTPS POST\nBearer Token\nJSON payload\n(model, messages)
+
+services -[#8A6A2A]-> uploads_tools : move_uploaded_file()
+services -[#8A6A2A]-> uploads_profiles : move_uploaded_file()
+
+react_spa -[#2C6E8A,dashed]-> uploads_tools : GET image\nhttp://localhost:8000/public/…
+
+@enduml

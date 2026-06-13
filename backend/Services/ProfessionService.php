@@ -44,7 +44,7 @@ final class ProfessionService
             'name' => $name
         ];
 
-        $id = $this->professionModel->create($payload);
+        $id = $this->professionModel->create($name);
 
         return [
             'success' => true,

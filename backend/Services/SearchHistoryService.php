@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Models\SearchHistory;
 use App\Models\SearchHistoryTool;
 use App\Models\ToolFeatures;
-use App\Services\SearchHistoryService;
 
 
 

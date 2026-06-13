@@ -28,7 +28,7 @@ final class RecommendationService
 
         $availableTools = $this->toolModel->recommendationCandidates();
 
-        $aiResponseJson = $this->openRouterService->getTop6Recommendations($prompt, $userProfession, $availableTools);
+        $aiResponseJson = $this->openRouterService->getRecommendations($prompt, $availableTools);
 
         if (!$aiResponseJson) {
             return ['success' => false, 'message' => "Notre assistant IA est temporairement indisponible."];

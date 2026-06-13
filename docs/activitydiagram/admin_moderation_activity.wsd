@@ -1,0 +1,91 @@
+@startuml review_moderation_pipeline_activity
+skinparam activityBackgroundColor #F4F4F4
+skinparam activityBorderColor #333333
+skinparam decisionBackgroundColor #FFF7D6
+skinparam decisionBorderColor #F57C00
+skinparam startColor #43A047
+skinparam endColor #E53935
+skinparam swimlaneTitleBackgroundColor #90CAF9
+skinparam swimlaneBorderColor #333333
+skinparam activityBorderRadius 15
+skinparam arrowColor #333333
+skinparam activityFontSize 13
+
+|Regular User / Admin|
+start
+:Remplit la note (5) et le commentaire;
+:Soumet l'avis;
+
+|React UI|
+:Envoie POST /api/reviews;
+
+|Auth & Role Middleware|
+:Injecte l'user_id dans la requête;
+:Transmet la requête au contrôleur;
+
+|Backend - ReviewController & Service|
+:Exécute submitReview(user_id, data);
+
+|Backend - AI Moderation|
+:Envoie POST /v1/moderations {input: comment};
+:Analyse le contenu du commentaire;
+:Retourne le résultat JSON;
+
+|Backend - ReviewController & Service|
+if (Le commentaire est toxique/spam (Flagged) ?) then (oui)
+  :Définit le statut à 'flagged';
+  :INSERT INTO reviews (..., status='flagged');
+  :Retourne le message "En attente de modération";
+  |React UI|
+  :Retourne HTTP 201 Created (Warning);
+  :Affiche "Votre avis est en cours de vérification";
+  |Regular User / Admin|
+  stop
+else (non (Commentaire propre))
+  |Backend - ReviewController & Service|
+  :Définit le statut à 'approved';
+  :INSERT INTO reviews (..., status='approved');
+  note right
+    L'avis est immédiatement approuvé
+    et devient visible sur la plateforme.
+  end note
+  :Retourne les données de l'avis;
+  |React UI|
+  :Affiche l'avis en direct sur le site;
+  |Regular User / Admin|
+  stop
+endif
+
+---
+
+|Regular User / Admin|
+:L'Admin ouvre l'onglet "Flagged" du Dashboard;
+:L'Admin clique sur "Ban User & Delete";
+
+|React UI|
+:Envoie POST /api/admin/users/:id/ban {review_id};
+
+|Auth & Role Middleware|
+:Vérifie le rôle de l'utilisateur;
+
+if (User Role == 'admin' ?) then (non)
+  |React UI|
+  :Retourne HTTP 403 Forbidden;
+  |Regular User / Admin|
+  :Voit une erreur d'accès refusé;
+  stop
+else (oui)
+  |Backend - ReviewController & Service|
+  :Exécute banUserAndCleanUp(user_id, review_id);
+  :UPDATE users SET status = 'suspended' WHERE id = ?;
+  :DELETE FROM reviews WHERE id = ?;
+  :Retourne le message de confirmation;
+  
+  |React UI|
+  :Retourne HTTP 200 OK;
+  :Retire l'avis de la liste affichée;
+  |Regular User / Admin|
+  :Voit l'alerte "Utilisateur banni avec succès";
+  stop
+endif
+@enduml
