@@ -96,3 +96,61 @@ router_note ..> ShelfController : instantiates
 router_note ..> SuggestionController : instantiates
 router_note ..> SearchHistoryController : instantiates
 router_note ..> ExploreController : instantiates
+
+' ═══════════════════════════════════════════════════════════
+' DB RELATIONSHIPS (foreign keys with multiplicities)
+' ═══════════════════════════════════════════════════════════
+
+' ── User ──────────────────────────────────────────────────
+User "1" --> "1" Profession : profession_id
+User "1" --> "*" Review : user_id (écrit)
+User "1" --> "*" Suggestion : user_id (propose)
+User "1" --> "*" FavoriteItem : user_id (favorise)
+User "1" --> "*" Shelf : user_id (possède)
+User "1" --> "*" SearchHistory : user_id (recherche)
+
+' ── AiTool ────────────────────────────────────────────────
+AiTool "*" --> "1" Category : category_id
+AiTool "*" --> "1" Provider : provider_id
+AiTool "1" --> "*" Review : tool_id (reçoit)
+AiTool "1" --> "*" ToolFeatures : tool_id (a)
+AiTool "1" --> "*" ToolModel : tool_id (a)
+AiTool "1" --> "*" FavoriteItem : tool_id (favorisé par)
+
+' ── Review ────────────────────────────────────────────────
+' Already covered above, but explicit:
+' Review "*" --> "1" User
+' Review "*" --> "1" AiTool
+
+' ── Suggestion ────────────────────────────────────────────
+' Already covered above (user_id, category_id, provider_id)
+
+' ── FavoriteItem ──────────────────────────────────────────
+' Already covered above (user_id, tool_id)
+
+' ── Shelf ─────────────────────────────────────────────────
+Shelf "1" --> "*" ShelfItem : shelf_id (contient)
+' Already covered: Shelf "*" --> "1" User
+
+' ── ShelfItem ─────────────────────────────────────────────
+ShelfItem "*" --> "1" AiTool : tool_id
+
+' ── SearchHistory ─────────────────────────────────────────
+SearchHistory "1" --> "*" SearchHistoryTool : search_history_id (contient)
+' Already covered: SearchHistory "*" --> "1" User
+
+' ── SearchHistoryTool ─────────────────────────────────────
+SearchHistoryTool "*" --> "1" AiTool : tool_id
+
+' ── ToolFeatures ──────────────────────────────────────────
+ToolFeatures "*" --> "1" Feature : feature_id
+
+' ── ToolModel ─────────────────────────────────────────────
+ToolModel "*" --> "1" Model : model_id
+
+' ── Model ─────────────────────────────────────────────────
+Model "*" --> "1" Provider : provider_id
+
+' ── AiTool self-refs ─────────────────────────────────────
+AiTool "*" --> "1" User : created_by
+AiTool "*" --> "1" User : validated_by

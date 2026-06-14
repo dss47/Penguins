@@ -1,0 +1,887 @@
+@startuml Penguins_ClassDiagram
+skinparam backgroundColor #FFFFFF
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam classBorderThickness 2
+skinparam classFontColor #111111
+skinparam classFontSize 12
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageBackgroundColor #FFFFFF
+skinparam packageBorderColor #333333
+skinparam packageFontColor #111111
+skinparam arrowColor #555555
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodeMargin 20
+skinparam packageMargin 40
+skinparam ranksep 60
+skinparam nodesep 50
+skinparam defaultTextAlignment left
+
+' ═══════════════════════════════════════════════════════════
+' MODELS
+' ═══════════════════════════════════════════════════════════
+
+' ── Package: Models ──────────────────────────────────────
+package "Models" as models_pkg {
+  abstract class BaseModel {
+    {field} # PDO $db
+    {method} + __construct(?PDO $db = null)
+  }
+
+  ' ═══════════════════════════════════════════════════════
+  ' ROW 1 — Core entities
+  ' ═══════════════════════════════════════════════════════
+
+  class User extends BaseModel {
+    {field} + int id
+    {field} + int profession_id
+    {field} + string email
+    {field} + string password_hash
+    {field} + string name
+    {field} + string profile_url
+    {field} + enum role
+    {field} + enum status
+    {field} + datetime scheduled_deletion
+    {field} + datetime suspended_until
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + findByEmail(string $email): ?array
+    {method} + findById(int $userId): ?array
+    {method} + create(array $data): int
+    {method} + update(int $id, array $data): bool
+    {method} + updateStatus(int $id, string $status): bool
+    {method} + updatePassword(int $id, string $passwordHash): bool
+    {method} + scheduleDeletion(int $userId, string $scheduledDate): bool
+    {method} + restoreAccount(int $userId): bool
+    {method} + getUsersReadyForPermanentDeletion(): array
+    {method} + deletePermanently(int $userId): bool
+  }
+
+  class AiTool extends BaseModel {
+    {field} + int id
+    {field} + int category_id
+    {field} + int provider_id
+    {field} + int created_by
+    {field} + int validated_by
+    {field} + string name
+    {field} + text description
+    {field} + string logo_url
+    {field} + string website_url
+    {field} + decimal global_rating
+    {field} + decimal website_rating
+    {field} + date release_date
+    {field} + enum status
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + all(): array
+    {method} + findById(int $toolId): ?array
+    {method} + findByName(string $name): ?array
+    {method} + create(array $data): ?int
+    {method} + update(int $toolId, array $data): bool
+    {method} + updateStatus(int $toolId, string $newStatus): bool
+    {method} + delete(int $toolId): bool
+    {method} + recommendationCandidates(): array
+    {method} + findActiveByIds(array $ids): array
+  }
+
+  class Review extends BaseModel {
+    {field} + int id
+    {field} + int user_id
+    {field} + int tool_id
+    {field} + tinyint rating
+    {field} + text comment
+    {field} + enum status
+    {field} + text ai_flag_reason
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + create(array $data): int
+    {method} + findById(int $id): ?array
+    {method} + update(int $id, array $data): bool
+    {method} + delete(int $id): bool
+    {method} + allByStatus(string $status): array
+    {method} + allByUserId(int $userId): array
+    {method} + allApprovedByToolId(int $toolId): array
+    {method} + topApprovedComments(int $limit = 3): array
+    {method} + findByUserAndTool(int $userId, int $toolId): ?array
+    {method} + updateModeration(int $reviewId, string $status, ?string $aiFlagReason): bool
+    {method} + deleteAllByUserId(int $userId): bool
+  }
+
+  class Suggestion extends BaseModel {
+    {field} + int id
+    {field} + int user_id
+    {field} + int category_id
+    {field} + int ?fixed_category_id
+    {field} + int ?provider_id
+    {field} + int ?fixed_provider_id
+    {field} + int ?model_id
+    {field} + text model_ids
+    {field} + int ?fixed_model_id
+    {field} + text fixed_model_ids
+    {field} + string name
+    {field} + string ?fixed_name
+    {field} + string logo_url
+    {field} + string website_url
+    {field} + string ?fixed_url
+    {field} + text description
+    {field} + text ?fixed_description
+    {field} + json existing_feature_ids
+    {field} + text ?fixed_feature_ids
+    {field} + date release_date
+    {field} + date ?fixed_release_date
+    {field} + text why_this_tool
+    {field} + enum status
+    {field} + text ?rejection_reason
+    {field} + text ai_moderation_notes
+    {field} + decimal ai_global_rating
+    {field} + int ?tool_id
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + create(array $data): int
+    {method} + findById(int $id): ?array
+    {method} + update(int $id, array $data): bool
+    {method} + delete(int $id): bool
+    {method} + allByStatus(string $status): array
+    {method} + allByUserId(int $userId): array
+    {method} + getAdminHistory(int $adminUserId): array
+    {method} + updateStatus(int $id, string $status, ?string $rejectionReason, ?int $toolId): bool
+    {method} + updateFromAiValidation(int $id, array $aiData): bool
+  }
+
+  ' ═══════════════════════════════════════════════════════
+  ' ROW 2 — Lookups / référentiels
+  ' ═══════════════════════════════════════════════════════
+
+  class Category extends BaseModel {
+    {field} + int id
+    {field} + string name
+    {field} + string icon
+    {field} + text description
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + create(array $data): int
+    {method} + update(int $id, array $data): bool
+    {method} + findById(int $id): ?array
+    {method} + all(): array
+    {method} + delete(int $id): bool
+  }
+
+  class Provider extends BaseModel {
+    {field} + int id
+    {field} + string name
+    {field} + string website_url
+    {field} + text description
+    {field} + enum status
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + create(array $data): int
+    {method} + update(int $id, array $data): bool
+    {method} + findById(int $id): ?array
+    {method} + findByName(string $name): ?array
+    {method} + all(): array
+    {method} + allActive(): array
+    {method} + allByStatus(string $status): array
+    {method} + delete(int $id): bool
+    {method} + updateStatus(int $id, string $status): bool
+  }
+
+  class Feature extends BaseModel {
+    {field} + int id
+    {field} + string name
+    {field} + text description
+    {field} + enum type
+    {field} + enum status
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + create(array $data): int
+    {method} + update(int $id, array $data): bool
+    {method} + findById(int $id): ?array
+    {method} + all(): array
+    {method} + allActive(): array
+    {method} + delete(int $id): bool
+    {method} + updateStatus(int $id, string $status): bool
+  }
+
+  class Model extends BaseModel {
+    {field} + int id
+    {field} + int provider_id
+    {field} + string name
+    {field} + text description
+    {field} + enum status
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + create(array $data): int
+    {method} + findById(int $id): ?array
+    {method} + all(): array
+    {method} + allByProviderId(int $providerId): array
+    {method} + update(int $id, array $data): bool
+    {method} + delete(int $id): bool
+    {method} + updateStatus(int $id, string $status): bool
+  }
+
+  class Profession extends BaseModel {
+    {field} + int id
+    {field} + string name
+    {field} + timestamp created_at
+    --
+    {method} + create(string $name): int
+    {method} + findById(int $id): ?array
+    {method} + all(): array
+    {method} + delete(int $id): bool
+  }
+
+  ' ═══════════════════════════════════════════════════════
+  ' ROW 3 — Données utilisateur
+  ' ═══════════════════════════════════════════════════════
+
+  class FavoriteItem extends BaseModel {
+    {field} + int id
+    {field} + int user_id
+    {field} + int tool_id
+    {field} + timestamp created_at
+    --
+    {method} + add(int $userId, int $toolId): bool
+    {method} + remove(int $userId, int $toolId): bool
+    {method} + isFavorited(int $userId, int $toolId): bool
+    {method} + allByUserId(int $userId): array
+  }
+
+  class Shelf extends BaseModel {
+    {field} + int id
+    {field} + int user_id
+    {field} + string name
+    {field} + text description
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + create(array $data): int
+    {method} + findById(int $shelfId): ?array
+    {method} + allByUserId(int $userId): array
+    {method} + findByUserId(int $userId): array
+    {method} + update(int $id, array $data): bool
+    {method} + delete(int $id): bool
+  }
+
+  class ShelfItem extends BaseModel {
+    {field} + int id
+    {field} + int shelf_id
+    {field} + int tool_id
+    {field} + timestamp created_at
+    --
+    {method} + allByShelfId(int $shelfId): array
+    {method} + findById(int $id): ?array
+    {method} + addToShelf(array $data): int
+    {method} + removeFromShelf(int $shelfId, int $toolId): bool
+    {method} + exists(int $shelfId, int $toolId): bool
+    {method} + toggle(int $shelfId, int $toolId): string
+    {method} + getToolsByShelfId(int $shelfId): array
+  }
+
+  class SearchHistory extends BaseModel {
+    {field} + int id
+    {field} + int user_id
+    {field} + text prompt_text
+    {field} + string title
+    {field} + enum search_type
+    {field} + text ai_reasoning
+    {field} + timestamp created_at
+    --
+    {method} + create(array $data): int
+    {method} + findById(int $historyId): ?array
+    {method} + allByUserId(int $userId): array
+  }
+
+  class SearchHistoryTool extends BaseModel {
+    {field} + int id
+    {field} + int search_history_id
+    {field} + int tool_id
+    --
+    {method} + linkTool(int $searchHistoryId, int $toolId): bool
+    {method} + findToolsByHistoryId(int $historyId): array
+  }
+
+  ' ═══════════════════════════════════════════════════════
+  ' ROW 4 — Jonctions
+  ' ═══════════════════════════════════════════════════════
+
+  class ToolFeatures extends BaseModel {
+    {field} + int id
+    {field} + int tool_id
+    {field} + int feature_id
+    {field} + timestamp created_at
+    --
+    {method} + linkFeatureToTool(int $toolId, int $featureId): bool
+    {method} + unlinkFeatureFromTool(int $toolId, int $featureId): bool
+    {method} + findFeaturesByToolId(int $toolId): array
+  }
+
+  class ToolModel extends BaseModel {
+    {field} + int id
+    {field} + int tool_id
+    {field} + int model_id
+    --
+    {method} + linkModelToTool(int $toolId, int $modelId): bool
+    {method} + unlinkModelFromTool(int $toolId, int $modelId): bool
+    {method} + findModelsByToolId(int $toolId): array
+  }
+
+  ' ═══════════════════════════════════════════════════════
+  ' HIDDEN ALIGNMENT (4 rows × 5 cols grid)
+  ' ═══════════════════════════════════════════════════════
+
+  ' Row 1: Core entities
+  BaseModel -[hidden]-> User
+  User -[hidden]-> AiTool
+  AiTool -[hidden]-> Review
+  Review -[hidden]-> Suggestion
+
+  ' Row 2: Lookups (below Row 1)
+  Suggestion -[hidden]d-> Category
+  Category -[hidden]-> Provider
+  Provider -[hidden]-> Feature
+  Feature -[hidden]-> Model
+  Model -[hidden]-> Profession
+
+  ' Row 3: User data (below Row 2)
+  Category -[hidden]d-> FavoriteItem
+  FavoriteItem -[hidden]-> Shelf
+  Shelf -[hidden]-> ShelfItem
+  ShelfItem -[hidden]-> SearchHistory
+  SearchHistory -[hidden]-> SearchHistoryTool
+
+  ' Row 4: Junctions (below Row 3)
+  ShelfItem -[hidden]d-> ToolFeatures
+  ToolFeatures -[hidden]-> ToolModel
+}
+
+' ═══════════════════════════════════════════════════════════
+' SERVICES
+' ═══════════════════════════════════════════════════════════
+
+' ── Package: Services ─────────────────────────────────────
+package "Services" as svc_pkg {
+
+  ' ── Services referenced by AdminController ──────────────
+  class AdminService {
+    {field} - PDO $db
+    {method} + getDashboardData(): array
+    {method} + getUsers(): array
+    {method} + updateUserRole(int $userId, string $role): bool
+    {method} + updateUserStatus(int $userId, string $status): bool
+    {method} + suspendUser(int $userId, string $duration): bool
+    {method} + deleteUser(int $userId): bool
+    {method} + getSuggestions(): array
+    {method} + rejectSuggestion(int $id, string $reason): bool
+    {method} + deleteSuggestion(int $id): bool
+  }
+
+  class ToolService {
+    {field} - AiTool $toolModel
+    {field} - ToolFeatures $toolFeatures
+    {method} + listTools(): array
+    {method} + listAllToolsWithDetails(): array
+    {method} + listPublicTools(): array
+    {method} + getPublicToolByName(string $name): array
+    {method} + getToolDetails(int $id): array
+    {method} + createTool(array $payload, int $userId): array
+    {method} + updateTool(int $id, array $payload): array
+    {method} + updateToolStatus(int $id, string $newStatus): array
+    {method} + deleteTool(int $id): array
+    {method} + validateToolData(array $payload): array
+  }
+
+  class SuggestionService {
+    {field} - Suggestion $suggestionModel
+    {field} - OpenRouterService $openRouterService
+    {field} - Category $categoryModel
+    {field} - Provider $providerModel
+    {field} - Model $modelModel
+    {field} - Feature $featureModel
+    {field} - ToolService $toolService
+    {field} - UploadService $uploadService
+    {field} - ToolModel $toolModelJunction
+    {field} - ToolFeatures $toolFeatures
+    {method} + createSuggestion(array $payload, ?array $file): array
+    {method} + listPendingSuggestions(): array
+    {method} + promoteToTool(int $suggestionId, int $adminId): array
+  }
+
+  class UploadService {
+    {field} - string $baseDir
+    {method} + handleUpload(array $file, string $destinationFolder, ?string $customName): array
+  }
+
+  ' ── Other services ────────────────────────────────────────
+  class AuthService {
+    {field} - User $userModel
+    {field} - JwtService $jwtService
+    {method} + registerUser(string $firstName, string $lastName, string $email, string $password): array
+    {method} + verifyCredentials(string $email, string $password): array|false
+    {method} + logout(): array
+  }
+
+  class CategoryService {
+    {field} - Category $categoryModel
+    {method} + getAllCategories(): array
+    {method} + getCategoryById(int $id): ?array
+    {method} + createCategory(array $data): array
+    {method} + updateCategory(int $id, array $data): array
+    {method} + deleteCategory(int $id): array
+  }
+
+  class FeatureService {
+    {field} - Feature $featureModel
+    {method} + getAllFeatures(): array
+    {method} + getGroupedFeatures(): array
+    {method} + getFeatureById(int $id): ?array
+    {method} + createFeature(array $data): array
+    {method} + updateFeature(int $id, array $data): array
+    {method} + deleteFeature(int $id): array
+  }
+
+  class ModelService {
+    {field} - Model $modelModel
+    {method} + getAllModels(): array
+    {method} + getModelsByProvider(int $providerId): array
+    {method} + getModelById(int $id): ?array
+    {method} + createModel(array $data): array
+    {method} + updateModel(int $id, array $data): array
+    {method} + deleteModel(int $id): array
+  }
+
+  class ProviderService {
+    {field} - Provider $providerModel
+    {method} + getAllProviders(): array
+    {method} + getProviderById(int $id): ?array
+    {method} + getProviderWithModels(int $id): ?array
+    {method} + createProvider(array $data): array
+    {method} + updateProvider(int $id, array $data): array
+    {method} + deleteProvider(int $id): array
+  }
+
+  class ReviewService {
+    {field} - Review $reviewModel
+    {field} - ModerationService $moderationService
+    {field} - User $userModel
+    {method} + submitReview(int $userId, array $payload): array
+    {method} + updateReview(int $userId, int $reviewId, array $payload): array
+    {method} + listUserReviews(int $userId): array
+    {method} + deleteReview(int $userId, int $reviewId): array
+    {method} + banUserAndCleanUp(int $userId, int $offensiveReviewId): array
+  }
+
+  class FavoriteService {
+    {field} - FavoriteItem $favoriteItemModel
+    {method} + toggleFavorite(int $userId, int $toolId): string
+    {method} + listUserFavorites(int $userId): array
+  }
+
+  class ShelfService {
+    {field} - Shelf $shelfModel
+    {field} - ShelfItem $shelfItemModel
+    {method} + listUserShelves(int $userId): array
+    {method} + createEmptyShelf(string $name, int $userId, ?string $description): array
+    {method} + updateShelf(int $shelfId, string $name, ?string $description, int $userId): array
+    {method} + deleteShelf(int $shelfId, int $userId): array
+    {method} + toggleShelfItem(int $shelfId, int $toolId): string
+    {method} + getShelfInfo(int $shelfId, int $userId): ?array
+    {method} + getToolsInShelf(int $shelfId, int $userId): array
+    {method} + getUserShelvesWithStatus(int $userId, int $toolId): array
+  }
+
+  class SearchHistoryService {
+    {field} - SearchHistory $searchHistoryModel
+    {field} - SearchHistoryTool $searchHistoryToolModel
+    {field} - ToolFeatures $toolFeatures
+    {method} + logSearch(int $userId, string $prompt, string $aiReasoning, array $recommendedToolIds, ?string $title): array
+    {method} + listUserHistory(int $userId): array
+    {method} + getSearchDetails(int $searchId, int $userId): ?array
+    {method} + clearUserHistory(int $userId): array
+  }
+
+  class ExploreService {
+    {field} - AiTool $toolModel
+    {field} - OpenRouterService $openRouterService
+    {field} - SearchHistoryService $searchHistoryService
+    {field} - AuthMiddleware $authMiddleware
+    {field} - ToolService $toolService
+    {method} + home(): array
+    {method} + landingSummary(): array
+    {method} + searchByKeywords(string $query): array
+    {method} + searchByPrompt(string $prompt, ?int $userId): array
+    {method} + filterTools(?int $categoryId, ?int $providerId): array
+    {method} + getToolDetails(int $toolId): ?array
+  }
+
+  class OpenRouterService {
+    {field} - string $apiKey
+    {field} - string $apiUrl
+    {field} - array $modelQueue
+    {method} + moderateComment(string $comment): array
+    {method} + evaluateToolSubmission(array $toolData, array $slimContext): ?string
+    {method} + getRecommendations(string $prompt, array $toolsData): ?array
+  }
+
+  class ModerationService {
+    {field} - OpenRouterService $openRouter
+    {field} - array $bannedKeywords
+    {method} + moderate(string $content): array
+  }
+
+  class RecommendationService {
+    {field} - AiTool $toolModel
+    {field} - OpenRouterService $openRouterService
+    {field} - SearchHistoryService $searchHistoryService
+    {method} + generateTop6Recommendations(int $userId, string $prompt, string $userProfession): array
+  }
+
+  class UserService {
+    {field} - User $userModel
+    {field} - UploadService $uploadService
+    {method} + updateProfile(int $userId, array $data, ?array $file): array
+    {method} + scheduleDeletion(int $userId): array
+    {method} + restoreAccount(int $userId): array
+    {method} + processPermanentDeletions(): int
+  }
+
+  class ProfessionService {
+    {field} - Profession $professionModel
+    {method} + getAllProfessions(): array
+    {method} + getProfessionById(int $id): ?array
+    {method} + createProfession(array $data): array
+    {method} + updateProfession(int $id, array $data): array
+    {method} + deleteProfession(int $id): array
+  }
+
+  ' ── Hidden alignment links ───────────────────────────────
+  AdminService -[hidden]-> ToolService
+  ToolService -[hidden]-> SuggestionService
+  SuggestionService -[hidden]-> UploadService
+  UploadService -[hidden]-> AuthService
+  AuthService -[hidden]-> CategoryService
+  CategoryService -[hidden]-> FeatureService
+  FeatureService -[hidden]-> ModelService
+  ModelService -[hidden]-> ProviderService
+  ProviderService -[hidden]-> ReviewService
+  ReviewService -[hidden]-> FavoriteService
+  FavoriteService -[hidden]-> ShelfService
+  ShelfService -[hidden]-> SearchHistoryService
+  SearchHistoryService -[hidden]-> ExploreService
+  ExploreService -[hidden]-> OpenRouterService
+  OpenRouterService -[hidden]-> ModerationService
+  ModerationService -[hidden]-> RecommendationService
+  RecommendationService -[hidden]-> UserService
+  UserService -[hidden]-> ProfessionService
+}
+
+' ═══════════════════════════════════════════════════════════
+' CONTROLLERS
+' ═══════════════════════════════════════════════════════════
+
+' ── Package: Controllers ──────────────────────────────────
+package "Controllers" as ctrl_pkg {
+
+  class AdminController {
+    {method} + dashboard(): array
+    {method} + users(): array
+    {method} + promoteUser(array $body): array
+    {method} + demoteUser(array $body): array
+    {method} + banUser(array $body): array
+    {method} + unbanUser(array $body): array
+    {method} + deleteUser(array $body): array
+    {method} + suggestions(): array
+    {method} + approveSuggestion(array $body): array
+    {method} + rejectSuggestion(array $body): array
+    {method} + deleteSuggestion(array $body): array
+    {method} + createSuggestion(array $body, ?array $logoFile): array
+    {method} + updateSuggestion(array $body, ?array $logoFile): array
+    {method} + suggestionHistory(): array
+    {method} + formData(): array
+    {method} + moderationReviews(): array
+    {method} + approveModerationReview(array $body): array
+    {method} + deleteModerationReview(array $body): array
+    {method} + tools(): array
+    {method} + updateToolStatus(array $body): array
+    {method} + deleteTool(array $body): array
+    {method} + createCategory|updateCategory|deleteCategory(array $body): array
+    {method} + createProvider|updateProvider|deleteProvider(array $body): array
+    {method} + createFeature|updateFeature|deleteFeature(array $body): array
+    {method} + createModel|updateModel|deleteModel(array $body): array
+  }
+
+  class AuthController {
+    {method} + register(array $payload): array
+    {method} + login(array $payload): array
+  }
+
+  class ExploreController {
+    {method} + home(): array
+    {method} + landingSummary(): array
+    {method} + search(array $query): array
+    {method} + recommend(array $body): array
+  }
+
+  class FavoriteController {
+    {method} + index(): array
+    {method} + toggle(array $payload): array
+  }
+
+  class ReviewController {
+    {method} + submit(array $payload): array
+    {method} + update(array $payload): array
+    {method} + list(): array
+    {method} + delete(array $payload): array
+  }
+
+  class SearchHistoryController {
+    {method} + list(): array
+    {method} + details(array $query): array
+  }
+
+  class ShelfController {
+    {method} + list(): array
+    {method} + show(array $query): array
+    {method} + create(array $payload): array
+    {method} + update(array $payload): array
+    {method} + delete(array $payload): array
+    {method} + toggleItem(array $payload): array
+  }
+
+  class SuggestionController {
+    {method} + create(array $body, ?array $logoFile): array
+    {method} + history(): array
+  }
+
+  class ToolController {
+    {method} + index(): array
+    {method} + reviews(): array
+    {method} + topReviews(): array
+  }
+
+  class UserController {
+    {method} + profile(): array
+    {method} + stats(): array
+    {method} + updateProfile(array $body, ?array $file): array
+    {method} + professions(): array
+    {method} + deleteAccount(): array
+  }
+
+  ' ── Hidden alignment links ───────────────────────────────
+  AdminController -[hidden]-> AuthController
+  AuthController -[hidden]-> ExploreController
+  ExploreController -[hidden]-> FavoriteController
+  FavoriteController -[hidden]-> ReviewController
+  ReviewController -[hidden]-> SearchHistoryController
+  SearchHistoryController -[hidden]-> ShelfController
+  ShelfController -[hidden]-> SuggestionController
+  SuggestionController -[hidden]-> ToolController
+  ToolController -[hidden]-> UserController
+}
+
+' ═══════════════════════════════════════════════════════════
+' MIDDLEWARE
+' ═══════════════════════════════════════════════════════════
+
+' ── Package: Middleware ────────────────────────────────────
+package "Middleware" as mw_pkg {
+  class AuthMiddleware {
+    {field} - JwtService $jwtService
+    {method} + authenticate(): ?array
+  }
+
+  class RoleMiddleware {
+    {method} + authorize(array $allowedRoles): bool
+  }
+
+  ' ── Hidden alignment links ───────────────────────────────
+  AuthMiddleware -[hidden]-> RoleMiddleware
+}
+
+' ═══════════════════════════════════════════════════════════
+' UTILS
+' ═══════════════════════════════════════════════════════════
+
+' ── Package: Utils ────────────────────────────────────────
+package "Utils" as util_pkg {
+  class JwtService {
+    {field} - string $secret
+    {method} + generateToken(array $payload): string
+    {method} + decode(string $token): ?array
+  }
+
+  class Response {
+    {method} {static} + success(mixed $data, int $statusCode): array
+    {method} {static} + created(mixed $data): array
+    {method} {static} + error(string $message, int $statusCode, mixed $details): array
+  }
+
+  ' ── Hidden alignment links ───────────────────────────────
+  JwtService -[hidden]-> Response
+}
+
+' ═══════════════════════════════════════════════════════════
+' CONFIG
+' ═══════════════════════════════════════════════════════════
+
+' ── Functions (config/database.php) ───────────────────────
+package "Config" as cfg_pkg {
+  class "database functions" as db_funcs {
+    {method} {static} + db_config(): array
+    {method} {static} + db_connection(): PDO
+  }
+}
+
+' ═══════════════════════════════════════════════════════════
+' RELATIONSHIPS
+' ═══════════════════════════════════════════════════════════
+
+' ── Force inter-column spacing ──────────────────────────────
+AdminController -[hidden]-> Category
+AdminController -[hidden]-> Suggestion
+SuggestionService -[hidden]-> ToolService
+ExploreService -[hidden]-> SuggestionService
+
+' ── AdminController → Model (direct CRUD access) ────────────
+AdminController ..> Category : uses directly
+AdminController ..> Provider : uses directly
+AdminController ..> Feature : uses directly
+AdminController ..> Model : uses directly
+AdminController ..> Review : uses directly
+AdminController ..> Suggestion : uses directly
+
+' ── Controller → Service dependencies ─────────────────────
+AdminController ..> AdminService : uses
+AdminController ..> SuggestionService : uses
+AdminController ..> ToolService : uses
+AdminController ..> UploadService : uses
+
+AuthController ..> AuthService : uses
+ExploreController ..> ExploreService : uses
+ExploreController ..> AuthMiddleware : uses
+FavoriteController ..> FavoriteService : uses
+FavoriteController ..> AuthMiddleware : uses
+ReviewController ..> ReviewService : uses
+ReviewController ..> AuthMiddleware : uses
+ShelfController ..> ShelfService : uses
+ShelfController ..> AuthMiddleware : uses
+SuggestionController ..> SuggestionService : uses
+ToolController ..> ToolService : uses
+UserController ..> UserService : uses
+UserController ..> AuthMiddleware : uses
+UserController ..> FavoriteService : uses
+UserController ..> ShelfService : uses
+
+' ── Service → Model dependencies ──────────────────────────
+AuthService ..> User : uses
+AuthService ..> JwtService : uses
+CategoryService ..> Category : uses
+FeatureService ..> Feature : uses
+ModelService ..> Model : uses
+ProviderService ..> Provider : uses
+ToolService ..> AiTool : uses
+ToolService ..> ToolFeatures : uses
+ReviewService ..> Review : uses
+ReviewService ..> ModerationService : uses
+ReviewService ..> User : uses
+ReviewService ..> Suggestion : uses
+FavoriteService ..> FavoriteItem : uses
+ShelfService ..> Shelf : uses
+ShelfService ..> ShelfItem : uses
+SearchHistoryService ..> SearchHistory : uses
+SearchHistoryService ..> SearchHistoryTool : uses
+SearchHistoryService ..> ToolFeatures : uses
+ExploreService ..> AiTool : uses
+ExploreService ..> OpenRouterService : uses
+ExploreService ..> SearchHistoryService : uses
+ExploreService ..> AuthMiddleware : uses
+ExploreService ..> ToolService : uses
+ModerationService ..> OpenRouterService : uses
+RecommendationService ..> AiTool : uses
+RecommendationService ..> OpenRouterService : uses
+RecommendationService ..> SearchHistoryService : uses
+SuggestionService ..> Suggestion : uses
+SuggestionService ..> OpenRouterService : uses
+SuggestionService ..> Category : uses
+SuggestionService ..> Provider : uses
+SuggestionService ..> Model : uses
+SuggestionService ..> Feature : uses
+SuggestionService ..> ToolService : uses
+SuggestionService ..> UploadService : uses
+SuggestionService ..> ToolModel : uses
+SuggestionService ..> ToolFeatures : uses
+UserService ..> User : uses
+UserService ..> UploadService : uses
+ProfessionService ..> Profession : uses
+
+' ── Middleware → Utils ─────────────────────────────────────
+AuthMiddleware ..> JwtService : uses
+
+' ── Routes (index.php) instantiates all controllers ───────
+note "index.php" as router_note
+router_note ..> AuthController : instantiates
+router_note ..> UserController : instantiates
+router_note ..> AdminController : instantiates
+router_note ..> ToolController : instantiates
+router_note ..> ReviewController : instantiates
+router_note ..> FavoriteController : instantiates
+router_note ..> ShelfController : instantiates
+router_note ..> SuggestionController : instantiates
+router_note ..> SearchHistoryController : instantiates
+router_note ..> ExploreController : instantiates
+
+' ═══════════════════════════════════════════════════════════
+' DB RELATIONSHIPS (foreign keys with multiplicities)
+' ═══════════════════════════════════════════════════════════
+
+' ── User ──────────────────────────────────────────────────
+User "1" --> "1" Profession : profession_id
+User "1" --> "*" Review : user_id (écrit)
+User "1" --> "*" Suggestion : user_id (propose)
+User "1" --> "*" FavoriteItem : user_id (favorise)
+User "1" --> "*" Shelf : user_id (possède)
+User "1" --> "*" SearchHistory : user_id (recherche)
+
+' ── AiTool ────────────────────────────────────────────────
+AiTool "*" --> "1" Category : category_id
+AiTool "*" --> "1" Provider : provider_id
+AiTool "1" --> "*" Review : tool_id (reçoit)
+AiTool "1" --> "*" ToolFeatures : tool_id (a)
+AiTool "1" --> "*" ToolModel : tool_id (a)
+AiTool "1" --> "*" FavoriteItem : tool_id (favorisé par)
+
+' ── Shelf ─────────────────────────────────────────────────
+Shelf "1" --> "*" ShelfItem : shelf_id (contient)
+
+' ── ShelfItem ─────────────────────────────────────────────
+ShelfItem "*" --> "1" AiTool : tool_id
+
+' ── SearchHistory ─────────────────────────────────────────
+SearchHistory "1" --> "*" SearchHistoryTool : search_history_id (contient)
+
+' ── SearchHistoryTool ─────────────────────────────────────
+SearchHistoryTool "*" --> "1" AiTool : tool_id
+
+' ── ToolFeatures ──────────────────────────────────────────
+ToolFeatures "*" --> "1" Feature : feature_id
+
+' ── ToolModel ─────────────────────────────────────────────
+ToolModel "*" --> "1" Model : model_id
+
+' ── Model ─────────────────────────────────────────────────
+Model "*" --> "1" Provider : provider_id
+
+' ── AiTool self-refs ─────────────────────────────────────
+AiTool "*" --> "1" User : created_by
+AiTool "*" --> "1" User : validated_by
+
+@enduml

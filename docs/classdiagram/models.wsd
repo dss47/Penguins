@@ -5,48 +5,75 @@ package "Models" as models_pkg {
     {method} + __construct(?PDO $db = null)
   }
 
-  ' ── Models referenced by AdminController (direct CRUD) ──
-  class Category extends BaseModel {
+  ' ═══════════════════════════════════════════════════════
+  ' ROW 1 — Core entities
+  ' ═══════════════════════════════════════════════════════
+
+  class User extends BaseModel {
+    {field} + int id
+    {field} + int profession_id
+    {field} + string email
+    {field} + string password_hash
+    {field} + string name
+    {field} + string profile_url
+    {field} + enum role
+    {field} + enum status
+    {field} + datetime scheduled_deletion
+    {field} + datetime suspended_until
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + findByEmail(string $email): ?array
+    {method} + findById(int $userId): ?array
     {method} + create(array $data): int
     {method} + update(int $id, array $data): bool
-    {method} + findById(int $id): ?array
-    {method} + all(): array
-    {method} + delete(int $id): bool
+    {method} + updateStatus(int $id, string $status): bool
+    {method} + updatePassword(int $id, string $passwordHash): bool
+    {method} + scheduleDeletion(int $userId, string $scheduledDate): bool
+    {method} + restoreAccount(int $userId): bool
+    {method} + getUsersReadyForPermanentDeletion(): array
+    {method} + deletePermanently(int $userId): bool
   }
 
-  class Provider extends BaseModel {
-    {method} + create(array $data): int
-    {method} + update(int $id, array $data): bool
-    {method} + findById(int $id): ?array
+  class AiTool extends BaseModel {
+    {field} + int id
+    {field} + int category_id
+    {field} + int provider_id
+    {field} + int created_by
+    {field} + int validated_by
+    {field} + string name
+    {field} + text description
+    {field} + string logo_url
+    {field} + string website_url
+    {field} + decimal global_rating
+    {field} + decimal website_rating
+    {field} + date release_date
+    {field} + enum status
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + all(): array
+    {method} + findById(int $toolId): ?array
     {method} + findByName(string $name): ?array
-    {method} + all(): array
-    {method} + allActive(): array
-    {method} + allByStatus(string $status): array
-    {method} + delete(int $id): bool
-    {method} + updateStatus(int $id, string $status): bool
-  }
-
-  class Feature extends BaseModel {
-    {method} + create(array $data): int
-    {method} + update(int $id, array $data): bool
-    {method} + findById(int $id): ?array
-    {method} + all(): array
-    {method} + allActive(): array
-    {method} + delete(int $id): bool
-    {method} + updateStatus(int $id, string $status): bool
-  }
-
-  class Model extends BaseModel {
-    {method} + create(array $data): int
-    {method} + findById(int $id): ?array
-    {method} + all(): array
-    {method} + allByProviderId(int $providerId): array
-    {method} + update(int $id, array $data): bool
-    {method} + delete(int $id): bool
-    {method} + updateStatus(int $id, string $status): bool
+    {method} + create(array $data): ?int
+    {method} + update(int $toolId, array $data): bool
+    {method} + updateStatus(int $toolId, string $newStatus): bool
+    {method} + delete(int $toolId): bool
+    {method} + recommendationCandidates(): array
+    {method} + findActiveByIds(array $ids): array
   }
 
   class Review extends BaseModel {
+    {field} + int id
+    {field} + int user_id
+    {field} + int tool_id
+    {field} + tinyint rating
+    {field} + text comment
+    {field} + enum status
+    {field} + text ai_flag_reason
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
     {method} + create(array $data): int
     {method} + findById(int $id): ?array
     {method} + update(int $id, array $data): bool
@@ -61,6 +88,36 @@ package "Models" as models_pkg {
   }
 
   class Suggestion extends BaseModel {
+    {field} + int id
+    {field} + int user_id
+    {field} + int category_id
+    {field} + int ?fixed_category_id
+    {field} + int ?provider_id
+    {field} + int ?fixed_provider_id
+    {field} + int ?model_id
+    {field} + text model_ids
+    {field} + int ?fixed_model_id
+    {field} + text fixed_model_ids
+    {field} + string name
+    {field} + string ?fixed_name
+    {field} + string logo_url
+    {field} + string website_url
+    {field} + string ?fixed_url
+    {field} + text description
+    {field} + text ?fixed_description
+    {field} + json existing_feature_ids
+    {field} + text ?fixed_feature_ids
+    {field} + date release_date
+    {field} + date ?fixed_release_date
+    {field} + text why_this_tool
+    {field} + enum status
+    {field} + text ?rejection_reason
+    {field} + text ai_moderation_notes
+    {field} + decimal ai_global_rating
+    {field} + int ?tool_id
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
     {method} + create(array $data): int
     {method} + findById(int $id): ?array
     {method} + update(int $id, array $data): bool
@@ -72,33 +129,102 @@ package "Models" as models_pkg {
     {method} + updateFromAiValidation(int $id, array $aiData): bool
   }
 
-  ' ── Other models ────────────────────────────────────────
-  class AiTool extends BaseModel {
-    {method} + all(): array
-    {method} + findById(int $toolId): ?array
-    {method} + findByName(string $name): ?array
-    {method} + create(array $data): ?int
-    {method} + update(int $toolId, array $data): bool
-    {method} + updateStatus(int $toolId, string $newStatus): bool
-    {method} + delete(int $toolId): bool
-    {method} + recommendationCandidates(): array
-    {method} + findActiveByIds(array $ids): array
-  }
+  ' ═══════════════════════════════════════════════════════
+  ' ROW 2 — Lookups / référentiels
+  ' ═══════════════════════════════════════════════════════
 
-  class User extends BaseModel {
-    {method} + findByEmail(string $email): ?array
-    {method} + findById(int $userId): ?array
+  class Category extends BaseModel {
+    {field} + int id
+    {field} + string name
+    {field} + string icon
+    {field} + text description
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
     {method} + create(array $data): int
     {method} + update(int $id, array $data): bool
-    {method} + updateStatus(int $id, string $status): bool
-    {method} + updatePassword(int $id, string $passwordHash): bool
-    {method} + scheduleDeletion(int $userId, string $scheduledDate): bool
-    {method} + restoreAccount(int $userId): bool
-    {method} + getUsersReadyForPermanentDeletion(): array
-    {method} + deletePermanently(int $userId): bool
+    {method} + findById(int $id): ?array
+    {method} + all(): array
+    {method} + delete(int $id): bool
   }
 
+  class Provider extends BaseModel {
+    {field} + int id
+    {field} + string name
+    {field} + string website_url
+    {field} + text description
+    {field} + enum status
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + create(array $data): int
+    {method} + update(int $id, array $data): bool
+    {method} + findById(int $id): ?array
+    {method} + findByName(string $name): ?array
+    {method} + all(): array
+    {method} + allActive(): array
+    {method} + allByStatus(string $status): array
+    {method} + delete(int $id): bool
+    {method} + updateStatus(int $id, string $status): bool
+  }
+
+  class Feature extends BaseModel {
+    {field} + int id
+    {field} + string name
+    {field} + text description
+    {field} + enum type
+    {field} + enum status
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + create(array $data): int
+    {method} + update(int $id, array $data): bool
+    {method} + findById(int $id): ?array
+    {method} + all(): array
+    {method} + allActive(): array
+    {method} + delete(int $id): bool
+    {method} + updateStatus(int $id, string $status): bool
+  }
+
+  class Model extends BaseModel {
+    {field} + int id
+    {field} + int provider_id
+    {field} + string name
+    {field} + text description
+    {field} + enum status
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
+    {method} + create(array $data): int
+    {method} + findById(int $id): ?array
+    {method} + all(): array
+    {method} + allByProviderId(int $providerId): array
+    {method} + update(int $id, array $data): bool
+    {method} + delete(int $id): bool
+    {method} + updateStatus(int $id, string $status): bool
+  }
+
+  class Profession extends BaseModel {
+    {field} + int id
+    {field} + string name
+    {field} + timestamp created_at
+    --
+    {method} + create(string $name): int
+    {method} + findById(int $id): ?array
+    {method} + all(): array
+    {method} + delete(int $id): bool
+  }
+
+  ' ═══════════════════════════════════════════════════════
+  ' ROW 3 — Données utilisateur
+  ' ═══════════════════════════════════════════════════════
+
   class FavoriteItem extends BaseModel {
+    {field} + int id
+    {field} + int user_id
+    {field} + int tool_id
+    {field} + timestamp created_at
+    --
     {method} + add(int $userId, int $toolId): bool
     {method} + remove(int $userId, int $toolId): bool
     {method} + isFavorited(int $userId, int $toolId): bool
@@ -106,6 +232,13 @@ package "Models" as models_pkg {
   }
 
   class Shelf extends BaseModel {
+    {field} + int id
+    {field} + int user_id
+    {field} + string name
+    {field} + text description
+    {field} + timestamp created_at
+    {field} + timestamp updated_at
+    --
     {method} + create(array $data): int
     {method} + findById(int $shelfId): ?array
     {method} + allByUserId(int $userId): array
@@ -115,6 +248,11 @@ package "Models" as models_pkg {
   }
 
   class ShelfItem extends BaseModel {
+    {field} + int id
+    {field} + int shelf_id
+    {field} + int tool_id
+    {field} + timestamp created_at
+    --
     {method} + allByShelfId(int $shelfId): array
     {method} + findById(int $id): ?array
     {method} + addToShelf(array $data): int
@@ -125,50 +263,78 @@ package "Models" as models_pkg {
   }
 
   class SearchHistory extends BaseModel {
+    {field} + int id
+    {field} + int user_id
+    {field} + text prompt_text
+    {field} + string title
+    {field} + enum search_type
+    {field} + text ai_reasoning
+    {field} + timestamp created_at
+    --
     {method} + create(array $data): int
     {method} + findById(int $historyId): ?array
     {method} + allByUserId(int $userId): array
   }
 
   class SearchHistoryTool extends BaseModel {
+    {field} + int id
+    {field} + int search_history_id
+    {field} + int tool_id
+    --
     {method} + linkTool(int $searchHistoryId, int $toolId): bool
     {method} + findToolsByHistoryId(int $historyId): array
   }
 
+  ' ═══════════════════════════════════════════════════════
+  ' ROW 4 — Jonctions
+  ' ═══════════════════════════════════════════════════════
+
   class ToolFeatures extends BaseModel {
+    {field} + int id
+    {field} + int tool_id
+    {field} + int feature_id
+    {field} + timestamp created_at
+    --
     {method} + linkFeatureToTool(int $toolId, int $featureId): bool
     {method} + unlinkFeatureFromTool(int $toolId, int $featureId): bool
     {method} + findFeaturesByToolId(int $toolId): array
   }
 
   class ToolModel extends BaseModel {
+    {field} + int id
+    {field} + int tool_id
+    {field} + int model_id
+    --
     {method} + linkModelToTool(int $toolId, int $modelId): bool
     {method} + unlinkModelFromTool(int $toolId, int $modelId): bool
     {method} + findModelsByToolId(int $toolId): array
   }
 
-  class Profession extends BaseModel {
-    {method} + create(string $name): int
-    {method} + findById(int $id): ?array
-    {method} + all(): array
-    {method} + delete(int $id): bool
-  }
+  ' ═══════════════════════════════════════════════════════
+  ' HIDDEN ALIGNMENT (4 rows × 5 cols grid)
+  ' ═══════════════════════════════════════════════════════
 
-  ' ── Hidden alignment links ───────────────────────────────
-  BaseModel -[hidden]-> Category
+  ' Row 1: Core entities
+  BaseModel -[hidden]-> User
+  User -[hidden]-> AiTool
+  AiTool -[hidden]-> Review
+  Review -[hidden]-> Suggestion
+
+  ' Row 2: Lookups (below Row 1)
+  Suggestion -[hidden]d-> Category
   Category -[hidden]-> Provider
   Provider -[hidden]-> Feature
   Feature -[hidden]-> Model
-  Model -[hidden]-> Review
-  Review -[hidden]-> Suggestion
-  Suggestion -[hidden]-> AiTool
-  AiTool -[hidden]-> User
-  User -[hidden]-> FavoriteItem
+  Model -[hidden]-> Profession
+
+  ' Row 3: User data (below Row 2)
+  Category -[hidden]d-> FavoriteItem
   FavoriteItem -[hidden]-> Shelf
   Shelf -[hidden]-> ShelfItem
   ShelfItem -[hidden]-> SearchHistory
   SearchHistory -[hidden]-> SearchHistoryTool
-  SearchHistoryTool -[hidden]-> ToolFeatures
+
+  ' Row 4: Junctions (below Row 3)
+  ShelfItem -[hidden]d-> ToolFeatures
   ToolFeatures -[hidden]-> ToolModel
-  ToolModel -[hidden]-> Profession
 }

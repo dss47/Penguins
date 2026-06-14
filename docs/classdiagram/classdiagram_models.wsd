@@ -1,0 +1,400 @@
+@startuml Penguins_ClassDiagram_Models
+skinparam backgroundColor #FFFFFF
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam classBorderThickness 2
+skinparam classFontColor #111111
+skinparam classFontSize 12
+skinparam classAttributeIconSize 0
+skinparam packageBackgroundColor #FFFFFF
+skinparam packageBorderColor #333333
+skinparam packageFontColor #111111
+skinparam arrowColor #555555
+skinparam shadowing false
+skinparam linetype ortho
+skinparam defaultTextAlignment left
+
+title Penguins — Modèle de Données (Relations)
+
+' ═══════════════════════════════════════════════════════════
+' CLASSES
+' ═══════════════════════════════════════════════════════════
+
+abstract class BaseModel {
+  {field} # PDO $db
+  {method} + __construct(?PDO $db = null)
+}
+
+' ── Core entities ─────────────────────────────────────────
+class User extends BaseModel {
+  {field} + int id
+  {field} + int profession_id
+  {field} + string email
+  {field} + string password_hash
+  {field} + string name
+  {field} + string profile_url
+  {field} + enum role
+  {field} + enum status
+  {field} + datetime scheduled_deletion
+  {field} + datetime suspended_until
+  {field} + timestamp created_at
+  {field} + timestamp updated_at
+  --
+  {method} + findByEmail(string $email): ?array
+  {method} + findById(int $userId): ?array
+  {method} + create(array $data): int
+  {method} + update(int $id, array $data): bool
+  {method} + updateStatus(int $id, string $status): bool
+  {method} + updatePassword(int $id, string $passwordHash): bool
+  {method} + scheduleDeletion(int $userId, string $scheduledDate): bool
+  {method} + restoreAccount(int $userId): bool
+  {method} + getUsersReadyForPermanentDeletion(): array
+  {method} + deletePermanently(int $userId): bool
+}
+
+class AiTool extends BaseModel {
+  {field} + int id
+  {field} + int category_id
+  {field} + int provider_id
+  {field} + int created_by
+  {field} + int validated_by
+  {field} + string name
+  {field} + text description
+  {field} + string logo_url
+  {field} + string website_url
+  {field} + decimal global_rating
+  {field} + decimal website_rating
+  {field} + date release_date
+  {field} + enum status
+  {field} + timestamp created_at
+  {field} + timestamp updated_at
+  --
+  {method} + all(): array
+  {method} + findById(int $toolId): ?array
+  {method} + findByName(string $name): ?array
+  {method} + create(array $data): ?int
+  {method} + update(int $toolId, array $data): bool
+  {method} + updateStatus(int $toolId, string $newStatus): bool
+  {method} + delete(int $toolId): bool
+  {method} + recommendationCandidates(): array
+  {method} + findActiveByIds(array $ids): array
+}
+
+class Review extends BaseModel {
+  {field} + int id
+  {field} + int user_id
+  {field} + int tool_id
+  {field} + tinyint rating
+  {field} + text comment
+  {field} + enum status
+  {field} + text ai_flag_reason
+  {field} + timestamp created_at
+  {field} + timestamp updated_at
+  --
+  {method} + create(array $data): int
+  {method} + findById(int $id): ?array
+  {method} + update(int $id, array $data): bool
+  {method} + delete(int $id): bool
+  {method} + allByStatus(string $status): array
+  {method} + allByUserId(int $userId): array
+  {method} + allApprovedByToolId(int $toolId): array
+  {method} + topApprovedComments(int $limit = 3): array
+  {method} + findByUserAndTool(int $userId, int $toolId): ?array
+  {method} + updateModeration(int $reviewId, string $status, ?string $aiFlagReason): bool
+  {method} + deleteAllByUserId(int $userId): bool
+}
+
+class Suggestion extends BaseModel {
+  {field} + int id
+  {field} + int user_id
+  {field} + int category_id
+  {field} + int ?fixed_category_id
+  {field} + int ?provider_id
+  {field} + int ?fixed_provider_id
+  {field} + int ?model_id
+  {field} + text model_ids
+  {field} + int ?fixed_model_id
+  {field} + text fixed_model_ids
+  {field} + string name
+  {field} + string ?fixed_name
+  {field} + string logo_url
+  {field} + string website_url
+  {field} + string ?fixed_url
+  {field} + text description
+  {field} + text ?fixed_description
+  {field} + json existing_feature_ids
+  {field} + text ?fixed_feature_ids
+  {field} + date release_date
+  {field} + date ?fixed_release_date
+  {field} + text why_this_tool
+  {field} + enum status
+  {field} + text ?rejection_reason
+  {field} + text ai_moderation_notes
+  {field} + decimal ai_global_rating
+  {field} + int ?tool_id
+  {field} + timestamp created_at
+  {field} + timestamp updated_at
+  --
+  {method} + create(array $data): int
+  {method} + findById(int $id): ?array
+  {method} + update(int $id, array $data): bool
+  {method} + delete(int $id): bool
+  {method} + allByStatus(string $status): array
+  {method} + allByUserId(int $userId): array
+  {method} + getAdminHistory(int $adminUserId): array
+  {method} + updateStatus(int $id, string $status, ?string $rejectionReason, ?int $toolId): bool
+  {method} + updateFromAiValidation(int $id, array $aiData): bool
+}
+
+' ── Lookups / référentiels ────────────────────────────────
+class Category extends BaseModel {
+  {field} + int id
+  {field} + string name
+  {field} + string icon
+  {field} + text description
+  {field} + timestamp created_at
+  {field} + timestamp updated_at
+  --
+  {method} + create(array $data): int
+  {method} + update(int $id, array $data): bool
+  {method} + findById(int $id): ?array
+  {method} + all(): array
+  {method} + delete(int $id): bool
+}
+
+class Provider extends BaseModel {
+  {field} + int id
+  {field} + string name
+  {field} + string website_url
+  {field} + text description
+  {field} + enum status
+  {field} + timestamp created_at
+  {field} + timestamp updated_at
+  --
+  {method} + create(array $data): int
+  {method} + update(int $id, array $data): bool
+  {method} + findById(int $id): ?array
+  {method} + findByName(string $name): ?array
+  {method} + all(): array
+  {method} + allActive(): array
+  {method} + allByStatus(string $status): array
+  {method} + delete(int $id): bool
+  {method} + updateStatus(int $id, string $status): bool
+}
+
+class Feature extends BaseModel {
+  {field} + int id
+  {field} + string name
+  {field} + text description
+  {field} + enum type
+  {field} + enum status
+  {field} + timestamp created_at
+  {field} + timestamp updated_at
+  --
+  {method} + create(array $data): int
+  {method} + update(int $id, array $data): bool
+  {method} + findById(int $id): ?array
+  {method} + all(): array
+  {method} + allActive(): array
+  {method} + delete(int $id): bool
+  {method} + updateStatus(int $id, string $status): bool
+}
+
+class "Model (PHP)" as ModelModel extends BaseModel {
+  {field} + int id
+  {field} + int provider_id
+  {field} + string name
+  {field} + text description
+  {field} + enum status
+  {field} + timestamp created_at
+  {field} + timestamp updated_at
+  --
+  {method} + create(array $data): int
+  {method} + findById(int $id): ?array
+  {method} + all(): array
+  {method} + allByProviderId(int $providerId): array
+  {method} + update(int $id, array $data): bool
+  {method} + delete(int $id): bool
+  {method} + updateStatus(int $id, string $status): bool
+}
+
+class Profession extends BaseModel {
+  {field} + int id
+  {field} + string name
+  {field} + timestamp created_at
+  --
+  {method} + create(string $name): int
+  {method} + findById(int $id): ?array
+  {method} + all(): array
+  {method} + delete(int $id): bool
+}
+
+' ── Utilisateur ───────────────────────────────────────────
+class FavoriteItem extends BaseModel {
+  {field} + int id
+  {field} + int user_id
+  {field} + int tool_id
+  {field} + timestamp created_at
+  --
+  {method} + add(int $userId, int $toolId): bool
+  {method} + remove(int $userId, int $toolId): bool
+  {method} + isFavorited(int $userId, int $toolId): bool
+  {method} + allByUserId(int $userId): array
+}
+
+class Shelf extends BaseModel {
+  {field} + int id
+  {field} + int user_id
+  {field} + string name
+  {field} + text description
+  {field} + timestamp created_at
+  {field} + timestamp updated_at
+  --
+  {method} + create(array $data): int
+  {method} + findById(int $shelfId): ?array
+  {method} + allByUserId(int $userId): array
+  {method} + findByUserId(int $userId): array
+  {method} + update(int $id, array $data): bool
+  {method} + delete(int $id): bool
+}
+
+class ShelfItem extends BaseModel {
+  {field} + int id
+  {field} + int shelf_id
+  {field} + int tool_id
+  {field} + timestamp created_at
+  --
+  {method} + allByShelfId(int $shelfId): array
+  {method} + findById(int $id): ?array
+  {method} + addToShelf(array $data): int
+  {method} + removeFromShelf(int $shelfId, int $toolId): bool
+  {method} + exists(int $shelfId, int $toolId): bool
+  {method} + toggle(int $shelfId, int $toolId): string
+  {method} + getToolsByShelfId(int $shelfId): array
+}
+
+class SearchHistory extends BaseModel {
+  {field} + int id
+  {field} + int user_id
+  {field} + text prompt_text
+  {field} + string title
+  {field} + enum search_type
+  {field} + text ai_reasoning
+  {field} + timestamp created_at
+  --
+  {method} + create(array $data): int
+  {method} + findById(int $historyId): ?array
+  {method} + allByUserId(int $userId): array
+}
+
+class SearchHistoryTool extends BaseModel {
+  {field} + int id
+  {field} + int search_history_id
+  {field} + int tool_id
+  --
+  {method} + linkTool(int $searchHistoryId, int $toolId): bool
+  {method} + findToolsByHistoryId(int $historyId): array
+}
+
+' ── Jonctions ─────────────────────────────────────────────
+class ToolFeatures extends BaseModel {
+  {field} + int id
+  {field} + int tool_id
+  {field} + int feature_id
+  {field} + timestamp created_at
+  --
+  {method} + linkFeatureToTool(int $toolId, int $featureId): bool
+  {method} + unlinkFeatureFromTool(int $toolId, int $featureId): bool
+  {method} + findFeaturesByToolId(int $toolId): array
+}
+
+class ToolModel extends BaseModel {
+  {field} + int id
+  {field} + int tool_id
+  {field} + int model_id
+  --
+  {method} + linkModelToTool(int $toolId, int $modelId): bool
+  {method} + unlinkModelFromTool(int $toolId, int $modelId): bool
+  {method} + findModelsByToolId(int $toolId): array
+}
+
+' ═══════════════════════════════════════════════════════════
+' HIDDEN ALIGNMENT
+' ═══════════════════════════════════════════════════════════
+
+' Row 1: Core
+BaseModel -[hidden]-> User
+User -[hidden]-> AiTool
+AiTool -[hidden]-> Review
+Review -[hidden]-> Suggestion
+
+' Row 2: Lookups
+Suggestion -[hidden]d-> Category
+Category -[hidden]-> Provider
+Provider -[hidden]-> Feature
+Feature -[hidden]-> ModelModel
+ModelModel -[hidden]-> Profession
+
+' Row 3: User data + junctions
+Category -[hidden]d-> FavoriteItem
+FavoriteItem -[hidden]-> Shelf
+Shelf -[hidden]-> ShelfItem
+ShelfItem -[hidden]-> SearchHistory
+SearchHistory -[hidden]-> SearchHistoryTool
+SearchHistoryTool -[hidden]-> ToolFeatures
+ToolFeatures -[hidden]-> ToolModel
+
+' ═══════════════════════════════════════════════════════════
+' DB RELATIONSHIPS (with multiplicities)
+' ═══════════════════════════════════════════════════════════
+
+' ── User ──────────────────────────────────────────────────
+User "1" --> "1" Profession : profession_id
+User "1" --> "*" Review : écrit
+User "1" --> "*" Suggestion : propose
+User "1" --> "*" FavoriteItem : favorise
+User "1" --> "*" Shelf : possède
+User "1" --> "*" SearchHistory : recherche
+
+' ── AiTool ────────────────────────────────────────────────
+AiTool "*" --> "1" Category : category_id
+AiTool "*" --> "1" Provider : provider_id
+AiTool "1" --> "*" Review : reçoit
+AiTool "1" --> "*" ToolFeatures : a
+AiTool "1" --> "*" ToolModel : a
+AiTool "1" --> "*" FavoriteItem : favorisé par
+
+' ── Review ────────────────────────────────────────────────
+Review "*" --> "1" User
+Review "*" --> "1" AiTool
+
+' ── Suggestion ────────────────────────────────────────────
+Suggestion "*" --> "1" User : user_id
+Suggestion "*" --> "1" Category : category_id
+Suggestion "*" --> "1" Provider : provider_id
+
+' ── FavoriteItem ──────────────────────────────────────────
+FavoriteItem "*" --> "1" User
+FavoriteItem "*" --> "1" AiTool
+
+' ── Shelf ─────────────────────────────────────────────────
+Shelf "1" --> "*" ShelfItem : contient
+Shelf "*" --> "1" User
+
+' ── ShelfItem ─────────────────────────────────────────────
+ShelfItem "*" --> "1" AiTool : tool_id
+
+' ── SearchHistory ─────────────────────────────────────────
+SearchHistory "1" --> "*" SearchHistoryTool : contient
+SearchHistory "*" --> "1" User
+
+' ── SearchHistoryTool ─────────────────────────────────────
+SearchHistoryTool "*" --> "1" AiTool : tool_id
+
+' ── ToolFeatures ──────────────────────────────────────────
+ToolFeatures "*" --> "1" Feature : feature_id
+
+' ── ToolModel ─────────────────────────────────────────────
+ToolModel "*" --> "1" ModelModel : model_id
+
+@enduml

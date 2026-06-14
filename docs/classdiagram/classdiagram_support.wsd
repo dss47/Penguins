@@ -1,0 +1,65 @@
+@startuml Penguins_ClassDiagram_Support
+skinparam backgroundColor #FFFFFF
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam classBorderThickness 2
+skinparam classFontColor #111111
+skinparam classFontSize 12
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageBackgroundColor #FFFFFF
+skinparam packageBorderColor #333333
+skinparam packageFontColor #111111
+skinparam arrowColor #555555
+skinparam shadowing false
+skinparam linetype ortho
+skinparam defaultTextAlignment left
+
+title Penguins — Support (Middleware / Utils / Config)
+
+' ── Middleware ─────────────────────────────────────────────
+package "Middleware" {
+  class AuthMiddleware {
+    {field} - JwtService $jwtService
+    {method} + authenticate(): ?array
+  }
+
+  class RoleMiddleware {
+    {method} + authorize(array $allowedRoles): bool
+  }
+
+  AuthMiddleware -[hidden]-> RoleMiddleware
+}
+
+' ── Utils ─────────────────────────────────────────────────
+package "Utils" {
+  class JwtService {
+    {field} - string $secret
+    {method} + generateToken(array $payload): string
+    {method} + decode(string $token): ?array
+  }
+
+  class Response {
+    {method} {static} + success(mixed $data, int $statusCode): array
+    {method} {static} + created(mixed $data): array
+    {method} {static} + error(string $message, int $statusCode, mixed $details): array
+  }
+
+  JwtService -[hidden]-> Response
+}
+
+' ── Config ─────────────────────────────────────────────────
+package "Config" {
+  class "database functions" as db_funcs {
+    {method} {static} + db_config(): array
+    {method} {static} + db_connection(): PDO
+  }
+}
+
+' ═══════════════════════════════════════════════════════════
+' AGGREGATIONS
+' ═══════════════════════════════════════════════════════════
+
+AuthMiddleware o-- JwtService : $jwtService
+
+@enduml

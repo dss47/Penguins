@@ -1,0 +1,192 @@
+@startuml Penguins_ClassDiagram_Controllers
+skinparam backgroundColor #FFFFFF
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam classBorderThickness 2
+skinparam classFontColor #111111
+skinparam classFontSize 12
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageBackgroundColor #FFFFFF
+skinparam packageBorderColor #333333
+skinparam packageFontColor #111111
+skinparam arrowColor #555555
+skinparam shadowing false
+skinparam linetype ortho
+skinparam defaultTextAlignment left
+
+title Penguins — Contrôleurs (Dépendances)
+
+' ═══════════════════════════════════════════════════════════
+' CONTROLLERS
+' ═══════════════════════════════════════════════════════════
+
+package "Controllers" {
+
+  class AuthController {
+    {method} + register(array $payload): array
+    {method} + login(array $payload): array
+  }
+
+  class UserController {
+    {method} + profile(): array
+    {method} + stats(): array
+    {method} + updateProfile(array $body, ?array $file): array
+    {method} + professions(): array
+    {method} + deleteAccount(): array
+  }
+
+  class AdminController {
+    {method} + dashboard(): array
+    {method} + users(): array
+    {method} + promoteUser(array $body): array
+    {method} + demoteUser(array $body): array
+    {method} + banUser(array $body): array
+    {method} + unbanUser(array $body): array
+    {method} + deleteUser(array $body): array
+    {method} + suggestions(): array
+    {method} + approveSuggestion(array $body): array
+    {method} + rejectSuggestion(array $body): array
+    {method} + deleteSuggestion(array $body): array
+    {method} + createSuggestion(array $body, ?array $logoFile): array
+    {method} + updateSuggestion(array $body, ?array $logoFile): array
+    {method} + suggestionHistory(): array
+    {method} + formData(): array
+    {method} + moderationReviews(): array
+    {method} + approveModerationReview(array $body): array
+    {method} + deleteModerationReview(array $body): array
+    {method} + tools(): array
+    {method} + updateToolStatus(array $body): array
+    {method} + deleteTool(array $body): array
+    {method} + createCategory|updateCategory|deleteCategory(array $body): array
+    {method} + createProvider|updateProvider|deleteProvider(array $body): array
+    {method} + createFeature|updateFeature|deleteFeature(array $body): array
+    {method} + createModel|updateModel|deleteModel(array $body): array
+  }
+
+  class ToolController {
+    {method} + index(): array
+    {method} + reviews(): array
+    {method} + topReviews(): array
+  }
+
+  class ExploreController {
+    {method} + home(): array
+    {method} + landingSummary(): array
+    {method} + search(array $query): array
+    {method} + recommend(array $body): array
+  }
+
+  class FavoriteController {
+    {method} + index(): array
+    {method} + toggle(array $payload): array
+  }
+
+  class ReviewController {
+    {method} + submit(array $payload): array
+    {method} + update(array $payload): array
+    {method} + list(): array
+    {method} + delete(array $payload): array
+  }
+
+  class ShelfController {
+    {method} + list(): array
+    {method} + show(array $query): array
+    {method} + create(array $payload): array
+    {method} + update(array $payload): array
+    {method} + delete(array $payload): array
+    {method} + toggleItem(array $payload): array
+  }
+
+  class SearchHistoryController {
+    {method} + list(): array
+    {method} + details(array $query): array
+  }
+
+  class SuggestionController {
+    {method} + create(array $body, ?array $logoFile): array
+    {method} + history(): array
+  }
+
+  ' ── Hidden alignment ──────────────────────────────────
+  AuthController -[hidden]-> UserController
+  UserController -[hidden]-> AdminController
+  AdminController -[hidden]-> ToolController
+  ToolController -[hidden]-> ExploreController
+  ExploreController -[hidden]-> FavoriteController
+  FavoriteController -[hidden]-> ReviewController
+  ReviewController -[hidden]-> ShelfController
+  ShelfController -[hidden]-> SearchHistoryController
+  SearchHistoryController -[hidden]-> SuggestionController
+}
+
+' ═══════════════════════════════════════════════════════════
+' AGGREGATIONS (constructor-injected, white diamond)
+' ═══════════════════════════════════════════════════════════
+
+' ── AuthController ──────────────────────────────────────
+AuthController o-- AuthService
+
+' ── UserController ──────────────────────────────────────
+UserController o-- UserService : $userService
+UserController o-- AuthMiddleware : $authMiddleware
+UserController o-- FavoriteService : $favoriteService
+UserController o-- ShelfService : $shelfService
+UserController o-- Review : $reviewModel
+UserController o-- SearchHistory : $searchHistoryModel
+
+' ── AdminController ─────────────────────────────────────
+AdminController o-- AdminService : $adminService
+AdminController o-- SuggestionService : $suggestionService
+AdminController o-- ToolService : $toolService
+AdminController o-- UploadService : $uploadService
+AdminController o-- Review : $reviewModel
+AdminController o-- Suggestion : $suggestionModel
+AdminController o-- Category : $categoryModel
+AdminController o-- Provider : $providerModel
+AdminController o-- Model : $modelModel
+AdminController o-- Feature : $featureModel
+
+' ── ToolController ──────────────────────────────────────
+ToolController o-- ToolService : $toolService
+ToolController o-- AuthMiddleware : $authMiddleware
+ToolController o-- Review : $reviewModel
+
+' ── ExploreController ───────────────────────────────────
+ExploreController o-- ExploreService : $exploreService
+ExploreController o-- AuthMiddleware : $authMiddleware
+
+' ── FavoriteController ──────────────────────────────────
+FavoriteController o-- FavoriteService : $favoriteService
+FavoriteController o-- AuthMiddleware : $authMiddleware
+
+' ── ReviewController ────────────────────────────────────
+ReviewController o-- ReviewService : $reviewService
+ReviewController o-- AuthMiddleware : $authMiddleware
+
+' ── ShelfController ─────────────────────────────────────
+ShelfController o-- ShelfService : $shelfService
+ShelfController o-- AuthMiddleware : $authMiddleware
+
+' ── SearchHistoryController ─────────────────────────────
+SearchHistoryController o-- SearchHistoryService : $searchHistoryService
+SearchHistoryController o-- AuthMiddleware : $authMiddleware
+
+' ── SuggestionController ────────────────────────────────
+SuggestionController o-- SuggestionService : $suggestionService
+SuggestionController o-- AuthMiddleware : $authMiddleware
+SuggestionController o-- Suggestion : $suggestionModel
+SuggestionController o-- Category : $categoryModel
+SuggestionController o-- Provider : $providerModel
+SuggestionController o-- Model : $modelModel
+SuggestionController o-- Feature : $featureModel
+
+' ═══════════════════════════════════════════════════════════
+' DEPENDENCIES (inline instantiation, dotted arrow)
+' ═══════════════════════════════════════════════════════════
+
+UserController ..> User : new User()
+UserController ..> Profession : new Profession()
+UserController ..> Suggestion : new Suggestion()
+
+@enduml
